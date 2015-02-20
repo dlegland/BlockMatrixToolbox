@@ -1,5 +1,5 @@
 classdef BlockMatrix < handle
-%BLOCKMATRIX  One-line description here, please.
+%BLOCKMATRIX Matrix that can be divided into several blocks
 %
 %   Class BlockMatrix
 %
@@ -7,7 +7,7 @@ classdef BlockMatrix < handle
 %   BlockMatrix
 %
 %   See also
-%
+%     BlockDimension
 
 % ------
 % Author: David Legland
@@ -20,7 +20,7 @@ classdef BlockMatrix < handle
 properties
     % contains the dimensions of blocs in each dimension, as a cell array
     % containing row vectors of integers
-    parts;
+    dims;
     
     % contains the data, as a vector or an array. 
     % Idea is to access only via linear indexing
@@ -40,7 +40,7 @@ methods
         
         if isempty(varargin)
             % populate with default data
-            this.parts = {[2 2], [2 3 2]};
+            this.dims = {[2 2], [2 3 2]};
             this.data = 1:28;
             
         elseif nargin == 2
@@ -49,10 +49,17 @@ methods
             end
             this.data = varargin{1};
             
-            if ~iscell(varargin{2})
-                error('second argument must be a cell array');
+            % second argument represents block dimension. This can be
+            % either a BlockDimension object, or a cell array containing
+            % the block sizes in each dimension.
+            var2 = varargin{2};
+            if isa(var2, 'BlockDimension')
+                this.dims = var2;
+            elseif iscell(var2)
+                this.dims = BlockDimension(var2);
+            else
+                error('second argument must be a cell array or a BlockDimension object');
             end
-            this.parts = varargin{2};
             
         else
             error('Requires two input arguments');
@@ -63,27 +70,24 @@ methods
 end % end constructors
 
 
-%% Methods
+%% Methods that depends uniquely on BlockDimension object
 methods
     function dims = getBlockDimensions(this, dim)
         % return the dimensions of the block in the specified dimension
         %
         % DIMS = getBlockDimensions(BM, IND)
         %
-        dims = this.parts{dim};
+        dims = getBlockDimensions(this.dims, dim);
     end
     
     function dim = getDimensionality(this)
         % returns the number of dimensions of this block matrix (2)
-        dim = length(this.parts);
+        dim = getDimensionality(this.dims);
     end
     
     function siz = getSize(this)
         % return the size in each direction of this block matrix object
-        siz = zeros(1, length(this.parts));
-        for i = 1:length(this.parts)
-            siz(i) = sum(this.parts{i});            
-        end
+        siz = getSize(this.dims);
     end
     
     function n = getBlockNumber(this)
@@ -91,12 +95,12 @@ methods
         %
         % N = getBlockNumber(BM);
         %
-        n = 1;
-        for i = 1:length(this.parts)
-            n = n * length(this.parts{i});
-        end
+        n = getBlockNumber(this.dims);
     end
-    
+end
+
+%% Methods specific to BlockMatric object
+methods
     function block = getBlock(this, row, col)
         % return the (i-th, j-th) block 
         %
@@ -104,11 +108,11 @@ methods
         %
         
         % determine row indices of block rows
-        parts1 = this.parts{1};
+        parts1 = getBlockDimensions(this.dims, 1);
         rowInds = (1:parts1(row))' + sum(parts1(1:row-1));
 
         % determine column indices of block columns
-        parts2 = this.parts{2};
+        parts2 = getBlockDimensions(this.dims, 2);
         colInds = (1:parts2(col)) + sum(parts2(1:col-1));
         
         % compute full size of block matrix
@@ -135,10 +139,10 @@ methods
         nCols = dim(2);
         
         % Display information on block sizes
-        disp(sprintf('BlockMatrix Object with %d rows and %d columns', nRows, nCols)); %#ok<DSPS>
-        parts1 = this.parts{1};
+        disp(sprintf('BlockMatrix object with %d rows and %d columns', nRows, nCols)); %#ok<DSPS>
+        parts1 = getBlockDimensions(this.dims, 1);
         disp(sprintf(['  row dims:' repmat(' %d', 1, length(parts1))], parts1)); %#ok<DSPS>
-        parts2 = this.parts{2};
+        parts2 = getBlockDimensions(this.dims, 2);
         disp(sprintf(['  col dims:' repmat(' %d', 1, length(parts2))], parts2)); %#ok<DSPS>
         
         if isLoose
@@ -148,8 +152,8 @@ methods
     
     function displayBlocks(this)
         % get BlockMatrix total size
-        nRowBlocks = length(this.parts{1});
-        nColBlocks = length(this.parts{2});
+        nRowBlocks = length(getBlockDimensions(this.dims, 1));
+        nColBlocks = length(getBlockDimensions(this.dims, 2));
         
         for row = 1:nRowBlocks
             for col = 1:nColBlocks
