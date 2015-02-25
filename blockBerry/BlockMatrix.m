@@ -85,9 +85,9 @@ methods
         dim = getDimensionality(this.dims);
     end
     
-    function siz = getSize(this)
+    function siz = getSize(this, varargin)
         % return the size in each direction of this block matrix object
-        siz = getSize(this.dims);
+        siz = getSize(this.dims, varargin{:});
     end
     
     function n = getBlockNumber(this)

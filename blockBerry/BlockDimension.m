@@ -61,15 +61,34 @@ methods
     end
     
     function dim = getDimensionality(this)
-        % returns the number of dimensions of this block matrix (2)
+        % Return the number of dimensions of this block matrix
         dim = length(this.parts);
     end
     
-    function siz = getSize(this)
-        % return the size in each direction of this block matrix object
-        siz = zeros(1, length(this.parts));
-        for i = 1:length(this.parts)
-            siz(i) = sum(this.parts{i});            
+    function siz = getSize(this, varargin)
+        % Return the size in each direction of this block matrix object
+        %
+        % SIZ = getSize(BD)
+        % Returns the size as a 1-by-ND row vector, where ND is the
+        % dimensionality of this BlockDimension.
+        %
+        % SIZ = getSize(BD,DIM)
+        % Returns the size in the specified dimension. DIM should be an
+        % integer between 1 and ND
+        %
+        
+        if isempty(varargin)
+            % return dimension vector
+            siz = zeros(1, length(this.parts));
+            for i = 1:length(this.parts)
+                siz(i) = sum(this.parts{i});            
+            end
+        else
+            dim = varargin{1};
+            siz = zeros(1, length(dim));
+            for i = 1:length(dim)
+                siz(i) = sum(this.parts{dim(i)});
+            end
         end
     end
     
