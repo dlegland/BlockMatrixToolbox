@@ -40,14 +40,18 @@ methods
         
         if isempty(varargin)
             % populate with default data
-            this.dims = {[2 2], [2 3 2]};
             this.data = 1:28;
+            this.dims = {[2 2], [2 3 2]};
             
         elseif nargin == 2
-            if ~isnumeric(varargin{1})
-                error('first argument must be numeric');
+            if isnumeric(varargin{1})
+                this.data = varargin{1};
+            elseif isa(varargin{1}, 'BlockMatrix')
+                bm = varargin{1};
+                this.data = bm.data;
+            else
+                error('first argument must be a matrix or a block matrix');
             end
-            this.data = varargin{1};
             
             % second argument represents block dimension. This can be
             % either a BlockDimension object, or a cell array containing

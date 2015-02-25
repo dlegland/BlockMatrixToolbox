@@ -27,7 +27,12 @@ parts = {[2 2], [2 3 2]};
 BM = BlockMatrix(data, parts);
 
 %% display info about the block Matrix
-disp(BM)
+disp(BM);
+
+%% Create a new block matrix with different size
+dims2 = {[1 2 1], [4 3]};
+BM2 = BlockMatrix(BM, dims2);
+disp(BM2);
 
 %% show the content of one of the blocks
 getBlock(BM, 2, 2)
