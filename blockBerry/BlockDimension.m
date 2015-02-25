@@ -92,14 +92,26 @@ methods
         end
     end
     
-    function n = getBlockNumber(this)
+    function n = getBlockNumber(this, varargin)
         % return the total number of blocks in this block matrix
         %
         % N = getBlockNumber(BD);
         %
-        n = 1;
-        for i = 1:length(this.parts)
-            n = n * length(this.parts{i});
+        
+        if isempty(varargin)
+            % compute total number of blocks
+            n = 1;
+            for i = 1:length(this.parts)
+                n = n * length(this.parts{i});
+            end
+        else
+            % returns the number of blocks only in the specified
+            % dimension(s)
+            dim = varargin{1};
+            n = zeros(1, length(dim));
+            for i = 1:length(dim)
+                n(i) = length(this.parts{dim(i)});
+            end
         end
     end
     

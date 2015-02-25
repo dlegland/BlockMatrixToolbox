@@ -77,7 +77,7 @@ end % end constructors
 %% Methods that depends uniquely on BlockDimension object
 methods
     function dims = getBlockDimensions(this, dim)
-        % return the dimensions of the block in the specified dimension
+        % Return the dimensions of the block in the specified dimension
         %
         % DIMS = getBlockDimensions(BM, IND)
         %
@@ -85,26 +85,30 @@ methods
     end
     
     function dim = getDimensionality(this)
-        % returns the number of dimensions of this block matrix (2)
+        % Return the number of dimensions of this block matrix (usually 2)
         dim = getDimensionality(this.dims);
     end
     
     function siz = getSize(this, varargin)
-        % return the size in each direction of this block matrix object
+        % Return the size in each direction of this block matrix object
         siz = getSize(this.dims, varargin{:});
     end
     
-    function n = getBlockNumber(this)
-        % return the total number of blocks in this block matrix
+    function n = getBlockNumber(this, varargin)
+        % Return the total number of blocks in this block matrix, or the
+        % number of blocks in a given dimension
         %
         % N = getBlockNumber(BM);
+        % N = getBlockNumber(BM, DIM);
         %
-        n = getBlockNumber(this.dims);
+        n = getBlockNumber(this.dims, varargin{:});
     end
 end
 
-%% Methods specific to BlockMatric object
+%% Methods specific to BlockMatrix object
+
 methods
+       
     function block = getBlock(this, row, col)
         % return the (i-th, j-th) block 
         %
