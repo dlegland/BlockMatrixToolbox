@@ -57,12 +57,12 @@ methods
             % either a BlockDimension object, or a cell array containing
             % the block sizes in each dimension.
             var2 = varargin{2};
-            if isa(var2, 'BlockDimension')
+            if isa(var2, 'BlockDimensions')
                 this.dims = var2;
             elseif iscell(var2)
-                this.dims = BlockDimension(var2);
+                this.dims = BlockDimensions(var2);
             else
-                error('second argument must be a cell array or a BlockDimension object');
+                error('second argument must be a cell array or a BlockDimensions object');
             end
             
         else
@@ -74,7 +74,41 @@ methods
 end % end constructors
 
 
-%% Methods that depends uniquely on BlockDimension object
+%% Methods specific to BlockMatrix object
+% sorted approcimately from high-level to low-level
+
+methods
+    
+    function block = getBlock(this, row, col)
+        % return the (i-th, j-th) block 
+        %
+        %   BLK = getBlock(BM, ROW, COL)
+        %
+        
+        % determine row indices of block rows
+        parts1 = getBlockDimensions(this.dims, 1);
+        rowInds = (1:parts1(row))' + sum(parts1(1:row-1));
+
+        % determine column indices of block columns
+        parts2 = getBlockDimensions(this.dims, 2);
+        colInds = (1:parts2(col)) + sum(parts2(1:col-1));
+        
+        % compute full size of block matrix
+        dim = [sum(parts1) sum(parts2)];
+        
+        % compute indices of block elements in data
+        colInds2 = repmat(colInds, length(rowInds), 1);
+        rowInds2 = repmat(rowInds, 1, length(colInds));
+        inds = sub2ind(dim, rowInds2, colInds2);
+        
+        % extract data element corresponding to block. 
+        block = this.data(inds);
+    end
+    
+end
+
+%% Methods that depends uniquely on BlockDimensions object
+
 methods
     function dims = getBlockDimensions(this, dim)
         % Return the dimensions of the block in the specified dimension
@@ -103,37 +137,17 @@ methods
         %
         n = getBlockNumber(this.dims, varargin{:});
     end
+    
+    function n = getBlockNumbers(this)
+        % Return the number of blocks in each dimension
+        n = getBlockNumbers(this.dims);
+    end
 end
 
-%% Methods specific to BlockMatrix object
+
+%% Display methods
 
 methods
-       
-    function block = getBlock(this, row, col)
-        % return the (i-th, j-th) block 
-        %
-        %   BLK = getBlock(BM, ROW, COL)
-        %
-        
-        % determine row indices of block rows
-        parts1 = getBlockDimensions(this.dims, 1);
-        rowInds = (1:parts1(row))' + sum(parts1(1:row-1));
-
-        % determine column indices of block columns
-        parts2 = getBlockDimensions(this.dims, 2);
-        colInds = (1:parts2(col)) + sum(parts2(1:col-1));
-        
-        % compute full size of block matrix
-        dim = [sum(parts1) sum(parts2)];
-        
-        % compute indices of block elements in data
-        colInds2 = repmat(colInds, length(rowInds), 1);
-        rowInds2 = repmat(rowInds, 1, length(colInds));
-        inds = sub2ind(dim, rowInds2, colInds2);
-        
-        % extract data element corresponding to block. 
-        block = this.data(inds);
-    end
     
     function disp(this)
         % display the content of this BlockMatrix object

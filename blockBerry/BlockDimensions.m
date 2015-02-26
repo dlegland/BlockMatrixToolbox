@@ -1,10 +1,10 @@
-classdef BlockDimension < handle
-%BLOCKDIMENSION  Store the block dimensions of a BlockMatrix data structure
+classdef BlockDimensions < handle
+%BlockDimensions  Store the block dimensions of a BlockMatrix data structure
 %
-%   Class BlockDimension
+%   Class BlockDimensions
 %
 %   Example
-%   BD = BlockDimension({[2 2], [2, 3, 2]});
+%   BD = BlockDimensions({[2 2], [2, 3, 2]});
 %
 %   See also
 %     BlockMatrix
@@ -27,16 +27,16 @@ end % end properties
 
 %% Constructor
 methods
-    function this = BlockDimension(varargin)
-        % Constructor for BlockDimension class
+    function this = BlockDimensions(varargin)
+        % Constructor for BlockDimensions class
         %
-        %   BD = BlockDimension(PARTS);
+        %   BD = BlockDimensions(PARTS);
         %   PARTS is a cell array, containing for each dimension the sizes
         %   of the blocks in this dimension.
         % 
         %   Example
-        %   BD = BlockDimension({[2 2], [2 3 2]});
-        %   Creates a BlockDimension object for a BlockMatrix, that will be
+        %   BD = BlockDimensions({[2 2], [2 3 2]});
+        %   Creates a BlockDimensions object for a BlockMatrix, that will be
         %   divided into two blocks in dimension 1 and into three blocks in
         %   dimension 2.
         %
@@ -53,7 +53,7 @@ end % end constructors
 %% Methods
 methods
     function dims = getBlockDimensions(this, dim)
-        % return the dimensions of the block in the specified dimension
+        % Return the dimensions of the block in the specified dimension
         %
         % DIMS = getBlockDimensions(BD, IND)
         %
@@ -61,16 +61,16 @@ methods
     end
     
     function dim = getDimensionality(this)
-        % Return the number of dimensions of this block matrix
+        % Return the number of dimensions
         dim = length(this.parts);
     end
     
     function siz = getSize(this, varargin)
-        % Return the size in each direction of this block matrix object
+        % Return the size (number of matrix elements) in each direction
         %
         % SIZ = getSize(BD)
         % Returns the size as a 1-by-ND row vector, where ND is the
-        % dimensionality of this BlockDimension.
+        % dimensionality of this BlockDimensions.
         %
         % SIZ = getSize(BD,DIM)
         % Returns the size in the specified dimension. DIM should be an
@@ -93,7 +93,7 @@ methods
     end
     
     function n = getBlockNumber(this, varargin)
-        % return the total number of blocks in this block matrix
+        % Return the total number of blocks
         %
         % N = getBlockNumber(BD);
         %
@@ -115,6 +115,20 @@ methods
         end
     end
     
+    function n = getBlockNumbers(this)
+        % Return the number of blocks in each dimension
+        %
+        % N = getBlockNumbers(BD);
+        % N is a 1-by-ND row vector
+        %
+        
+        nd = length(this.parts);
+        n = zeros(1, nd);
+        for i = 1:nd
+            n(i) = length(this.parts{1});
+        end
+    end
+    
     function disp(this)
         % display the content of this BlockMatrix object
         
@@ -125,7 +139,7 @@ methods
         dim = getSize(this);
         
         % Display information on block sizes in each dimension
-        disp(sprintf('BlockDimension object with %d dimensions', dim)); %#ok<DSPS>
+        disp(sprintf('BlockDimensions object with %d dimensions', dim)); %#ok<DSPS>
         for i = 1:dim
             parts_i = this.parts{i};
             pattern = ['  parts dims %2d:' repmat(' %d', 1, length(part_i))];
