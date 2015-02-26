@@ -45,8 +45,11 @@ methods
             
         elseif nargin == 2
             if isnumeric(varargin{1})
+                % initialsation constructor
                 this.data = varargin{1};
+                
             elseif isa(varargin{1}, 'BlockMatrix')
+                % copy constructor
                 bm = varargin{1};
                 this.data = bm.data;
             else
@@ -144,6 +147,22 @@ methods
     end
 end
 
+
+%% Overload some native methods
+
+methods
+    function res = transpose(this)
+        % transpose this BlockMatrix
+        
+        % ensure the new matrix is a rectangular array, with the new size
+        siz = getSize(this);
+        data2 = reshape(this.data, siz)';
+        
+        % transpose the BlockDimensions object, and create nesw BlockMatrix
+        dims2 = transpose(this.dims);
+        res = BlockMatrix(data2, dims2);
+    end
+end
 
 %% Display methods
 

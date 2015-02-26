@@ -41,16 +41,24 @@ methods
         %   dimension 2.
         %
         
-        if ~iscell(varargin{1})
+        if iscell(varargin{1})
+            % initialisation constructor
+            this.parts = varargin{1};
+            
+        elseif isa(varargin{1}, 'BlockDimensions')
+            % copy constuctor
+            bd = varargin{1};
+            this.parts = bd.parts;
+        else
             error('input argument must be a cell array');
         end
-        this.parts = varargin{1};
     end
 
 end % end constructors
 
 
 %% Methods
+
 methods
     function dims = getBlockDimensions(this, dim)
         % Return the dimensions of the block in the specified dimension
@@ -128,21 +136,44 @@ methods
             n(i) = length(this.parts{1});
         end
     end
-    
+end
+
+
+%% overload some native methods
+
+methods
+    function res = transpose(this)
+        % transpose the block dimensions
+        nd = length(this.parts);
+        if nd ~= 2
+            error('transpose is defined only for 2D BlockDimensions objects');
+        end
+        
+        parts2 = cell(1, nd);
+        parts2{1} = this.parts{2};
+        parts2{2} = this.parts{1};
+        res = BlockDimensions(parts2);
+    end
+end
+
+
+%% Display methods
+
+methods
     function disp(this)
         % display the content of this BlockMatrix object
         
         % loose format: display more empty lines
         isLoose = strcmp(get(0, 'FormatSpacing'), 'loose');
         
-        % get BlockMatrix total size
-        dim = getSize(this);
+        % get dimensionality
+        nd = getDimensionality(this);
         
         % Display information on block sizes in each dimension
-        disp(sprintf('BlockDimensions object with %d dimensions', dim)); %#ok<DSPS>
-        for i = 1:dim
+        disp(sprintf('BlockDimensions object with %d dimensions', nd)); %#ok<DSPS>
+        for i = 1:nd
             parts_i = this.parts{i};
-            pattern = ['  parts dims %2d:' repmat(' %d', 1, length(part_i))];
+            pattern = ['  parts dims %2d:' repmat(' %d', 1, length(parts_i))];
             disp(sprintf(pattern, i, parts_i)); %#ok<DSPS>
         end
         

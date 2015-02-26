@@ -1,4 +1,3 @@
-function demoBlockMatrix(varargin)
 %DEMOBLOCKMATRIX Simple demo file for manipulation of BlockMatrix objects
 %
 %   output = demoBlockMatrix(input)
