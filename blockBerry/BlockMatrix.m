@@ -153,6 +153,11 @@ end
 methods
     function res = transpose(this)
         % transpose this BlockMatrix
+        res = ctranspose(this);
+    end
+    
+    function res = ctranspose(this)
+        % overload the transpose operator for BlockMatrix object
         
         % ensure the new matrix is a rectangular array, with the new size
         siz = getSize(this);

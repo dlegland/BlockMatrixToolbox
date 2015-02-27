@@ -144,6 +144,11 @@ end
 methods
     function res = transpose(this)
         % transpose the block dimensions
+        res = ctranspose(this);
+    end
+    
+    function res = ctranspose(this)
+        % overload the transpose operator for BlockDimensions objects
         nd = length(this.parts);
         if nd ~= 2
             error('transpose is defined only for 2D BlockDimensions objects');
