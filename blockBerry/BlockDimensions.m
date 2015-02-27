@@ -159,8 +159,78 @@ methods
         parts2{2} = this.parts{1};
         res = BlockDimensions(parts2);
     end
-end
+    
+    function res = cat(dim, varargin)
+        % overload concatenation method for arbitrary dimension (between 1 and 2...) 
+        switch dim
+            case 1
+                res = vertcat(varargin{:});
+            case 2
+                res = horzcat(varargin{:});
+            otherwise
+                error('unsupported dimension: %d', dim);
+        end
+    end
+    
+    function res = horzcat(this, varargin)
+        % Overload the horizontal concatenation operator
+        
+        nd = length(this.parts);
+        partsH = this.parts{2};
+        
+        for i = 1:length(varargin)
+            var = varargin{i};
+            % additional BlockDimensions should have same dimensionality
+            % and same block size in other dimensions
+            if length(var.parts) ~= nd
+                error('Other BlockDimensions should have same dimensionality');
+            end
+            for iDim = [1 3:nd]
+                if length(this.parts{iDim}) ~= length(var.parts{iDim})
+                    error('BlockDimensions should have same block number in dimension %d', iDim); 
+                end
+                if any(this.parts{iDim} ~= var.parts{iDim}) 
+                    error('BlockDimensions should have same block sizes in dimension %d', iDim); 
+                end
+            end
+            
+            partsH = [partsH var.parts{2}]; %#ok<AGROW>
+        end
+        
+        newParts = [this.parts(1) {partsH} this.parts(3:end)];
+        res = BlockDimensions(newParts);
+    end
 
+    function res = vertcat(this, varargin)
+        % Overload the vertical concatenation operator
+        
+        nd = length(this.parts);
+        partsV = this.parts{1};
+        
+        for i = 1:length(varargin)
+            var = varargin{i};
+            % additional BlockDimensions should have same dimensionality
+            % and same block size in other dimensions
+            if length(var.parts) ~= nd
+                error('Other BlockDimensions should have same dimensionality');
+            end
+            for iDim = 2:nd
+                if length(this.parts{iDim}) ~= length(var.parts{iDim})
+                    error('BlockDimensions should have same block number in dimension %d', iDim); 
+                end
+                if any(this.parts{iDim} ~= var.parts{iDim}) 
+                    error('BlockDimensions should have same block sizes in dimension %d', iDim); 
+                end
+            end
+            
+            partsV = [partsV var.parts{1}]; %#ok<AGROW>
+        end
+        
+        newParts = [{partsV} this.parts(2:end)];
+        res = BlockDimensions(newParts);
+    end
+    
+end
 
 %% Display methods
 
@@ -178,12 +248,22 @@ methods
         disp(sprintf('BlockDimensions object with %d dimensions', nd)); %#ok<DSPS>
         for i = 1:nd
             parts_i = this.parts{i};
-            pattern = ['  parts dims %2d:' repmat(' %d', 1, length(parts_i))];
-            disp(sprintf(pattern, i, parts_i)); %#ok<DSPS>
+            string = formatParts(parts_i);
+            disp(sprintf('  parts dims %d: %s', i, string)); %#ok<DSPS>
         end
         
         if isLoose
             fprintf('\n');
+        end
+        
+        function string = formatParts(parts)
+            % display parts as a list of ints, or as empty
+            if isempty(parts)
+                string = '(empty)';
+            else
+                pattern = strtrim(repmat(' %d', 1, length(parts)));
+                string = sprintf(pattern, parts);
+            end
         end
     end
 

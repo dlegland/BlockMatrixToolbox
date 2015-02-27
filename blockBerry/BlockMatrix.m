@@ -167,6 +167,63 @@ methods
         dims2 = transpose(this.dims);
         res = BlockMatrix(data2, dims2);
     end
+    
+    function res = cat(dim, varargin)
+        % overload concatenation method for arbitrary dimension (between 1 and 2...) 
+        switch dim
+            case 1
+                res = vertcat(varargin{:});
+            case 2
+                res = horzcat(varargin{:});
+            otherwise
+                error('unsupported dimension: %d', dim);
+        end
+    end
+    
+    function res = horzcat(this, varargin)
+        % Overload the horizontal concatenation operator
+        
+        % initialize block dimension and data to that of first BlockMatrix
+        data2 = reshape(this.data, getSize(this));
+        dims2 = this.dims;
+        
+        for i = 1:length(varargin)
+            var = varargin{i};
+            
+            dataToAdd = reshape(var.data, getSize(var));
+            if size(dataToAdd, 1) ~= size(data2, 1)
+                error('BlockMatrices should have same number of rows');
+            end
+            
+            data2 = [data2 dataToAdd]; %#ok<AGROW>
+            dims2 = [dims2 var.dims]; %#ok<AGROW>
+        end
+        
+        res = BlockMatrix(data2, dims2);
+    end
+    
+    function res = vertcat(this, varargin)
+        % Overload the vertical concatenation operator
+        
+        % initialize block dimension and data to that of first BlockMatrix
+        data2 = reshape(this.data, getSize(this));
+        dims2 = this.dims;
+        
+        for i = 1:length(varargin)
+            var = varargin{i};
+            
+            dataToAdd = reshape(var.data, getSize(var));
+            if size(dataToAdd, 2) ~= size(data2, 2)
+                error('BlockMatrices should have same number of columns');
+            end
+            
+            data2 = [data2 ; dataToAdd]; %#ok<AGROW>
+            dims2 = [dims2 ; var.dims]; %#ok<AGROW>
+        end
+        
+        res = BlockMatrix(data2, dims2);
+    end
+    
 end
 
 %% Display methods
@@ -187,14 +244,25 @@ methods
         % Display information on block sizes
         disp(sprintf('BlockMatrix object with %d rows and %d columns', nRows, nCols)); %#ok<DSPS>
         parts1 = getBlockDimensions(this.dims, 1);
-        disp(sprintf(['  row dims:' repmat(' %d', 1, length(parts1))], parts1)); %#ok<DSPS>
+        disp(sprintf('  row dims: %s', formatParts(parts1))); %#ok<DSPS>
         parts2 = getBlockDimensions(this.dims, 2);
-        disp(sprintf(['  col dims:' repmat(' %d', 1, length(parts2))], parts2)); %#ok<DSPS>
+        disp(sprintf('  col dims: %s', formatParts(parts2))); %#ok<DSPS>
         
         if isLoose
             fprintf('\n');
         end
+        
+        function string = formatParts(parts)
+            % display parts as a list of ints, or as empty
+            if isempty(parts)
+                string = '(empty)';
+            else
+                pattern = strtrim(repmat(' %d', 1, length(parts)));
+                string = sprintf(pattern, parts);
+            end
+        end
     end
+    
     
     function displayBlocks(this)
         % get BlockMatrix total size
