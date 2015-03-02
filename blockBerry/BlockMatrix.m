@@ -78,7 +78,7 @@ end % end constructors
 
 
 %% Methods specific to BlockMatrix object
-% sorted approcimately from high-level to low-level
+% sorted approximately from high-level to low-level
 
 methods
     
