@@ -108,6 +108,43 @@ methods
         block = this.data(inds);
     end
     
+    function setBlock(this, row, col, blockData)
+        % set the data for the (i-th, j-th) block 
+        %
+        %   setBlock(BM, ROW, COL, DATA)
+        %
+        
+        % determine row indices of block rows
+        parts1 = getBlockDimensions(this.dims, 1);
+        rowInds = (1:parts1(row))' + sum(parts1(1:row-1));
+        
+        % check number of rows of input data
+        if length(rowInds) ~= size(blockData, 1)
+            error('block data should have %d rows, not %d', ...
+                length(rowInds), size(blockData, 1));
+        end
+
+        % determine column indices of block columns
+        parts2 = getBlockDimensions(this.dims, 2);
+        colInds = (1:parts2(col)) + sum(parts2(1:col-1));
+        
+        % check number of columns of input data
+        if length(colInds) ~= size(blockData, 2)
+            error('block data should have %d columns, not %d', ...
+                length(colInds), size(blockData, 2));
+        end
+
+        % compute full size of block matrix
+        dim = [sum(parts1) sum(parts2)];
+        
+        % compute indices of block elements in data
+        colInds2 = repmat(colInds, length(rowInds), 1);
+        rowInds2 = repmat(rowInds, 1, length(colInds));
+        inds = sub2ind(dim, rowInds2, colInds2);
+        
+        % extract data element corresponding to block. 
+        this.data(inds) = blockData;
+    end
 end
 
 %% Methods that depends uniquely on BlockDimensions object

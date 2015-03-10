@@ -87,7 +87,42 @@ methods
             % returns a zeros matrix of the appropriate size
             block = zeros(parts1(row), parts2(col));
         end
+    end
+    
+        function setBlock(this, row, col, blockData)
+        % set the data for the (i-th, j-th) block 
+        %
+        %   setBlock(BM, ROW, COL, DATA)
+        %   ROW and COL indices should be equal
+        %
         
+        % check ROW and COL equality
+        if row ~= col
+            error('row and column indices should be the same');
+        end
+        
+        % determine row indices of block rows
+        parts1 = getBlockDimensions(this.dims, 1);
+        rowInds = (1:parts1(row))' + sum(parts1(1:row-1));
+        
+        % check number of rows of input data
+        if length(rowInds) ~= size(blockData, 1)
+            error('block data should have %d rows, not %d', ...
+                length(rowInds), size(blockData, 1));
+        end
+
+        % determine column indices of block columns
+        parts2 = getBlockDimensions(this.dims, 2);
+        colInds = (1:parts2(col)) + sum(parts2(1:col-1));
+        
+        % check number of columns of input data
+        if length(colInds) ~= size(blockData, 2)
+            error('block data should have %d columns, not %d', ...
+                length(colInds), size(blockData, 2));
+        end
+
+        % extract data element corresponding to block. 
+        this.diags{row} = blockData;
     end
 end
 

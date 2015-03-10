@@ -15,7 +15,7 @@
 % Copyright 2015 INRA - Cepia Software Platform.
 
 
-%% Creation d'un objket BlockDiagonal
+%% Creation d'un objet BlockDiagonal
 
 % create two rectangular matrices
 mat1 = reshape(1:6, [2 3]);
