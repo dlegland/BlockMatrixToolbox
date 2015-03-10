@@ -4,6 +4,7 @@ classdef BlockDiagonal < handle
 %   Class BlockDiagonal
 %
 %   Example
+%   
 %   BlockDiagonal
 %
 %   See also
@@ -18,7 +19,7 @@ classdef BlockDiagonal < handle
 
 %% Properties
 properties
-    % the set of diagonal vectors, as a cell array containing vectors
+    % the set of diagonal blocks, as a cell array containing matrices
     diags;
     
     % the block dimensions of this diagonal matrix
@@ -32,18 +33,32 @@ methods
     function this = BlockDiagonal(varargin)
         % Constructor for BlockDiagonal class
         %
-        %   diagos = {[1 2 3], [4 5], [6 7 8]};
+        %   diagos = {rand(2,3), rand(2,2), rand(3, 2)};
         %   BD = BlockDiagonal(diagos);
         %
         
         if iscell(varargin{1})
+            % blocks are given as a cell array of matrices
             this.diags = varargin{1};
+            
+        elseif all(cellfun(@isnumeric, varargin))
+            % blocks are given as varargin
+            this.diags = varargin;
+            
         else
-            error('input argument must be a cell array of row vectors');
+            error('input argument must be a cell array of matrices');
         end
         
-        dd = cellfun(@length, this.diags);
-        this.dims = BlockDimensions({dd, dd});
+        % compute block dimensions
+        nDiags = length(this.diags);
+        dims1 = zeros(1, nDiags);
+        dims2 = zeros(1, nDiags);
+        for i = 1:nDiags
+            siz = size(this.diags{i});
+            dims1(i) = siz(1);
+            dims2(i) = siz(2);
+        end
+        this.dims = BlockDimensions({dims1, dims2});
     end
 
 end % end constructors
@@ -62,8 +77,8 @@ methods
         
         if row == col
             % extract data element corresponding to block.
-            diagData = this.diags{row};
-            block = diag(diagData);
+            block = this.diags{row};
+            
         else
             % determine row indices of block rows
             parts1 = getBlockDimensions(this.dims, 1);
