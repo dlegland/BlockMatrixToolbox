@@ -95,6 +95,20 @@ methods (Test)
         testCase.verifyEqual(dim1, 8);
         testCase.verifyEqual(dim2, 7);
     end
+    
+    function testTimes(testCase)
+        data1 = reshape(1:28, [4 7]);
+        parts1 = {[2 2], [2 3 2]};
+        BM1 = BlockMatrix(data1, parts1);
+        
+        data2 = reshape(1:35, [7 5]);
+        parts2 = {[2 3 2], [2 1 2]};
+        BM2 = BlockMatrix(data2, parts2);
+        
+        data3 = data1 * data2;
+        BM3 = BM1 * BM2;
+        testCase.verifyEqual(data3, BM3.data, 'AbsTol', .1);
+    end
 end
 
 end % end classdef
