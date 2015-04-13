@@ -1,10 +1,10 @@
-classdef IntegerComposition < handle
-%INTEGERCOMPOSITION Store an ordered partition of an integer
+classdef IntegerPartition < handle
+%INTEGERPARTITION Store an ordered partition of an integer
 %
-%   Class IntegerComposition
+%   Class IntegerPartition
 %
 %   Example
-%   IntegerComposition
+%   ip = IntegerPartition([2, 3, 2]);
 %
 %   See also
 %
@@ -26,13 +26,13 @@ end % end properties
 
 %% Constructor
 methods
-    function this = IntegerComposition(varargin)
-    % Constructor for IntegerComposition class
+    function this = IntegerPartition(varargin)
+    % Constructor for IntegerPartition class
         if nargin == 1 && isnumeric(varargin{1})
             % initialisation constructor
             this.terms = varargin{1};
             
-        elseif nargin == 1 && isa(varargin{1}, 'IntegerComposition')
+        elseif nargin == 1 && isa(varargin{1}, 'IntegerPartition')
             % copy constructor
             var1 = varargin{1};
             this.terms = var1.terms;
@@ -65,7 +65,7 @@ methods
     function b = eq(this, that)
         % compare two integer compositions
         
-        if ~isa(this, 'IntegerComposition') || ~isa(that, 'IntegerComposition')
+        if ~isa(this, 'IntegerPartition') || ~isa(that, 'IntegerPartition')
             b = false;
             return;
         end

@@ -1,10 +1,10 @@
-classdef IntegerCompositionTest < matlab.unittest.TestCase
-%INTEGERCOMPOSITIONTEST  One-line description here, please.
+classdef IntegerPartitionTest < matlab.unittest.TestCase
+%INTEGERPARTITIONTEST  One-line description here, please.
 %
-%   Class IntegerCompositionTest
+%   Class IntegerPartitionTest
 %
 %   Example
-%   IntegerCompositionTest
+%   IntegerPartitionTest
 %
 %   See also
 %
@@ -24,41 +24,41 @@ end % end properties
 methods (Test)
     function testConstructor(testCase)
          
-        % create the IntegerComposition object
+        % create the IntegerPartition object
         terms = [2 3 2];
-        comp = IntegerComposition(terms);
+        comp = IntegerPartition(terms);
         
         testCase.verifyEqual(terms, comp.terms);
     end
 
     function testCopyConstructor(testCase)
          
-        % create the IntegerComposition object
+        % create the IntegerPartition object
         terms = [2 3 2];
-        comp = IntegerComposition(terms);
-        copy = IntegerComposition(comp);
+        comp = IntegerPartition(terms);
+        copy = IntegerPartition(comp);
         
         testCase.verifyEqual(comp, copy);
     end
     
     function testLength(testCase)
         
-        % create the IntegerComposition object
+        % create the IntegerPartition object
         terms = [2 3 2];
-        comp = IntegerComposition(terms);
+        comp = IntegerPartition(terms);
         
         testCase.verifyEqual(3, length(comp));
     end
     
     function testEquals(testCase)
         
-        % create the IntegerComposition object
+        % create the IntegerPartition object
         terms = [2 3 2];
-        comp1 = IntegerComposition(terms);
+        comp1 = IntegerPartition(terms);
         terms = [2 3 2];
-        comp2 = IntegerComposition(terms);
+        comp2 = IntegerPartition(terms);
         terms = [2 3 1];
-        comp3 = IntegerComposition(terms);
+        comp3 = IntegerPartition(terms);
         
         testCase.verifyTrue(comp1 == comp2);
         testCase.verifyTrue(comp2 == comp1);
