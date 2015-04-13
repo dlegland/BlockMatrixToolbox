@@ -28,6 +28,15 @@ properties
     
 end % end properties
 
+%% Static methods
+methods (Static)
+    function res = zeros(blockDims)
+        % Creates an empty BlockMatrix with specified block-dimensions
+        arraySize = getSize(blockDims);
+        array = zeros(arraySize);
+        res = BlockMatrix(array, blockDims);
+    end
+end
 
 %% Constructor
 methods
