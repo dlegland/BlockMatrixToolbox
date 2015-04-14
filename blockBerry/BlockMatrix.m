@@ -4,10 +4,14 @@ classdef BlockMatrix < handle
 %   Class BlockMatrix
 %
 %   Example
-%   BlockMatrix
+%     data = reshape(1:28, [7 4])';
+%     dims = BlockDimensions({[2 2], [2 3 2]});
+%     BM = BlockMatrix(data, dims);
+%     displayData(BM);
 %
 %   See also
-%     BlockDimension
+%     BlockDimensions
+%
 
 % ------
 % Author: David Legland
@@ -159,12 +163,23 @@ end
 %% Methods that depends uniquely on BlockDimensions object
 
 methods
-    function dims = getBlockDimensions(this, dim)
-        % Return the dimensions of the block in the specified dimension
+    function dims = getBlockDimensions(this, varargin)
+        % Return the block-dimensions of this block-matrix
         %
-        % DIMS = getBlockDimensions(BM, IND)
+        %   DIMS = getBlockDimensions(BM)
+        %   Returns the block-dimension of this block matrix, as a
+        %   BlockDimension object.
+        %   
+        %   DIMS = getBlockDimensions(BM, IND)
+        %   Returns the BlockDimension object for the specified dimension,
+        %   as a list of integers (subject to changes in future)
         %
-        dims = getBlockDimensions(this.dims, dim);
+        if nargin == 1
+            dims = this.dims;
+        else
+            dim = varargin{1};
+            dims = getBlockDimensions(this.dims, dim);
+        end
     end
     
     function dim = getDimensionality(this)

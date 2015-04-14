@@ -33,7 +33,7 @@ function q = maxbet_procedure1(data, tt, tol)
 
 % total number of blocks
 % % maxblo = length(data);
-maxblo = blockNumber(data); % assume block matrix is 'row-block' matrix
+maxblo = getBlockNumber(data); % assume block matrix is 'row-block' matrix
 
 
 %% Normalisation of loadings
@@ -59,17 +59,17 @@ for blo = 1:maxblo
     % normalisation du vecteur par bloc.
     % (a voir si cela peut devenir un methode "norm" qui fait partie de la
     % classe BlockMatrix).
-    v = getBlock(tt, 1, blo);
+    v = getBlock(tt, blo, 1);
     v = v / norm(v);
-    setBlock(t, 1, maxblo, v);
+    setBlock(t, blo, 1, v);
 %     t{blo} = tt{blo} / norm(tt{blo});
 end
 
 %% Computation of X'*X by block rows
 
 % allocation memoire pour le resultat
-xdims = getBlockDimensions(data);
-AA = BlockMatrix.zeros(xdims);
+AAdims = BlockDimensions({vdims.parts{1}, sum(vdims.parts{1})});
+AA = BlockMatrix.zeros(AAdims);
 %AA = cell(1, maxblo);
 
 % iteration sur les blocs
@@ -78,7 +78,7 @@ for blo = 1:maxblo
     % * une premiere fois pour considerer le bloc courant
     % * une deuxieme fois pour calculer le produit avec l'ensemble des
     %   autres blocs
-    setBlock(AA, 1, blo, getBlock(data, 1, blo)' * X);
+    setBlock(AA, blo, 1, getBlock(data, 1, blo)' * X);
     %AA{blo} = data{blo}' * X;
 end
 
@@ -86,7 +86,7 @@ end
 %% Iterations
 
 % creation de la Block-Matrix pour le vecteur resultat
-q = BlockMarix.zeros(vdims);
+q = BlockMatrix.zeros(vdims);
 % q = cell(1, maxblo);
 
 % initialise la condition de sortie
@@ -98,11 +98,10 @@ iter = 0;
 while residu > tol
     iter = iter + 1;
     
-    
     % re-initialise le vecteur uu
     uu = BlockMatrix.zeros(vdims);
     for blo = 1:maxblo
-        setBlock(uu, 1, blo, getBlock(t, 1, blo));
+        setBlock(uu, blo, 1, getBlock(t, blo, 1));
         % uu{1, blo} = t{1, blo};
     end
 %     % concatene les objets
@@ -114,15 +113,15 @@ while residu > tol
     s = 0;
     for blo = 1:maxblo
         % multiplication locale
-        ak = getBlock(AA, 1, blo) * uu;
+        ak = getBlock(AA, blo, 1) * uu.data;
         % ak = AA{blo} * uu;
         
         % sotcke le vecteur normalise
-        setBlock(q, 1, blo, ak / norm(ak));
+        setBlock(q, blo, 1, ak / norm(ak));
         % q{blo} = ak / norm(ak);
         
         % incremente le residu
-        s = s + norm(getBlock(q, A, blo) - getBlock(t, 1, blo));
+        s = s + norm(getBlock(q, blo, 1) - getBlock(t, blo, 1));
         % s = s + norm(q{blo} - t{blo});
     end
     
