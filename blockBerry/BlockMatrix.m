@@ -369,6 +369,13 @@ methods
         disp(sprintf('  row dims: %s', formatParts(parts1))); %#ok<DSPS>
         parts2 = getBlockDimensions(this.dims, 2);
         disp(sprintf('  col dims: %s', formatParts(parts2))); %#ok<DSPS>
+
+        if nCols < 20 && nRows < 50
+            if isLoose
+                fprintf('\n');
+            end
+            displayData(this);
+        end
         
         if isLoose
             fprintf('\n');
