@@ -68,7 +68,7 @@ methods
         dims = this.parts{dim};
     end
     
-    function dim = getDimensionality(this)
+    function dim = dimensionality(this)
         % Return the number of dimensions
         dim = length(this.parts);
     end
@@ -242,7 +242,7 @@ methods
         isLoose = strcmp(get(0, 'FormatSpacing'), 'loose');
         
         % get dimensionality
-        nd = getDimensionality(this);
+        nd = dimensionality(this);
         
         % Display information on block sizes in each dimension
         disp(sprintf('BlockDimensions object with %d dimensions', nd)); %#ok<DSPS>

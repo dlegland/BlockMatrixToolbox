@@ -137,9 +137,9 @@ methods
         dims = getBlockDimensions(this.dims, dim);
     end
     
-    function dim = getDimensionality(this)
+    function dim = dimensionality(this)
         % Return the number of dimensions of this block matrix (usually 2)
-        dim = getDimensionality(this.dims);
+        dim = dimensionality(this.dims);
     end
     
     function siz = getSize(this, varargin)
