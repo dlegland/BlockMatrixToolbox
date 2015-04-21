@@ -22,8 +22,8 @@ classdef BlockMatrix < handle
 
 %% Properties
 properties
-    % contains the dimensions of blocs in each dimension, as a cell array
-    % containing row vectors of integers
+    % contains the dimensions of blocs in each dimension, as a
+    % BlockDimensions object
     dims;
     
     % contains the data, as a vector or an array. 
@@ -36,6 +36,11 @@ end % end properties
 methods (Static)
     function res = zeros(blockDims)
         % Creates an empty BlockMatrix with specified block-dimensions
+        
+        if ~isa(blockDims, 'BlockDimensions')
+            error('Requires an instance of BlockDimensions as input');
+        end
+        
         arraySize = getSize(blockDims);
         array = zeros(arraySize);
         res = BlockMatrix(array, blockDims);
@@ -54,7 +59,7 @@ methods
         if isempty(varargin)
             % populate with default data
             this.data = 1:28;
-            this.dims = {[2 2], [2 3 2]};
+            this.dims = BlockDimensions({[2 2], [2 3 2]});
             
         elseif nargin == 2
             if isnumeric(varargin{1})
@@ -103,11 +108,11 @@ methods
         
         % determine row indices of block rows
         parts1 = getBlockDimensions(this.dims, 1);
-        rowInds = (1:parts1(row))' + sum(parts1(1:row-1));
+        rowInds = blockIndices(parts1, row)';
 
         % determine column indices of block columns
         parts2 = getBlockDimensions(this.dims, 2);
-        colInds = (1:parts2(col)) + sum(parts2(1:col-1));
+        colInds = blockIndices(parts2, col);
         
         % compute full size of block matrix
         dim = [sum(parts1) sum(parts2)];
@@ -129,8 +134,8 @@ methods
         
         % determine row indices of block rows
         parts1 = getBlockDimensions(this.dims, 1);
-        rowInds = (1:parts1(row))' + sum(parts1(1:row-1));
-        
+        rowInds = blockIndices(parts1, row)';
+
         % check number of rows of input data
         if length(rowInds) ~= size(blockData, 1)
             error('block data should have %d rows, not %d', ...
@@ -139,7 +144,7 @@ methods
 
         % determine column indices of block columns
         parts2 = getBlockDimensions(this.dims, 2);
-        colInds = (1:parts2(col)) + sum(parts2(1:col-1));
+        colInds = blockIndices(parts2, col);
         
         % check number of columns of input data
         if length(colInds) ~= size(blockData, 2)
@@ -221,6 +226,11 @@ methods
         % get block dimensions of each matrix
         dimsA = this.dims;
         dimsB = that.dims;
+        
+        % check dimensionality
+        if dimensionality(dimsB) ~= 2
+            error('Requires another BlockTensor of dimensionality 2');
+        end
         
         % total number of elements should match
         if getSize(dimsA, 2) ~= getSize(dimsB, 1)
@@ -370,7 +380,7 @@ methods
                 string = '(empty)';
             else
                 pattern = strtrim(repmat(' %d', 1, length(parts)));
-                string = sprintf(pattern, parts);
+                string = sprintf(pattern, parts.terms);
             end
         end
     end

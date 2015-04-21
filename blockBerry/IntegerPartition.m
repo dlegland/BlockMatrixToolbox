@@ -30,6 +30,10 @@ methods
     % Constructor for IntegerPartition class
         if nargin == 1 && isnumeric(varargin{1})
             % initialisation constructor
+            var1 = varargin{1};
+            if any(var1 <= 0) || any(round(var1) ~= var1)
+                error('Requires only positive integers');
+            end
             this.terms = varargin{1};
             
         elseif nargin == 1 && isa(varargin{1}, 'IntegerPartition')
@@ -62,8 +66,93 @@ methods
         n = sum(this.terms);
     end
     
+    function n = sum(this)
+        % returns the sum of the terms
+        % (returns the same result as the "integer" function)
+        n = sum(this.terms);
+    end
+
+    function inds = blockIndices(this, index)
+        % returns the linear indices of the elements in the i-th block
+        inds = (1:this.terms(index)) + sum(this.terms(1:index-1));
+    end
+
+end % end methods
+
+%% Overload some native methods
+methods
+    function res = horzcat(this, varargin)
+        % Overload the horizontal concatenation operator
+        
+        newTerms = this.terms;
+        
+        for i = 1:length(varargin)
+            that = varargin{i};
+            if ~isa(that, 'IntegerPartition')
+                error(['Additional argument should be an IntegerPartition, not a ' classname(that)]);
+            end
+            newTerms = [newTerms that.terms]; %#ok<AGROW>
+        end
+        
+        res = IntegerPartition(newTerms);
+    end
+    
+    function varargout = subsref(this, subs)
+        % returns the term of this partition at the given index
+        %
+        % P = IntegerPartition([2 3 2]);
+        % P(2)
+        % ans =
+        %     3
+        
+        % extract reference type
+        s1 = subs(1);
+        type = s1.type;
+        
+        % switch between reference types
+        if strcmp(type, '.')
+            % in case of dot reference, use builtin subsref
+            
+            % check if we need to return output or not
+            if nargout > 0
+                % if some output arguments are asked, pre-allocate result
+                varargout = cell(nargout, 1);
+                [varargout{:}] = builtin('subsref', this, subs);
+                
+            else
+                % call parent function, and eventually return answer
+                builtin('subsref', this, subs);
+                if exist('ans', 'var')
+                    varargout{1} = ans; %#ok<NOANS>
+                end
+            end
+            
+            % stop here
+            return;
+            
+        elseif strcmp(type, '()')
+            % Process parens indexing
+            
+            varargout{1} = 0;
+            
+            % different processing if 1 or 2 indices are used
+            ns = length(s1.subs);
+            if ns == 1
+                % one index: use linearised image
+                varargout{1} = this.terms(s1.subs{1});
+                
+            else
+                error('Only linear indexing is allowed for IntegerPartition');
+            end
+            
+        else
+            error('braces indexing of IntegerPartition is not supported');
+        end
+            
+    end
+    
     function b = eq(this, that)
-        % compare two integer compositions
+        % tests whether two compositions are the same or not
         
         if ~isa(this, 'IntegerPartition') || ~isa(that, 'IntegerPartition')
             b = false;
@@ -79,15 +168,11 @@ methods
     end
     
     function b = ne(this, that)
-        % tests whether two compositions are the same or not
+        % tests whether two compositions are different or not
         b = ~eq(this, that);
     end
     
-    function b = isWeak(this)
-        % returns true if at least one of the terms is zeros
-        b = any(this.terms == 0);
-    end
-end % end methods
+end
 
 end % end classdef
 

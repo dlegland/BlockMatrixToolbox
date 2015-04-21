@@ -103,7 +103,7 @@ methods
         
         % determine row indices of block rows
         parts1 = getBlockDimensions(this.dims, 1);
-        rowInds = (1:parts1(row))' + sum(parts1(1:row-1));
+        rowInds = blockIndices(parts1, row)';
         
         % check number of rows of input data
         if length(rowInds) ~= size(blockData, 1)
@@ -113,7 +113,7 @@ methods
 
         % determine column indices of block columns
         parts2 = getBlockDimensions(this.dims, 2);
-        colInds = (1:parts2(col)) + sum(parts2(1:col-1));
+        colInds = blockIndices(parts2, col);
         
         % check number of columns of input data
         if length(colInds) ~= size(blockData, 2)
@@ -195,7 +195,7 @@ methods
                 string = '(empty)';
             else
                 pattern = strtrim(repmat(' %d', 1, length(parts)));
-                string = sprintf(pattern, parts);
+                string = sprintf(pattern, parts.terms);
             end
         end
     end

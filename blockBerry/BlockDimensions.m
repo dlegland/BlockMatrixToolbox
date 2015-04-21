@@ -6,6 +6,11 @@ classdef BlockDimensions < handle
 %   Example
 %   BD = BlockDimensions({[2 2], [2, 3, 2]});
 %
+%   Example
+%   p1 = IntegerPartition([2, 2]);
+%   p2 = IntegerPartition([2, 3, 2]);
+%   BD = BlockDimensions({p1, p2});
+%
 %   See also
 %     BlockMatrix
 
@@ -43,7 +48,23 @@ methods
         
         if iscell(varargin{1})
             % initialisation constructor
-            this.parts = varargin{1};
+            % 
+            % can be initialised from:
+            % * a cell array of IntegerPartition
+            % * a cell array of integer arrays
+            % * another BlockDimensions object
+            %
+            
+            var1 = varargin{1};
+            this.parts = cell(1, length(var1));
+            for i = 1:length(var1)
+                if isa(var1{i}, 'IntegerPartition')
+                    this.parts{i} = var1{i};
+                else
+                    % convert integer array to IntegerPartition object
+                    this.parts{i} = IntegerPartition(var1{i});
+                end
+            end
             
         elseif isa(varargin{1}, 'BlockDimensions')
             % copy constuctor
@@ -64,7 +85,7 @@ methods
         % Return the dimensions of the block in the specified dimension
         %
         % DIMS = getBlockDimensions(BD, IND)
-        %
+        % DIMS is an IntegerPartition
         dims = this.parts{dim};
     end
     
@@ -89,13 +110,20 @@ methods
             % return dimension vector
             siz = zeros(1, length(this.parts));
             for i = 1:length(this.parts)
-                siz(i) = sum(this.parts{i});            
+%                 siz(i) = sum(this.parts{i});
+                siz(i) = integer(this.parts{i});
             end
         else
             dim = varargin{1};
             siz = zeros(1, length(dim));
+            nd = dimensionality(this);
             for i = 1:length(dim)
-                siz(i) = sum(this.parts{dim(i)});
+                if dim(i) > nd
+                    error(sprintf(...
+                        'dimension %d is too high, should be less than', dim(i), nd)); %#ok<SPERR>
+                end
+%                 siz(i) = sum(this.parts{dim(i)});
+                siz(i) = integer(this.parts{dim(i)});
             end
         end
     end
@@ -133,7 +161,7 @@ methods
         nd = length(this.parts);
         n = zeros(1, nd);
         for i = 1:nd
-            n(i) = length(this.parts{1});
+            n(i) = length(this.parts{i});
         end
     end
 end
@@ -189,7 +217,8 @@ methods
                 if length(this.parts{iDim}) ~= length(var.parts{iDim})
                     error('BlockDimensions should have same block number in dimension %d', iDim); 
                 end
-                if any(this.parts{iDim} ~= var.parts{iDim}) 
+%                 if any(this.parts{iDim} ~= var.parts{iDim}) 
+                if this.parts{iDim} ~= var.parts{iDim}
                     error('BlockDimensions should have same block sizes in dimension %d', iDim); 
                 end
             end
@@ -218,7 +247,8 @@ methods
                 if length(this.parts{iDim}) ~= length(var.parts{iDim})
                     error('BlockDimensions should have same block number in dimension %d', iDim); 
                 end
-                if any(this.parts{iDim} ~= var.parts{iDim}) 
+                % if any(this.parts{iDim} ~= var.parts{iDim})
+                if this.parts{iDim} ~= var.parts{iDim}
                     error('BlockDimensions should have same block sizes in dimension %d', iDim); 
                 end
             end
@@ -262,7 +292,7 @@ methods
                 string = '(empty)';
             else
                 pattern = strtrim(repmat(' %d', 1, length(parts)));
-                string = sprintf(pattern, parts);
+                string = sprintf(pattern, parts.terms);
             end
         end
     end
