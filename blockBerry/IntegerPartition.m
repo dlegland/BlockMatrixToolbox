@@ -174,5 +174,25 @@ methods
     
 end
 
+
+%% Display methods
+
+methods
+    function disp(this)
+        nd = length(this.terms);
+        disp(sprintf('IntegerPartition object with %d terms', nd)); %#ok<DSPS>
+        disp(['    ' char(this)]);
+    end
+    
+    function buffer = char(this)
+        % convert to string representation
+        
+        n = length(this.terms);
+        pattern = ['(%d' repmat(', %d', 1, n-1) ')'];
+        buffer = sprintf(pattern, this.terms);
+    end
+
+end
+
 end % end classdef
 

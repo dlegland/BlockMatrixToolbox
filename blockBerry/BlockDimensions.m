@@ -349,27 +349,23 @@ methods
         
         % Display information on block sizes in each dimension
         disp(sprintf('BlockDimensions object with %d dimensions', nd)); %#ok<DSPS>
-        for i = 1:nd
-            parts_i = this.parts{i};
-            string = formatParts(parts_i);
-            disp(sprintf('  parts dims %d: %s', i, string)); %#ok<DSPS>
-        end
+        disp(char(this));
         
         if isLoose
             fprintf('\n');
         end
-        
-        function string = formatParts(parts)
-            % display parts as a list of ints, or as empty
-            if isempty(parts)
-                string = '(empty)';
-            else
-                pattern = strtrim(repmat(' %d', 1, length(parts)));
-                string = sprintf(pattern, parts.terms);
-            end
-        end
     end
 
+    function buffer = char(this)
+        % convert to string representation
+        
+        nd = length(this.parts);
+        buffer = ['( ' char(this.parts{1})];
+        for i = 2:nd
+            buffer = [buffer ', ' char(this.parts{i})]; %#ok<AGROW>
+        end
+        buffer = [buffer ' )'];
+    end
 end % end methods
 
 end % end classdef
