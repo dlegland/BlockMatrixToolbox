@@ -24,7 +24,7 @@ classdef BlockDimensions < handle
 %% Properties
 properties
     % contains the dimensions of blocs in each dimension, as a cell array
-    % containing row vectors of integers
+    % containing instances of IntegerPartition
     parts;
     
 end % end properties
@@ -39,22 +39,27 @@ methods
         %   PARTS is a cell array, containing for each dimension the sizes
         %   of the blocks in this dimension.
         % 
+        %   BD = BlockDimensions(PARTS, DIMS);
+        %   Alternative construction of BlockDimension object. PARTS is a
+        %   row vector containing all  the block dimensions, and DIMS is 
+        % 
+        %
         %   Example
-        %   BD = BlockDimensions({[2 2], [2 3 2]});
-        %   Creates a BlockDimensions object for a BlockMatrix, that will be
-        %   divided into two blocks in dimension 1 and into three blocks in
-        %   dimension 2.
+        %     % Creates a BlockDimensions object for a BlockMatrix, divided
+        %     % into two blocks in dimension 1 and into three blocks in 
+        %     % dimension 2.
+        %     BD = BlockDimensions({[2 2], [2 3 2]});
+        %
+        %     % Construction of the same BlockDimension object, using a
+        %     % list of partitions and a list of term numbers
+        %     BD = BlockDimensions([2 2 2 3 2], [2 3]);
         %
         
         if iscell(varargin{1})
-            % initialisation constructor
-            % 
-            % can be initialised from:
+            % Processes following cases:
             % * a cell array of IntegerPartition
             % * a cell array of integer arrays
-            % * another BlockDimensions object
-            %
-            
+        
             var1 = varargin{1};
             this.parts = cell(1, length(var1));
             for i = 1:length(var1)
@@ -64,6 +69,19 @@ methods
                     % convert integer array to IntegerPartition object
                     this.parts{i} = IntegerPartition(var1{i});
                 end
+            end
+            
+        elseif nargin == 2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
+            % constructor from partition array and dimension array
+            allParts = varargin{1};
+            dims = varargin{2};
+            nd = length(dims);
+            this.parts = cell(1, nd);
+            ind = 1;
+            for i = 1:nd
+                terms = allParts(ind:(ind+dims(i)-1));
+                this.parts{i} = IntegerPartition(terms);
+                ind = ind + dims(i);
             end
             
         elseif isa(varargin{1}, 'BlockDimensions')
@@ -81,6 +99,42 @@ end % end constructors
 %% Methods
 
 methods
+    function p = getPartitions(this)
+        % return the vector containing all the block partitions
+        % see also: getDimensions
+        
+        % dimensionality of this BlockDimensions
+        nd = length(this.parts);
+        
+        % compute total number of partitions
+        np = 0;
+        for i = 1:nd
+            np = np + length(this.parts{i});
+        end
+        
+        p = zeros(1, np);
+        ind = 1;
+        for i = 1:nd
+            length_i = length(this.parts{i});
+            p(ind:ind+length_i-1) = this.parts{i}.terms;
+            ind = ind + length_i;
+        end
+    end
+    
+    function dims = getDimensions(this)
+        % return the vector containing all the dimensions
+        % see also: getPartitions
+        
+        % dimensionality of this BlockDimensions
+        nd = length(this.parts);
+        
+        % compute total number of partitions
+        dims = zeros(1, nd);
+        for i = 1:nd
+            dims(i) = length(this.parts{i});
+        end
+    end
+    
     function dims = getBlockDimensions(this, dim)
         % Return the dimensions of the block in the specified dimension
         %
@@ -110,8 +164,7 @@ methods
             % return dimension vector
             siz = zeros(1, length(this.parts));
             for i = 1:length(this.parts)
-%                 siz(i) = sum(this.parts{i});
-                siz(i) = integer(this.parts{i});
+                siz(i) = sum(this.parts{i});
             end
         else
             dim = varargin{1};
@@ -122,8 +175,7 @@ methods
                     error(sprintf(...
                         'dimension %d is too high, should be less than', dim(i), nd)); %#ok<SPERR>
                 end
-%                 siz(i) = sum(this.parts{dim(i)});
-                siz(i) = integer(this.parts{dim(i)});
+                siz(i) = sum(this.parts{dim(i)});
             end
         end
     end
@@ -217,7 +269,6 @@ methods
                 if length(this.parts{iDim}) ~= length(var.parts{iDim})
                     error('BlockDimensions should have same block number in dimension %d', iDim); 
                 end
-%                 if any(this.parts{iDim} ~= var.parts{iDim}) 
                 if this.parts{iDim} ~= var.parts{iDim}
                     error('BlockDimensions should have same block sizes in dimension %d', iDim); 
                 end
@@ -247,7 +298,6 @@ methods
                 if length(this.parts{iDim}) ~= length(var.parts{iDim})
                     error('BlockDimensions should have same block number in dimension %d', iDim); 
                 end
-                % if any(this.parts{iDim} ~= var.parts{iDim})
                 if this.parts{iDim} ~= var.parts{iDim}
                     error('BlockDimensions should have same block sizes in dimension %d', iDim); 
                 end
