@@ -310,6 +310,29 @@ methods
         res = BlockDimensions(newParts);
     end
     
+    function b = eq(this, that)
+        % tests whether two block dimensions are the same or not
+        
+        % both objects should be of the right class
+        if ~isa(this, 'BlockDimensions') || ~isa(that, 'BlockDimensions')
+            b = false;
+            return;
+        end
+        
+        % both objects should have same dimensionality
+        if length(this.parts) ~= length(that.parts)
+            b = false;
+            return;
+        end
+        
+        % all partitions should be equal
+        b = all(cellfun(@eq, this.parts, that.parts));
+    end
+    
+    function b = ne(this, that)
+        % tests whether two block dimensions are different or not
+        b = ~eq(this, that);
+    end    
 end
 
 %% Display methods
