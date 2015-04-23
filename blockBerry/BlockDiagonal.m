@@ -1,5 +1,5 @@
-classdef BlockDiagonal < handle
-%BLOCKDIAGONAL Diagonal matrix that can be divided into several 'block vectors' 
+classdef BlockDiagonal < AbstractBlockMatrix
+%BLOCKDIAGONAL Block Matrix with zeros blocks except on diagonal blocks
 %
 %   Class BlockDiagonal
 %
@@ -89,7 +89,7 @@ methods
         end
     end
     
-        function setBlock(this, row, col, blockData)
+    function setBlock(this, row, col, blockData)
         % set the data for the (i-th, j-th) block 
         %
         %   setBlock(BM, ROW, COL, DATA)
@@ -162,143 +162,6 @@ methods
         n = getBlockNumbers(this.dims);
     end
 end
-
-%% Display methods
-
-methods
-    
-    function disp(this)
-        % display the content of this BlockMatrix object
-        
-        % loose format: display more empty lines
-        isLoose = strcmp(get(0, 'FormatSpacing'), 'loose');
-        
-        % get BlockMatrix total size
-        dim = getSize(this);
-        nRows = dim(1);
-        nCols = dim(2);
-        
-        % Display information on block sizes
-        disp(sprintf('BlockMatrix object with %d rows and %d columns', nRows, nCols)); %#ok<DSPS>
-        parts1 = getBlockDimensions(this.dims, 1);
-        disp(sprintf('  row dims: %s', formatParts(parts1))); %#ok<DSPS>
-        parts2 = getBlockDimensions(this.dims, 2);
-        disp(sprintf('  col dims: %s', formatParts(parts2))); %#ok<DSPS>
-        
-        if nCols < 20 && nRows < 50
-            if isLoose
-                fprintf('\n');
-            end
-            displayData(this);
-        end
-        
-        if isLoose
-            fprintf('\n');
-        end
-        
-        function string = formatParts(parts)
-            % display parts as a list of ints, or as empty
-            if isempty(parts)
-                string = '(empty)';
-            else
-                pattern = strtrim(repmat(' %d', 1, length(parts)));
-                string = sprintf(pattern, parts.terms);
-            end
-        end
-    end
-    
-    
-    function displayBlocks(this)
-        % get BlockMatrix total size
-        nRowBlocks = length(getBlockDimensions(this.dims, 1));
-        nColBlocks = length(getBlockDimensions(this.dims, 2));
-        
-        for row = 1:nRowBlocks
-            for col = 1:nColBlocks
-                disp(sprintf('Block (%d,%d)', row, col)); %#ok<DSPS>
-                disp(getBlock(this, row, col));
-            end
-        end
-        
-    end
-    
-    function displayData(this)
-        % display data using different style for aternating blocks
-        
-        % get Block dimensions in each dimensions,
-        % for the moment as a row vector of positive integers,
-        % later as an instance of IntegerPartition
-        dims1 = getBlockDimensions(this, 1);
-        dims2 = getBlockDimensions(this, 2);
-        
-        % get BlockMatrix total size
-        nRowBlocks = length(dims1);
-        nColBlocks = length(dims2);
-        
-        % define printing styles for alterating blocs
-        styleList = {[.7 0 0], '*blue'};
-        
-        % the style of first block, and of 'odd' blocks
-        iStyle = 1;
-        
-        % iterate over block-rows
-        for iBlock = 1:nRowBlocks
-            
-            % iterate over the rows of current row of blocks
-            for iRow = 1:dims1(iBlock)
-                
-                % style of first block
-                iBlockStyle = iStyle;
-                
-                % iterate over blocks of current block row
-                for jBlock = 1:nColBlocks
-                    % extract data of current row within current block
-                    blockData = getBlock(this, iBlock, jBlock);
-                    rowData = blockData(iRow, :);
-                    
-                    % the string to display
-                    stringArray = formatArray(rowData);
-                    string = [strjoin(stringArray, '   ') '   '];
-                    
-                    % choose appropriate style
-                    style = styleList{iBlockStyle};
-                    
-                    % display in color
-                    cprintf(style, string);
-                    % alternate the style of next block(-column)
-                    iBlockStyle = 3 - iBlockStyle;
-                end
-                
-                fprintf('\n');
-                
-            end % end iteration of rows within block-row
-            
-            % alternate the style for next block-row
-            iStyle = 3 - iStyle;
-            
-        end  % end block-row iteration
-        
-        function stringArray = formatArray(array)
-            % convert a numerical array to a formatted cell array of strings
-            stringArray = cell(size(array));
-            
-            for i = 1:numel(array)
-                num = array(i);
-                
-                % choose formatting style
-                if num < 1000
-                    fmt = '%.4f';
-                else
-                    fmt = '%4.2e';
-                end
-                
-                % ensure 9 digits are used, and align to the right
-                stringArray{i} = sprintf('%9s', num2str(num, fmt));
-            end
-        end
-    end % end displayData method
-    
-end % end methods
 
 end % end classdef
 
