@@ -163,5 +163,30 @@ methods
     end
 end
 
+%% Overload some native methods
+methods
+    function res = transpose(this)
+        % transpose this BlockDiagonal Matrix
+        res = ctranspose(this);
+    end
+    
+    function res = ctranspose(this)
+        % overload the transpose operator for BlockDiagonal object
+        
+        % Transpose each block
+        nDiags = length(this.diags);
+        diags2 = cell(nDiags, 1);
+        for i = 1:nDiags
+            diags2{i} = this.diags{i}';
+        end
+        
+        % Creates the new BlockDiagonal object (Block dimensions are
+        % computed automatically in constructor)
+        res = BlockDiagonal(diags2);
+    end
+    
+
+end
+
 end % end classdef
 
