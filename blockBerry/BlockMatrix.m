@@ -1,16 +1,24 @@
 classdef BlockMatrix < AbstractBlockMatrix
 %BLOCKMATRIX Matrix that can be divided into several blocks
 %
-%   Class BlockMatrix
+%   BlockMatrix objects can be constructed in several ways:
+%   data = reshape(1:28, [4 7]);
+%   % construction from a cell array of integer partitions
+%   BM = BlockMatrix(data, {[2 2], [2 3 2]});
+%   % construction from integer partitions in each direction
+%   BM = BlockMatrix(data, [2 2], [2 3 2]);
+%   % construction from a BlockDimension object
+%   DIMS = BlockDimensions({[2 2], [2 3 2]});
+%   BM = BlockMatrix(data, DIMS);
 %
 %   Example
 %     data = reshape(1:28, [7 4])';
 %     dims = BlockDimensions({[2 2], [2 3 2]});
 %     BM = BlockMatrix(data, dims);
-%     displayData(BM);
+%     disp(BM);
 %
 %   See also
-%     BlockDimensions
+%     BlockDiagonal, BlockDimensions
 %
 
 % ------
@@ -53,7 +61,14 @@ methods
         % Constructor for BlockMatrix class
         %
         %   data = reshape(1:28, [4 7]);
+        %   % construction from a cell array of integer partitions
         %   BM = BlockMatrix(data, {[2 2], [2 3 2]});
+        %   % construction from integer partitions in each direction
+        %   BM = BlockMatrix(data, [2 2], [2 3 2]);
+        %   % construction from a BlockDimension object
+        %   DIMS = BlockDimensions({[2 2], [2 3 2]});
+        %   BM = BlockMatrix(data, DIMS);
+        %
         %
         
         if isempty(varargin)
@@ -86,8 +101,20 @@ methods
                 error('second argument must be a cell array or a BlockDimensions object');
             end
             
+        elseif nargin == 3
+            % get data array and check validity
+            if ~isnumeric(varargin{1}) || ndims(varargin{1})~=2 %#ok<ISMAT>
+                error('First argument must be a 2D numeric array');
+            end
+            this.data = varargin{1};
+            
+            % create block-dimensions from the two last arguments
+            rowdims = IntegerPartition(varargin{2});
+            coldims = IntegerPartition(varargin{3});
+            this.dims = BlockDimensions({rowdims, coldims});
+            
         else
-            error('Requires two input arguments');
+            error('Requires two or three input arguments');
         end
 
     end
@@ -216,63 +243,7 @@ end
 
 %% Overload some native methods
 
-methods
-%     function res = mtimes(this, that)
-%         % multiplies two instances of BlockMatrix
-%         % 
-%         % usage:
-%         %   X = A * B
-%         
-%         % get block dimensions of each matrix
-%         dimsA = this.dims;
-%         dimsB = that.dims;
-%         
-%         % check dimensionality
-%         if dimensionality(dimsB) ~= 2
-%             error('Requires another BlockTensor of dimensionality 2');
-%         end
-%         
-%         % total number of elements should match
-%         if getSize(dimsA, 2) ~= getSize(dimsB, 1)
-%             error('number of columns of first matrix (%d) should match number of rows of second matrix (%d)', ...
-%                 getSize(dimsA, 2), getSize(dimsB, 1));
-%         end
-%         if getBlockNumber(dimsA, 2) ~= getBlockNumber(dimsB, 1)
-%             error('number of block columns of first matrix (%d) should match number of block rows of second matrix (%d)', ...
-%                 getBlockNumber(dimsA, 2), getBlockNumber(dimsB, 1));
-%         end
-% 
-%         % compute size and block dimension of the resulting block-matrix
-%         dimsC = BlockDimensions([dimsA.parts(1) dimsB.parts(2)]);
-%         nC = getSize(dimsC, 1);
-%         mC = getSize(dimsC, 2);
-%         res = BlockMatrix(zeros([nC mC]), dimsC);
-% 
-%         % number of blocks to iterate
-%         nBlocks = getBlockNumber(dimsA, 2);
-% 
-%         for iRow = 1:getBlockNumber(dimsA, 1)
-%             for iCol = 1:getBlockNumber(dimsB, 2)
-%                 % Compute block (iRow, iCol), by iterating over i-th row of
-%                 % first matrix, and j-th column of second matrix
-%                 
-%                 % allocate memory for current result block
-%                 block = zeros([dimsA.parts{1}(iRow) dimsB.parts{2}(iCol)]);
-%                 
-%                 % iterate over columns of first matrix, and rows of second
-%                 % matrix
-%                 for iBlock = 1:nBlocks
-%                     blockA = getBlock(this, iRow, iBlock);
-%                     blockB = getBlock(that, iBlock, iCol);
-%                     block = block + blockA * blockB;
-%                 end
-%                 
-%                 % store current block in result block matrix
-%                 setBlock(res, iRow, iCol, block);
-%             end
-%         end
-%     end
-    
+methods   
     function res = transpose(this)
         % transpose this BlockMatrix
         res = ctranspose(this);

@@ -1,13 +1,18 @@
 classdef BlockDiagonal < AbstractBlockMatrix
 %BLOCKDIAGONAL Block Matrix with zeros blocks except on diagonal blocks
 %
-%   Class BlockDiagonal
+%   BlockDiagonal objects are constructed from the list of blocks located
+%   on the diagonal. The Block-Dimensions of the block-diagonal is computed
+%   automatically.
 %
 %   Example
-%   
-%   BlockDiagonal
+%   % create a block diagonal matrix
+%   BD = BlockDiagonal({rand(2, 3), rand(2, 2), rand(1, 2)});
+%   % transpose and multiplies two blockdiagonals
+%   BD' * BD
 %
 %   See also
+%     BlockMatrix, BlockDimensions
 %
 
 % ------
