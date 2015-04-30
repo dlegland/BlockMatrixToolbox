@@ -71,14 +71,9 @@ methods
         %
         %
         
-        if isempty(varargin)
-            % populate with default data
-            this.data = 1:28;
-            this.dims = BlockDimensions({[2 2], [2 3 2]});
-            
-        elseif nargin == 2
+        if nargin == 2
             if isnumeric(varargin{1})
-                % initialsation constructor
+                % initialisation constructor
                 this.data = varargin{1};
                 
             elseif isa(varargin{1}, 'BlockMatrix')
@@ -112,6 +107,21 @@ methods
             rowdims = IntegerPartition(varargin{2});
             coldims = IntegerPartition(varargin{3});
             this.dims = BlockDimensions({rowdims, coldims});
+            
+        elseif nargin == 1
+            % copy constructor, from another BlockMatrix object
+            if isa(varargin{1}, 'BlockMatrix')
+                bm = varargin{1};
+                this.data = bm.data;
+                this.dims = bm.dims;
+            else
+                error('copy constructor requires a block matrix object');
+            end
+            
+        elseif isempty(varargin)
+            % empty constructor: populate with default data
+            this.data = 1:28;
+            this.dims = BlockDimensions({[2 2], [2 3 2]});
             
         else
             error('Requires two or three input arguments');
