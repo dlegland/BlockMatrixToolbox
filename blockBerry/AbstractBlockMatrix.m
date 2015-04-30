@@ -379,8 +379,8 @@ methods
                 num = array(i);
                 
                 % choose formatting style
-                if num < 1000
-                    fmt = '%.4f';
+                if abs(num) < 1e4 && abs(num) > 1e-2
+                    fmt = '%.3f';
                 else
                     fmt = '%4.2e';
                 end
