@@ -198,7 +198,7 @@ methods
 end
 
 
-%% Overload some artihmetic methods
+%% Overload some arithmetic methods
 
 methods
     function res = mtimes(this, that)
@@ -259,10 +259,66 @@ methods
 
 end % end methods
 
+%% Overload indexing methods
+methods
+    function varargout = subsref(this, subs)
+        % Overload subsref for Block Matrices objects
+        %
+        % BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2])
+        % BM(2, 3)
+        % ans =
+        %     10
+        % BM{2, 3}
+        % ans = 
+        %    20   21
+        %    27   28
+        %
+        
+        % extract reference type
+        s1 = subs(1);
+        type = s1.type;
+        
+        % switch between reference types
+        if strcmp(type, '.')
+            % in case of dot reference, use builtin subsref
+            
+            % check if we need to return output or not
+            if nargout > 0
+                % if some output arguments are asked, pre-allocate result
+                varargout = cell(nargout, 1);
+                [varargout{:}] = builtin('subsref', this, subs);
+                
+            else
+                % call parent function, and eventually return answer
+                builtin('subsref', this, subs);
+                if exist('ans', 'var')
+                    varargout{1} = ans; %#ok<NOANS>
+                end
+            end
+            
+        elseif strcmp(type, '()')
+            % Process parens indexing -> return elements of data matrix
+            matrix = getMatrix(this);
+            varargout{1} = subsref(matrix, subs);
+            
+        elseif strcmp(type, '{}')
+            % Process braces indexing -> return block at specified position
+            ns = length(s1.subs);
+            if ns == 2
+                % returns integer partition of corresponding dimension
+                blockRow = s1.subs{1};
+                blockCol = s1.subs{2};
+                varargout{1} = getBlock(this, blockRow, blockCol);
+            else
+                error('Requires two indices for identifying blocks');
+            end
+        end
+    end
+end
+
 %% Display methods
 
 methods
-    
     function disp(this)
         % display the content of this BlockMatrix object
         
@@ -382,7 +438,7 @@ methods
                 num = array(i);
                 
                 % choose formatting style
-                if num == 0
+                if num == 0 || round(num) == num
                     fmt = '%g';
                 elseif abs(num) < 1e4 && abs(num) > 1e-2
                     fmt = '%.3f';

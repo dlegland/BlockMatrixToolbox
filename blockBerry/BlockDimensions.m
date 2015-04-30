@@ -342,7 +342,7 @@ methods
         % ans =
         % IntegerPartition object with 3 terms
         %     (1, 2, 1)
-         
+        
         
         % extract reference type
         s1 = subs(1);
@@ -391,8 +391,8 @@ methods
                 error('Only linear indexing is allowed for BlockDimensions');
             end
         end
-            
-    end    
+        
+    end
 end
 
 %% Display methods
