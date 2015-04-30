@@ -4,10 +4,12 @@ classdef AbstractBlockMatrix < handle
 %   Class AbstractBlockMatrix
 %
 %   Example
-%   AbstractBlockMatrix
+%     data = reshape(1:28, [7 4])';
+%     BM = BlockMatrix(data, [1 2 1], [2 3 2]);
 %
 %   See also
-%   BlockMatrix, BlockDiagonal
+%     BlockMatrix, BlockDiagonal
+%
 
 % ------
 % Author: David Legland
@@ -49,6 +51,151 @@ end % end abstract methods
 
 %% Computation Methods
 % Some methods are performed, that only relies on abstract methods.
+
+methods
+    function res = blockProduct(this, that, type)
+        % compute newly defined block-matrix product of two block-matrices
+        %
+        % RES = blockProduct(BM1, BM1, TYPE)
+        % BM1 and BM2 are two block matrices, and TYPE is a string
+        % representing the type of blck product, for eaxmple 'uu', 'hh',
+        % 'ks'...
+        %
+        % Some conditions exist on the block-dimensions of input block
+        % matrices, depending on the type of block-product applied.
+        %
+        % Example
+        %   BM = BlockMatrix(reshape(1:28, [4 7]), [1 2 1], [2 3 2]);
+        %   res = blockProduct(BM, BM', 'uu');
+        %   disp(res)
+        %   BlockMatrix object with 4 rows and 4 columns
+        %     row dims: 2 2
+        %     col dims: 2 2
+        % 
+        %    140.0000    336.0000    532.0000    728.0000   
+        %    336.0000    875.0000    1.41e+03    1.95e+03   
+        %    532.0000    1.41e+03    2.30e+03    3.18e+03   
+        %    728.0000    1.95e+03    3.18e+03    4.40e+03   
+
+        
+        % check validity of TYPE argument
+        if ~ischar(type)
+            error('the TYPE argument must be a char array');
+        end
+        validTypes = {...
+            'uu', 'uh', 'uk', 'us', ...
+            'hu', 'hh', 'hk', 'hs', ...
+            'ku', 'kh', 'kk', 'ks', ...
+            'su', 'sh', 'sk', 'ss'};
+        if ~ismember(type, validTypes)
+            error('the TYPE argument is not a valid string');
+        end
+        
+        switch lower(type(1))
+            case 'u'
+                % usual product along blocks
+                % we need: blockdims1(2) == blockdims2(1)
+                
+                switch lower(type(2))
+                    case 'u'
+                        res = blockProduct_uu(this, that);
+                    case 'h'
+                        error('Block Product type "uh" not yet implemented');
+                    case 'k'
+                        error('Block Product type "uk" not yet implemented');
+                    case 's'
+                        error('Block Product type "us" not yet implemented');
+                end
+                
+            case 'h'
+                % hadamard product along blocks
+                % we need: same number of blocks in each direction
+                
+                switch lower(type(2))
+                    case 'u'
+                        error('Block Product type "hu" not yet implemented');
+                    case 'h'
+                        res = blockProduct_hh(this, that);
+                    case 'k'
+                        error('Block Product type "hk" not yet implemented');
+                    case 's'
+                        error('Block Product type "hs" not yet implemented');
+                end
+                
+            case 'k'
+                % kroenecker product along blocks
+                % we need: (what ?)
+                
+                switch lower(type(2))
+                    case 'u'
+                        error('Block Product type "ku" not yet implemented');
+                    case 'h'
+                        error('Block Product type "kh" not yet implemented');
+                    case 'k'
+                        error('Block Product type "kk" not yet implemented');
+                    case 's'
+                        error('Block Product type "ks" not yet implemented');
+                end
+                
+            case 's'
+                % scalar product along blocks
+                % we need one scalar
+                
+                switch lower(type(2))
+                    case 'u'
+                        error('Block Product type "su" not yet implemented');
+                    case 'h'
+                        error('Block Product type "sh" not yet implemented');
+                    case 'k'
+                        error('Block Product type "sk" not yet implemented');
+                    case 's'
+                        error('Block Product type "ss" not yet implemented');
+                end
+        end
+        
+    end
+    
+    function res = blockProduct_uu(this, that)
+        % compute 'uu'-type block matrix product
+        % It corresponds to classical matrix product
+        res = mtimes(this, that);
+    end
+    
+    function res = blockProduct_hh(this, that)
+        % compute 'hh'-type block matrix product
+        % It corresponds to hadamard product along blocks, and hadamard
+        % product within blocks
+        
+        % check conditions on dimensions
+        dimsA = getBlockDimensions(this);
+        dimsB = getBlockDimensions(that);
+        if dimsA ~= dimsB
+            error('Block dimensions of block matrices must be the same');
+        end
+        
+        % create empty result with same dims
+        res = BlockMatrix.zeros(dimsA);
+        
+        % iterate over blocks
+        for iBlock = 1:getBlockNumber(dimsA, 1)
+            for jBlock = 1:getBlockNumber(dimsA, 2)
+                % extract blocks of the two input block matrices
+                blockA = getBlock(this, iBlock, jBlock);
+                blockB = getBlock(that, iBlock, jBlock);
+                
+                % compute 'h'-product of blocks
+                resBlock = blockA .* blockB;
+                
+                % assign result
+                setBlock(res, iBlock, jBlock, resBlock);
+            end
+        end
+    end
+    
+end
+
+
+%% Overload some artihmetic methods
 
 methods
     function res = mtimes(this, that)
