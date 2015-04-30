@@ -24,12 +24,9 @@ classdef AbstractBlockMatrix < handle
 % Methods in this bloc are declared for implementation in sub-classes
 
 methods (Abstract)
-    block = getBlock(this, row, col)
-    % Returns the block content at a given position
+    matrix = getMatrix(this)
+    % Returns the content of this block-matrix as a matlab array
     
-    block = setBlock(this, row, col, blockContent)
-    % Updates the block content at a given position
-
     dims = getBlockDimensions(this, dim)
     % Return the dimensions of the block in the specified dimension
     
@@ -46,6 +43,12 @@ methods (Abstract)
     n = getBlockNumbers(this)
     % Return the number of blocks in each dimension
     
+    block = getBlock(this, row, col)
+    % Returns the block content at a given position
+    
+    block = setBlock(this, row, col, blockContent)
+    % Updates the block content at a given position
+
 end % end abstract methods
 
 

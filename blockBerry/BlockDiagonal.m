@@ -27,7 +27,8 @@ properties
     % the set of diagonal blocks, as a cell array containing matrices
     diags;
     
-    % the block dimensions of this diagonal matrix
+    % the block dimensions of this diagonal matrix, as a cell array of
+    % integer partitions.
     dims;
     
 end % end properties
@@ -73,7 +74,27 @@ end % end constructors
 % sorted approximately from high-level to low-level
 
 methods
-    
+    function matrix = getMatrix(this)
+        % Returns the content of this block-matrix as a matlab array
+        %
+ 
+        % allocate size for result matrix
+        siz = getSize(this);
+        matrix = zeros(siz);
+         
+        % determine block dimensions along each dimension
+        dims1 = getBlockDimensions(this.dims, 1);
+        dims2 = getBlockDimensions(this.dims, 2);
+        
+        % iterate over diagonal blocks
+        for iBlock = 1:min(length(dims1), length(dims2))
+            block = getBlock(this, iBlock, iBlock);
+            rowInds = blockIndices(dims1, iBlock);
+            colInds = blockIndices(dims2, iBlock);
+            matrix(rowInds, colInds) = block;
+        end
+    end
+ 
     function block = getBlock(this, row, col)
         % return the (i-th, j-th) block 
         %

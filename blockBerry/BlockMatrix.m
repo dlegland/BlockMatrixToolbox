@@ -136,6 +136,14 @@ end % end constructors
 % sorted approximately from high-level to low-level
 
 methods
+    function matrix = getMatrix(this)
+        % Returns the content of this block-matrix as a matlab array
+        %
+        % For a BlockMatrix object BM, this is equivalent to 
+        % matrix = BM.data;
+        %
+        matrix = this.data;
+    end
     
     function block = getBlock(this, row, col)
         % return the (i-th, j-th) block 
