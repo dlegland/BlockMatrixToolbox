@@ -109,6 +109,18 @@ methods (Test)
         BM3 = BM1 * BM2;
         testCase.verifyEqual(data3, BM3.data, 'AbsTol', .1);
     end
+
+    
+    function test_subsref(testCase)
+        BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
+        
+        res = BM(2, 3);
+        testCase.verifyEqual(10, res, 'AbsTol', .1);
+
+        res = BM{2, 3};
+        testCase.verifyEqual([20 21; 27 28], res, 'AbsTol', .1);
+    end
+
 end
 
 end % end classdef
