@@ -332,7 +332,7 @@ methods
         nColBlocks = length(dims2);
         
         % define printing styles for alterating blocs
-        styleList = {[.7 0 0], '*blue'};
+        styleList = {'*blue', [.7 0 0]};
         
         % the style of first block, and of 'odd' blocks
         iStyle = 1;
@@ -382,7 +382,9 @@ methods
                 num = array(i);
                 
                 % choose formatting style
-                if abs(num) < 1e4 && abs(num) > 1e-2
+                if num == 0
+                    fmt = '%g';
+                elseif abs(num) < 1e4 && abs(num) > 1e-2
                     fmt = '%.3f';
                 else
                     fmt = '%4.2e';
