@@ -2,12 +2,17 @@ classdef IntegerPartition < handle
 %INTEGERPARTITION Store an ordered partition of an integer
 %
 %   Class IntegerPartition
+%   Store an ordered partition of an integer, as a list of integer terms.
+%   Terms should be positive integers.
 %
 %   Example
-%   ip = IntegerPartition([2, 3, 2]);
+%     IP = IntegerPartition([2, 3, 2]);
+%     length(IP)
+%     ans =
+%         3
 %
 %   See also
-%
+%     BlockDimensions
 
 % ------
 % Author: David Legland
@@ -28,6 +33,14 @@ end % end properties
 methods
     function this = IntegerPartition(varargin)
     % Constructor for IntegerPartition class
+    % 
+    % IP = IntegerPartition(TERMS)
+    % where TERMS is a row vector of positive integers, initialize the
+    % partition with the given terms.
+    %
+    % IP = IntegerPartition(IP0)
+    % Copy constructor
+    
         if nargin == 1 && isnumeric(varargin{1})
             % initialisation constructor
             var1 = varargin{1};
@@ -135,10 +148,10 @@ methods
             
             varargout{1} = 0;
             
-            % different processing if 1 or 2 indices are used
+            % check number of indices
             ns = length(s1.subs);
             if ns == 1
-                % one index: use linearised image
+                % returns the requested terms
                 varargout{1} = this.terms(s1.subs{1});
                 
             else

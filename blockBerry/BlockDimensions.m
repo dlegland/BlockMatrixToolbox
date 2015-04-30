@@ -333,6 +333,66 @@ methods
         % tests whether two block dimensions are different or not
         b = ~eq(this, that);
     end    
+    
+    function varargout = subsref(this, subs)
+        % Returns the integer partition for a given dimension
+        %
+        % DIMS = BlockDimensions({[1 2 1], [3 4]});
+        % DIMS{1}
+        % ans =
+        % IntegerPartition object with 3 terms
+        %     (1, 2, 1)
+         
+        
+        % extract reference type
+        s1 = subs(1);
+        type = s1.type;
+        
+        % switch between reference types
+        if strcmp(type, '.')
+            % in case of dot reference, use builtin subsref
+            
+            % check if we need to return output or not
+            if nargout > 0
+                % if some output arguments are asked, pre-allocate result
+                varargout = cell(nargout, 1);
+                [varargout{:}] = builtin('subsref', this, subs);
+                
+            else
+                % call parent function, and eventually return answer
+                builtin('subsref', this, subs);
+                if exist('ans', 'var')
+                    varargout{1} = ans; %#ok<NOANS>
+                end
+            end
+            
+            % stop here
+            return;
+            
+        elseif strcmp(type, '()')
+            % Process parens indexing
+            error('parens indexing of BlockDimensions is not supported');
+            
+        elseif strcmp(type, '{}')
+            % Process braces indexing
+            ns = length(s1.subs);
+            if ns == 1
+                % returns integer partition of corresponding dimension
+                intPart = this.parts{s1.subs{1}};
+                if length(subs) == 1
+                    varargout{1} = intPart;
+                else
+                    % process other calls to subsref
+                    varargout = cell(nargout, 1);
+                    [varargout{:}] = subsref(intPart, subs(2:end));
+                end
+                
+            else
+                error('Only linear indexing is allowed for BlockDimensions');
+            end
+        end
+            
+    end    
 end
 
 %% Display methods
