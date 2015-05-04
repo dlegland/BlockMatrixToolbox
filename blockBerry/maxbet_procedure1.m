@@ -1,10 +1,13 @@
-function q = maxbet_procedure1(data, tt, tol)
+function [q, iter, resid] = maxbet_procedure1(data, tt, tol)
 %MAXBET_PROCEDURE1  MAXBET procedure for multi-block matrices.
 %
 %   Q = maxbet_procedure1(DATA, TT, TOL)
 %   Computes the solution of the original maxbet problem, that consists in
 %   maximizing: (Q' * XX' * XX * Q), under block-normalized vector 
 %   (norm(qk) = 1).
+%
+%   [Q, ITER] = maxbet_procedure1(DATA, TT, TOL)
+%   Also returns the number of iterations.
 %
 %   Inputs:
 %   DATA:   multiblocks input matrix as horizontal list of blocks
@@ -14,11 +17,21 @@ function q = maxbet_procedure1(data, tt, tol)
 %
 %   Outputs:
 %   Q:      solution, as a list of horizontal block vectors
+%   ITER:   the number of iterations needed to reach convergence
+%
 %
 %   Example
-%   maxbet_procedure1
+%     % Create Block-matrix for the data
+%     data = BlockMatrix(rand(4, 7), 4, [2 3 2]);
+%     % Create Block-matrix for initialisation vector
+%     tt = BlockMatrix(rand(7, 1), [2 3 2], 1);
+%     % call the MAXBET procedure
+%     [q, iter] = maxbet_procedure1(data, tt, 1e-3);
+%     disp(sprintf('converged afeter %d iterations', iter));
+%
 %
 %   See also
+%     BlockMatrix
 %
 %   References
 %   Van De Geer (1984), Ten Berge (1988), Hanafi and Kiers (2006)
@@ -26,14 +39,14 @@ function q = maxbet_procedure1(data, tt, tol)
  
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@nantes.inra.fr
 % Created: 2015-04-13,    using Matlab 8.4.0.150421 (R2014b)
 % Copyright 2015 INRA - Cepia Software Platform.
 
 
 % total number of blocks
-% % maxblo = length(data);
-maxblo = getBlockNumber(data); % assume block matrix is 'row-block' matrix
+% (assume block matrix is 'row-block' matrix)
+maxblo = getBlockNumber(data); 
 
 
 %% Normalisation of loadings
@@ -48,29 +61,29 @@ X = [];
 % create new BlockMatrix representing the normalized input vectors
 vdims = getBlockDimensions(tt);
 t = BlockMatrix.zeros(vdims);
-% t = cell(A, maxblo);
 
 % iterate over blocks to concatenate the blocks
 for blo = 1:maxblo
     % concatenate the global matrix
     X = cat(2, X, getBlock(data, 1, blo));
-%     X = cat(2, X, data{blo});
     
-    % normalisation du vecteur par bloc.
+    % normalization by blocks of the vector
     % (a voir si cela peut devenir un methode "norm" qui fait partie de la
     % classe BlockMatrix).
-    v = getBlock(tt, blo, 1);
+    v = tt{blo, 1};
+    % long syntax:    % v = getBlock(tt, blo, 1);
+    
     v = v / norm(v);
-    setBlock(t, blo, 1, v);
-%     t{blo} = tt{blo} / norm(tt{blo});
+    
+    t{blo, 1} = v;
+    % long syntax:  % setBlock(t, blo, 1, v);
 end
 
 %% Computation of X'*X by block rows
 
-% allocation memoire pour le resultat
-AAdims = BlockDimensions({vdims.parts{1}, sum(vdims.parts{1})});
+% allocate memory for temporary computations
+AAdims = BlockDimensions({vdims{1}, sum(vdims{1})});
 AA = BlockMatrix.zeros(AAdims);
-%AA = cell(1, maxblo);
 
 % iteration sur les blocs
 for blo = 1:maxblo
@@ -78,56 +91,52 @@ for blo = 1:maxblo
     % * une premiere fois pour considerer le bloc courant
     % * une deuxieme fois pour calculer le produit avec l'ensemble des
     %   autres blocs
-    setBlock(AA, blo, 1, getBlock(data, 1, blo)' * X);
-    %AA{blo} = data{blo}' * X;
+    AA{blo, 1} = data{1, blo}' * X;
+    % long syntax:
+    % setBlock(AA, blo, 1, getBlock(data, 1, blo)' * X);
 end
 
 
 %% Iterations
 
-% creation de la Block-Matrix pour le vecteur resultat
+% creation of the Block-matrix for storing result
 q = BlockMatrix.zeros(vdims);
-% q = cell(1, maxblo);
 
-% initialise la condition de sortie
-residu = 1;
+% initialize the condition for breaking loop
+resid = 1;
 
-% on compte les iterations
+% count the number of iterations
 iter = 0;
 
-while residu > tol
+while resid > tol
     iter = iter + 1;
     
-    % re-initialise le vecteur uu
+    % re-initialize the vector uu
     uu = BlockMatrix.zeros(vdims);
     for blo = 1:maxblo
-        setBlock(uu, blo, 1, getBlock(t, blo, 1));
-        % uu{1, blo} = t{1, blo};
+        % short syntax (using braces-indexing)
+        uu{blo, 1} = t{blo, 1};
+        % long syntax (using setBlock/getBlock methods)
+        % setBlock(uu, blo, 1, getBlock(t, blo, 1));
     end
-%     % concatene les objets
-%     uu = [];
-%     for blo = 1:maxblo
-%         uu = cat(1, uu, t{blo});
-%     end
     
     s = 0;
     for blo = 1:maxblo
-        % multiplication locale
-        ak = getBlock(AA, blo, 1) * uu.data;
-        % ak = AA{blo} * uu;
+        % local multiplication
+        ak = AA{blo, 1} * uu.data;
+        % ak = getBlock(AA, blo, 1) * uu.data;
         
-        % sotcke le vecteur normalise
-        setBlock(q, blo, 1, ak / norm(ak));
-        % q{blo} = ak / norm(ak);
+        % store the normalized vector
+        q{blo, 1} = ak / norm(ak);
+        % setBlock(q, blo, 1, ak / norm(ak));
         
-        % incremente le residu
-        s = s + norm(getBlock(q, blo, 1) - getBlock(t, blo, 1));
-        % s = s + norm(q{blo} - t{blo});
+        % increment residual
+        s = s + norm(q{blo, 1} - t{blo, 1});
+        % s = s + norm(getBlock(q, blo, 1) - getBlock(t, blo, 1));
     end
     
-    residu = s;
+    resid = s;
     
     % update block vectors of loadings
     t = q;
 end
-

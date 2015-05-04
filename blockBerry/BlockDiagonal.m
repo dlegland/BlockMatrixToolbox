@@ -248,12 +248,21 @@ methods
             
             ns = length(s1.subs);
             if ns == 1
-                % returns integer partition of corresponding dimension
+                % linear indexing of block
                 blockRow = s1.subs{1};
-                
                 setBlock(this, blockRow, blockRow, value);
+                
+            elseif ns == 2
+                % two indices: row and col indices of blocks should be the same
+                blockRow = s1.subs{1};
+                blockCol = s1.subs{2};
+                if any(blockRow ~= blockCol)
+                    error('row indices should match column indices');
+                end
+                setBlock(this, blockRow, blockRow, value);
+                
             else
-                error('Requires one index for identifying diagonal block');
+                error('too many indices for identifying diagonal block');
             end
 
             

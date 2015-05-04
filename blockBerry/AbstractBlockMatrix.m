@@ -226,11 +226,11 @@ methods
                 getBlockNumber(dimsA, 2), getBlockNumber(dimsB, 1));
         end
 
-        % compute size and block dimension of the resulting block-matrix
+        % compute block dimension of the resulting block-matrix
         dimsC = BlockDimensions([dimsA.parts(1) dimsB.parts(2)]);
-        nC = getSize(dimsC, 1);
-        mC = getSize(dimsC, 2);
-        res = BlockMatrix(zeros([nC mC]), dimsC);
+        
+        % allocate memory for result
+        res = BlockMatrix.zeros(dimsC);
 
         % number of blocks to iterate
         nBlocks = getBlockNumber(dimsA, 2);
@@ -241,7 +241,7 @@ methods
                 % first matrix, and j-th column of second matrix
                 
                 % allocate memory for current result block
-                block = zeros([dimsA.parts{1}(iRow) dimsB.parts{2}(iCol)]);
+                block = zeros([dimsA{1}(iRow) dimsB{2}(iCol)]);
                 
                 % iterate over columns of first matrix, and rows of second
                 % matrix
