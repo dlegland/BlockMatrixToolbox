@@ -202,7 +202,7 @@ end
 
 methods
     function res = mtimes(this, that)
-        % multiplies two instances of BlockMatrix
+        % Multiplies two instances of BlockMatrix
         % 
         % usage:
         %   X = A * B
@@ -262,7 +262,7 @@ end % end methods
 %% Overload indexing methods
 methods
     function varargout = subsref(this, subs)
-        % Overload subsref for Block Matrices objects
+        % Override subsref for Block Matrices objects
         %
         % BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2])
         % BM(2, 3)
@@ -320,7 +320,7 @@ end
 
 methods
     function disp(this)
-        % display the content of this BlockMatrix object
+        % Display the content of this BlockMatrix object
         
         % loose format: display more empty lines
         isLoose = strcmp(get(0, 'FormatSpacing'), 'loose');
@@ -361,7 +361,7 @@ methods
     
     
     function displayBlocks(this)
-        % get BlockMatrix total size
+        % Display inner blocks of block matrix object
         nRowBlocks = length(getBlockDimensions(this.dims, 1));
         nColBlocks = length(getBlockDimensions(this.dims, 2));
         
@@ -375,7 +375,7 @@ methods
     end
     
     function displayData(this)
-        % display data using different style for aternating blocks
+        % Display data using different style for aternating blocks
         
         % get Block dimensions in each dimensions,
         % for the moment as a row vector of positive integers,
@@ -431,7 +431,7 @@ methods
         end  % end block-row iteration
         
         function stringArray = formatArray(array)
-            % convert a numerical array to a formatted cell array of strings
+            % Convert a numerical array to a formatted cell array of strings
             stringArray = cell(size(array));
             
             for i = 1:numel(array)

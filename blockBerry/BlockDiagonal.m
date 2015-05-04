@@ -142,7 +142,7 @@ methods
         rowInds = blockIndices(parts1, row)';
         
         % check number of rows of input data
-        if length(rowInds) ~= size(blockData, 1)
+        if ~isscalar(blockData) && length(rowInds) ~= size(blockData, 1)
             error('block data should have %d rows, not %d', ...
                 length(rowInds), size(blockData, 1));
         end
@@ -152,7 +152,7 @@ methods
         colInds = blockIndices(parts2, col);
         
         % check number of columns of input data
-        if length(colInds) ~= size(blockData, 2)
+        if ~isscalar(blockData) && length(colInds) ~= size(blockData, 2)
             error('block data should have %d columns, not %d', ...
                 length(colInds), size(blockData, 2));
         end
@@ -221,6 +221,51 @@ methods
         res = BlockDiagonal(diags2);
     end
     
+    function varargout = subsasgn(this, subs, value)
+        % Override subsasgn function for BlockMatrix objects
+        
+        % extract current indexing info
+        s1 = subs(1);
+        type = s1.type;
+        
+        if strcmp(type, '.')
+            % in case of dot reference, use builtin
+            
+            % if some output arguments are asked, use specific processing
+            if nargout > 0
+                varargout = cell(1);
+                varargout{1} = builtin('subsasgn', this, subs, value);
+            else
+                builtin('subsasgn', this, subs, value);
+            end
+            
+        elseif strcmp(type, '()')
+            % In case of parens reference, index the inner data
+            error('BlockDiagonal:subsasgn', 'Can not manage parens reference');
+            
+        elseif strcmp(type, '{}')
+            % In case of braces indexing, use blocks
+            
+            ns = length(s1.subs);
+            if ns == 1
+                % returns integer partition of corresponding dimension
+                blockRow = s1.subs{1};
+                
+                setBlock(this, blockRow, blockRow, value);
+            else
+                error('Requires one index for identifying diagonal block');
+            end
+
+            
+        else
+            error('BlockDiagonal:subsasgn', 'Can not manage such reference');
+        end
+        
+        if nargout > 0
+            varargout{1} = this;
+        end
+
+    end
 
 end
 

@@ -182,7 +182,7 @@ methods
         rowInds = blockIndices(parts1, row)';
 
         % check number of rows of input data
-        if length(rowInds) ~= size(blockData, 1)
+        if ~isscalar(blockData) && length(rowInds) ~= size(blockData, 1)
             error('block data should have %d rows, not %d', ...
                 length(rowInds), size(blockData, 1));
         end
@@ -192,7 +192,7 @@ methods
         colInds = blockIndices(parts2, col);
         
         % check number of columns of input data
-        if length(colInds) ~= size(blockData, 2)
+        if ~isscalar(blockData) && length(colInds) ~= size(blockData, 2)
             error('block data should have %d columns, not %d', ...
                 length(colInds), size(blockData, 2));
         end
@@ -314,7 +314,7 @@ methods
     end
     
     function res = vertcat(this, varargin)
-        % Overload the vertical concatenation operator
+        % Override the vertical concatenation operator
         
         % initialize block dimension and data to that of first BlockMatrix
         data2 = reshape(this.data, getSize(this));
@@ -335,6 +335,75 @@ methods
         res = BlockMatrix(data2, dims2);
     end
     
+    
+    function varargout = subsasgn(this, subs, value)
+        % Override subsasgn function for BlockMatrix objects
+        
+        % extract current indexing info
+        s1 = subs(1);
+        type = s1.type;
+        
+        if strcmp(type, '.')
+            % in case of dot reference, use builtin
+            
+            % if some output arguments are asked, use specific processing
+            if nargout > 0
+                varargout = cell(1);
+                varargout{1} = builtin('subsasgn', this, subs, value);
+            else
+                builtin('subsasgn', this, subs, value);
+            end
+            
+        elseif strcmp(type, '()')
+            % In case of parens reference, index the inner data
+            
+            % different processing if 1 or 2 indices are used
+            ns = length(s1.subs);
+            if ns == 1
+                % one index: use linearised indices
+                
+                % check that indices are within image bound
+                this.data(s1.subs{:});
+                
+                this.data(s1.subs{1}) = value;
+                
+            elseif ns == 2
+                % two indices: parse row and column indices
+                
+                % check that indices are within image bound
+                this.data(s1.subs{:});
+                
+                % extract corresponding data
+                this.data(s1.subs{:}) = value;
+           
+            else
+                error('BlockMatrix:subsasgn', 'Too many indices');
+            end
+            
+        elseif strcmp(type, '{}')
+            % In case of braces indexing, use blocks
+            
+            ns = length(s1.subs);
+            if ns == 2
+                % returns integer partition of corresponding dimension
+                blockRow = s1.subs{1};
+                blockCol = s1.subs{2};
+                
+                setBlock(this, blockRow, blockCol, value);
+            else
+                error('Requires two indices for identifying blocks');
+            end
+
+            
+        else
+            error('BlockMatrix:subsasgn', 'Can not manage such reference');
+        end
+        
+        if nargout > 0
+            varargout{1} = this;
+        end
+
+    end
 end
 
 end % end classdef

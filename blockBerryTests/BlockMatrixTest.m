@@ -111,14 +111,28 @@ methods (Test)
     end
 
     
-    function test_subsref(testCase)
+    function test_subsref_parens(testCase)
         BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
-        
         res = BM(2, 3);
         testCase.verifyEqual(10, res, 'AbsTol', .1);
-
+    end
+    
+    function test_subsref_braces(testCase)
+        BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
         res = BM{2, 3};
         testCase.verifyEqual([20 21; 27 28], res, 'AbsTol', .1);
+    end
+
+    function test_subsasgn_parens(testCase)
+        BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
+        BM(2, 3) = 4;
+        testCase.verifyEqual(4, BM(2, 3));
+    end
+    
+    function test_subsasgn_braces(testCase)
+        BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 2 3]);
+        BM{2, 3} = [1 2 3;4 5 6];
+        testCase.verifyEqual(4, BM(4, 5));
     end
 
 end
