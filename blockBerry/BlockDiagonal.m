@@ -43,6 +43,10 @@ methods
         %   BD = BlockDiagonal(diagos);
         %
         
+        if nargin == 0
+            error('Require at least one input argument');
+        end
+        
         if iscell(varargin{1})
             % blocks are given as a cell array of matrices
             this.diags = varargin{1};
@@ -50,6 +54,12 @@ methods
         elseif all(cellfun(@isnumeric, varargin))
             % blocks are given as varargin
             this.diags = varargin;
+            
+        elseif isa(varargin{1}, 'BlockDiagonal')
+            % copy constructor
+            var1 = varargin{1};
+            this.diags = var1.diags;
+            this.dims = var1.dims;
             
         else
             error('input argument must be a cell array of matrices');
