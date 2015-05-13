@@ -1,7 +1,8 @@
-# BlockBerry4m
+# BlockMatrixToolbox
 Implementation of multi-blocks data structure (matrices) for Matlab
 
-This toolbox for Matlab allows creation and manipulation of multi-blocks matrices, also called "block-matrices".
+This toolbox for Matlab allows creation and manipulation of multi-block matrices, also called
+"block-matrices".
 Block-matrices are matrices endowed with a "block-dimensions", that defines a decomposition of 
 the data into several blocks. 
 
@@ -11,8 +12,8 @@ original structure of the experiment.
 # Overview
 
 The toolbox can be downloaded by cloning the project from the following URL:
-[https://github.com/dlegland/BlockBerry4m.git](https://github.com/dlegland/BlockBerry4m.git)
-Then, simply add the path to the "blockBerry4m/blockBerry" directory to the path.
+[https://github.com/dlegland/BlockMatrixToolbox.git](https://github.com/dlegland/BlockMatrixToolbox.git)
+Then, simply add the path to the "BlockMatrixToolbox/multiBlock" directory to the path.
 
 ## Creation of Block-Matrices
 
@@ -35,7 +36,7 @@ As an alternative syntax, the BlockDimension object can be explicitley created a
     >> BD = BlockDimension({[2 2], [2 3 2]});
     >> X = BlockMatrix(data, BD);
 
-The content of a blockMatrix can be shown by using the **disp** function, or simply by omitting the 
+The content of a BlockMatrix can be shown by using the **disp** function, or simply by omitting the 
 final semi colon:
 
 	>> X
@@ -122,7 +123,8 @@ BlockDiagonal matrices can be multiplied as common block-matrices:
 # Credits
 
 BlockBerry4m is developped jointly by INRA and ONIRIS. The development started at the occasion of 
-the "CouplImSpec" project, involving also the SOLEIL synchrotron.
+the "CouplImSpec" project, involving also the SOLEIL synchrotron, and during the AI-Fruit project
+of Region "Pays-de-la-Loire"
 
 Authors:
 

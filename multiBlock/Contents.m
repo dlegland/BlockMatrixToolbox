@@ -1,4 +1,4 @@
-% BLOCKBERRY
+% BLOCKMATRIXTOOLBOX
 %
 %   Toolbox for manipulation of Block-Matrices.
 %
@@ -19,5 +19,5 @@
 %   maxbet_procedure1   - MAXBET procedure for multi-block matrices.
 %
 %   Project URL:
-%   https://github.com/dlegland/BlockBerry4m
+%   https://github.com/dlegland/BlockMatrixToolbox
 %
