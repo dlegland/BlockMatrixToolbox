@@ -33,7 +33,7 @@ methods (Abstract)
     dim = dimensionality(this)
     % Return the number of dimensions of this block matrix (usually 2)
     
-    getSize(this, varargin)
+%     getSize(this, varargin)
     % Return the size in each direction of this block matrix object
     
     n = getBlockNumber(this, varargin)
@@ -41,6 +41,9 @@ methods (Abstract)
     % number of blocks in a given dimension
     
     n = getBlockNumbers(this)
+    % Return the number of blocks in each dimension
+    
+    n = blockSize(this, varargin)
     % Return the number of blocks in each dimension
     
     block = getBlock(this, row, col)
@@ -180,8 +183,8 @@ methods
         res = BlockMatrix.zeros(dimsA);
         
         % iterate over blocks
-        for iBlock = 1:getBlockNumber(dimsA, 1)
-            for jBlock = 1:getBlockNumber(dimsA, 2)
+        for iBlock = 1:blockSize(dimsA, 1)
+            for jBlock = 1:blockSize(dimsA, 2)
                 % extract blocks of the two input block matrices
                 blockA = getBlock(this, iBlock, jBlock);
                 blockB = getBlock(that, iBlock, jBlock);
@@ -217,13 +220,13 @@ methods
         end
         
         % total number of elements should match
-        if getSize(dimsA, 2) ~= getSize(dimsB, 1)
+        if size(dimsA, 2) ~= size(dimsB, 1)
             error('number of columns of first matrix (%d) should match number of rows of second matrix (%d)', ...
-                getSize(dimsA, 2), getSize(dimsB, 1));
+                size(dimsA, 2), size(dimsB, 1));
         end
-        if getBlockNumber(dimsA, 2) ~= getBlockNumber(dimsB, 1)
+        if blockSize(dimsA, 2) ~= blockSize(dimsB, 1)
             error('number of block columns of first matrix (%d) should match number of block rows of second matrix (%d)', ...
-                getBlockNumber(dimsA, 2), getBlockNumber(dimsB, 1));
+                blockSize(dimsA, 2), blockSize(dimsB, 1));
         end
 
         % compute block dimension of the resulting block-matrix
@@ -235,8 +238,8 @@ methods
         % number of blocks to iterate
         nBlocks = getBlockNumber(dimsA, 2);
 
-        for iRow = 1:getBlockNumber(dimsA, 1)
-            for iCol = 1:getBlockNumber(dimsB, 2)
+        for iRow = 1:blockSize(dimsA, 1)
+            for iCol = 1:blockSize(dimsB, 2)
                 % Compute block (iRow, iCol), by iterating over i-th row of
                 % first matrix, and j-th column of second matrix
                 
@@ -326,7 +329,7 @@ methods
         isLoose = strcmp(get(0, 'FormatSpacing'), 'loose');
         
         % get BlockMatrix total size
-        dim = getSize(this);
+        dim = size(this);
         nRows = dim(1);
         nCols = dim(2);
         

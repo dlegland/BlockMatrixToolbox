@@ -89,7 +89,7 @@ methods
         %
  
         % allocate size for result matrix
-        siz = getSize(this);
+        siz = size(this);
         matrix = zeros(siz);
          
         % determine block dimensions along each dimension
@@ -183,6 +183,11 @@ methods
         siz = getSize(this.dims, varargin{:});
     end
     
+    function siz = blockSize(this, varargin)
+        % Return the number of blocks of this BlockDiagonal
+        siz = blockSize(this.dims, varargin{:});
+    end
+
     function n = getBlockNumber(this, varargin)
         % Return the total number of blocks in this block matrix, or the
         % number of blocks in a given dimension
@@ -201,6 +206,11 @@ end
 
 %% Overload some native methods
 methods
+    function siz = size(this, varargin)
+        % Return the size in each direction of this block matrix object
+        siz = size(this.dims, varargin{:});
+    end
+    
     function res = transpose(this)
         % transpose this BlockDiagonal Matrix
         res = ctranspose(this);

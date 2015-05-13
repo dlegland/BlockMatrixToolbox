@@ -46,7 +46,7 @@ function [q, iter, resid] = maxbet_procedure1(data, tt, tol)
 
 % total number of blocks
 % (assume block matrix is 'row-block' matrix)
-maxblo = getBlockNumber(data); 
+maxblo = blockSize(data, 2); 
 
 
 %% Normalisation of loadings
@@ -65,7 +65,7 @@ t = BlockMatrix.zeros(vdims);
 % iterate over blocks to concatenate the blocks
 for blo = 1:maxblo
     % concatenate the global matrix
-    X = cat(2, X, getBlock(data, 1, blo));
+    X = cat(2, X, data{1, blo});
     
     % normalization by blocks of the vector
     % (a voir si cela peut devenir un methode "norm" qui fait partie de la

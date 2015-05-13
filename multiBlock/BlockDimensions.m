@@ -160,22 +160,41 @@ methods
         % integer between 1 and ND
         %
         
+        siz = size(this, varargin{:});
+    end
+        
+    function siz = blockSize(this, varargin)
+        % Return the number of size blocks of this BlockDimensions object
+        %
+        % BS = blockSize(BD);
+        % returns the number of blocks in each direction as a 1-by-ND row
+        % vector.
+        %
+        % S = blockSize(BD, DIM);
+        % returns the number of blocks in the specified direction. DIM
+        % should be an integer between 1 and the dimensionality of this
+        % BlockDimensions.
+        %
+        
+        nd = length(this.parts);
+        
         if isempty(varargin)
-            % return dimension vector
-            siz = zeros(1, length(this.parts));
-            for i = 1:length(this.parts)
-                siz(i) = sum(this.parts{i});
+            % block size in each direction
+            siz = zeros(1, nd);
+            for i = 1:nd
+                siz(i) = length(this.parts{i});
             end
+            
         else
+            % block size in the specified direction(s)
             dim = varargin{1};
             siz = zeros(1, length(dim));
-            nd = dimensionality(this);
             for i = 1:length(dim)
                 if dim(i) > nd
                     error(sprintf(...
                         'dimension %d is too high, should be less than', dim(i), nd)); %#ok<SPERR>
                 end
-                siz(i) = sum(this.parts{dim(i)});
+                siz(i) = length(this.parts{dim(i)});
             end
         end
     end
@@ -222,6 +241,42 @@ end
 %% overload some native methods
 
 methods
+    function siz = size(this, varargin)
+        % Return the size (number of matrix elements) in each direction
+        %
+        % SIZ = size(BD)
+        % Returns the size as a 1-by-ND row vector, where ND is the
+        % dimensionality of this BlockDimensions.
+        %
+        % SIZ = size(BD, DIM)
+        % Returns the size in the specified dimension. DIM should be an
+        % integer between 1 and ND
+        %
+
+        % number of dimensions
+        nd = length(this.parts);
+        
+        if isempty(varargin)
+            % return dimension vector
+            siz = zeros(1, nd);
+            for i = 1:nd
+                siz(i) = sum(this.parts{i});
+            end
+            
+        else
+            % return size in the specified direction
+            dim = varargin{1};
+            siz = zeros(1, length(dim));
+            for i = 1:length(dim)
+                if dim(i) > nd
+                    error(sprintf(...
+                        'dimension %d is too high, should be less than', dim(i), nd)); %#ok<SPERR>
+                end
+                siz(i) = sum(this.parts{dim(i)});
+            end
+        end
+    end
+    
     function res = transpose(this)
         % transpose the block dimensions
         res = ctranspose(this);

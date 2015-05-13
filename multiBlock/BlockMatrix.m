@@ -242,6 +242,11 @@ methods
         siz = getSize(this.dims, varargin{:});
     end
     
+    function siz = blockSize(this, varargin)
+        % Return the number of blocks of this BlockMatrix
+        siz = blockSize(this.dims, varargin{:});
+    end
+
     function n = getBlockNumber(this, varargin)
         % Return the total number of blocks in this block matrix, or the
         % number of blocks in a given dimension
@@ -262,6 +267,12 @@ end
 %% Overload some native methods
 
 methods   
+    
+    function siz = size(this, varargin)
+        % Return the size in each direction of this block matrix object
+        siz = size(this.dims, varargin{:});
+    end
+
     function res = transpose(this)
         % transpose this BlockMatrix
         res = ctranspose(this);
@@ -301,7 +312,7 @@ methods
         for i = 1:length(varargin)
             var = varargin{i};
             
-            dataToAdd = reshape(var.data, getSize(var));
+            dataToAdd = reshape(var.data, size(var));
             if size(dataToAdd, 1) ~= size(data2, 1)
                 error('BlockMatrices should have same number of rows');
             end
@@ -317,13 +328,13 @@ methods
         % Override the vertical concatenation operator
         
         % initialize block dimension and data to that of first BlockMatrix
-        data2 = reshape(this.data, getSize(this));
+        data2 = reshape(this.data, size(this));
         dims2 = this.dims;
         
         for i = 1:length(varargin)
             var = varargin{i};
             
-            dataToAdd = reshape(var.data, getSize(var));
+            dataToAdd = reshape(var.data, size(var));
             if size(dataToAdd, 2) ~= size(data2, 2)
                 error('BlockMatrices should have same number of columns');
             end
