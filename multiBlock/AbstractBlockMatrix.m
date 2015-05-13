@@ -204,6 +204,22 @@ end
 %% Overload some arithmetic methods
 
 methods
+    function res = norm(this, varargin)
+        % Computes the Block-norm of this BlockMatrix
+        
+        % compute size of result (corresponding to the "block-size")
+        siz = blockSize(this);
+        res = zeros(siz);
+        
+        % iterate over blocks
+        for i = 1:siz(1)
+            for j = 1:siz(2)
+                % compute norm of current block
+                res(i,j) = norm(getBlock(this, i, j), varargin{:});
+            end
+        end
+    end
+    
     function res = mtimes(this, that)
         % Multiplies two instances of BlockMatrix
         % 
