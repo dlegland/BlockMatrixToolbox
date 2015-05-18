@@ -24,33 +24,30 @@ classdef AbstractBlockMatrix < handle
 % Methods in this bloc are declared for implementation in sub-classes
 
 methods (Abstract)
-    matrix = getMatrix(this)
     % Returns the content of this block-matrix as a matlab array
+    matrix = getMatrix(this)
     
-    dims = getBlockDimensions(this, dim)
     % Return the dimensions of the block in the specified dimension
+    dims = getBlockDimensions(this, dim)
     
-    dim = dimensionality(this)
     % Return the number of dimensions of this block matrix (usually 2)
-    
-%     getSize(this, varargin)
-    % Return the size in each direction of this block matrix object
-    
+    dim = dimensionality(this)
+       
+    % Return the total number of blocks in this block matrix, 
+    % or the number of blocks in a given dimension
     n = getBlockNumber(this, varargin)
-    % Return the total number of blocks in this block matrix, or the
-    % number of blocks in a given dimension
     
+    % Return the number of blocks in each dimension
     n = getBlockNumbers(this)
-    % Return the number of blocks in each dimension
     
+    % Return the number of blocks in each dimension
     n = blockSize(this, varargin)
-    % Return the number of blocks in each dimension
     
-    block = getBlock(this, row, col)
     % Returns the block content at a given position
+    block = getBlock(this, row, col)
     
-    block = setBlock(this, row, col, blockContent)
     % Updates the block content at a given position
+    block = setBlock(this, row, col, blockContent)
 
 end % end abstract methods
 
@@ -60,7 +57,7 @@ end % end abstract methods
 
 methods
     function res = blockProduct(this, that, type)
-        % compute newly defined block-matrix product of two block-matrices
+        % Compute newly defined block-matrix product of two block-matrices
         %
         % RES = blockProduct(BM1, BM1, TYPE)
         % BM1 and BM2 are two block matrices, and TYPE is a string

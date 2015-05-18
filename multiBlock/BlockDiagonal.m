@@ -180,11 +180,19 @@ methods
     
     function siz = getSize(this, varargin)
         % Return the size in each direction of this block matrix object
+        %
+        % deprecated: use size instead
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getSize'' is obsolete, use ''size'' instead');
         siz = getSize(this.dims, varargin{:});
     end
     
     function siz = blockSize(this, varargin)
-        % Return the number of blocks of this BlockDiagonal
+        % Return the number of blocks of this BlockMatrix
+        %
+        % N = blockSize(BM);
+        % N = blockSize(BM, DIM);
+        %
         siz = blockSize(this.dims, varargin{:});
     end
 
@@ -192,9 +200,10 @@ methods
         % Return the total number of blocks in this block matrix, or the
         % number of blocks in a given dimension
         %
-        % N = getBlockNumber(BM);
-        % N = getBlockNumber(BM, DIM);
-        %
+        % deprecated: use blockSize instead
+        
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getBlockNumber'' is obsolete, use ''blockSize'' instead');
         n = getBlockNumber(this.dims, varargin{:});
     end
     

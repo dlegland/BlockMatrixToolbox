@@ -1,5 +1,5 @@
 classdef BlockDimensions < handle
-%BlockDimensions  Store the block dimensions of a BlockMatrix data structure
+%BLOCKDIMENSIONS  Store the block dimensions of a BlockMatrix data structure
 %
 %   Class BlockDimensions
 %
@@ -151,14 +151,9 @@ methods
     function siz = getSize(this, varargin)
         % Return the size (number of matrix elements) in each direction
         %
-        % SIZ = getSize(BD)
-        % Returns the size as a 1-by-ND row vector, where ND is the
-        % dimensionality of this BlockDimensions.
-        %
-        % SIZ = getSize(BD,DIM)
-        % Returns the size in the specified dimension. DIM should be an
-        % integer between 1 and ND
-        %
+        % deprecated: use size instead
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getSize'' is obsolete, use ''size'' instead');
         
         siz = size(this, varargin{:});
     end
@@ -166,20 +161,17 @@ methods
     function siz = blockSize(this, varargin)
         % Return the number of size blocks of this BlockDimensions object
         %
-        % BS = blockSize(BD);
-        % returns the number of blocks in each direction as a 1-by-ND row
-        % vector.
+        % BSIZ = blockSize(BD);
+        % Return block size, as a row vector of block numbers in each
+        % direction.
         %
-        % S = blockSize(BD, DIM);
-        % returns the number of blocks in the specified direction. DIM
-        % should be an integer between 1 and the dimensionality of this
-        % BlockDimensions.
-        %
+        % BSIZ = blockSize(BD, DIM);
+        % Return the number of blocks in the specifed direction(s).
         
         nd = length(this.parts);
         
         if isempty(varargin)
-            % block size in each direction
+            % block size in each direction (return a vector)
             siz = zeros(1, nd);
             for i = 1:nd
                 siz(i) = length(this.parts{i});
@@ -187,6 +179,8 @@ methods
             
         else
             % block size in the specified direction(s)
+            % (return either a scalar, or a vector if several directions
+            % are specified)
             dim = varargin{1};
             siz = zeros(1, length(dim));
             for i = 1:length(dim)
@@ -202,9 +196,11 @@ methods
     function n = getBlockNumber(this, varargin)
         % Return the total number of blocks
         %
-        % N = getBlockNumber(BD);
-        %
+        % deprecated: use blockSize instead
         
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getBlockNumber'' is obsolete, use ''blockSize'' instead');
+       
         if isempty(varargin)
             % compute total number of blocks
             n = 1;
