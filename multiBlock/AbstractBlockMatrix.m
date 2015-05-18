@@ -335,6 +335,22 @@ end
 %% Display methods
 
 methods
+    function reveal(this)
+        % Reveal the structure of the block-Matrix in a condensed way
+        
+        % extract block partitions in each direction
+        parts1 = getBlockDimensions(this, 1);
+        parts2 = getBlockDimensions(this, 2);
+        
+        pattern = ['   ' repmat('%3d', 1, length(parts2)) '\n'];
+        fprintf(pattern, parts2.terms);
+        
+        pattern = ['%3d' repmat('  +', 1, length(parts2)) '\n'];
+        for iRow = 1:length(parts1)
+            fprintf(pattern, parts1(iRow));
+        end
+    end
+    
     function disp(this)
         % Display the content of this BlockMatrix object
         
