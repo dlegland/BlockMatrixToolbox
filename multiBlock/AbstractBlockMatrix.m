@@ -196,6 +196,19 @@ methods
     
 end
 
+%% Utility methods
+
+methods
+    function tf = isOneBlock(this)
+        % Check if a BlockMatrix is divided in one block in each direction
+        tf = all(blockSize(this) == [1 1]);
+    end
+    
+    function tf = isScalarBlock(this)
+        % Check if a BlockMatrix is divided in 1-1 blocks in each direction
+        tf = all(blockSize(this) == size(this));
+    end
+end
 
 %% Overload some arithmetic methods
 
