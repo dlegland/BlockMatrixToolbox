@@ -59,7 +59,7 @@ X = [];
 % globale, car deja accessible via la classe BlockMatrix)
 
 % create new BlockMatrix representing the normalized input vectors
-vdims = getBlockDimensions(tt);
+vdims = blockDimensions(tt);
 t = BlockMatrix.zeros(vdims);
 
 % iterate over blocks to concatenate the blocks

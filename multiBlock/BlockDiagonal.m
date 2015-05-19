@@ -93,14 +93,14 @@ methods
         matrix = zeros(siz);
          
         % determine block dimensions along each dimension
-        dims1 = getBlockDimensions(this.dims, 1);
-        dims2 = getBlockDimensions(this.dims, 2);
+        parts1 = blockPartition(this.dims, 1);
+        parts2 = blockPartition(this.dims, 2);
         
         % iterate over diagonal blocks
-        for iBlock = 1:min(length(dims1), length(dims2))
+        for iBlock = 1:min(length(parts1), length(parts2))
             block = getBlock(this, iBlock, iBlock);
-            rowInds = blockIndices(dims1, iBlock);
-            colInds = blockIndices(dims2, iBlock);
+            rowInds = blockIndices(parts1, iBlock);
+            colInds = blockIndices(parts2, iBlock);
             matrix(rowInds, colInds) = block;
         end
     end
@@ -117,8 +117,8 @@ methods
             
         else
             % determine row indices of block rows
-            parts1 = getBlockDimensions(this.dims, 1);
-            parts2 = getBlockDimensions(this.dims, 2);
+            parts1 = blockPartition(this.dims, 1);
+            parts2 = blockPartition(this.dims, 2);
             
             % returns a zeros matrix of the appropriate size
             block = zeros(parts1(row), parts2(col));
@@ -165,14 +165,32 @@ end
 
 %% Methods that depends uniquely on BlockDimensions object
 methods
-    function dims = getBlockDimensions(this, dim)
+    function dims = blockDimensions(this, varargin)
         % Return the dimensions of the block in the specified dimension
         %
-        % DIMS = getBlockDimensions(BM, IND)
+        %   DIMS = blockDimensions(BM)
+        %   Returns the block-dimension of this block matrix, as a
+        %   BlockDimension object.
+        %   
+        %   DIMS = blockDimensions(BM, IND)
+        %   Returns the BlockDimension object for the specified dimension,
+        %   as a list of integers (subject to changes in future)
         %
-        dims = getBlockDimensions(this.dims, dim);
+        if nargin == 1
+            dims = this.dims;
+        else
+            dim = varargin{1};
+            dims = getBlockDimensions(this.dims, dim);
+        end
     end
     
+    function dims = getBlockDimensions(this, varargin)
+        % deprecated: use size instead
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getBlockDimensions'' is obsolete, use ''blockDimensions'' instead');
+        dims = blockDimensions(this, varargin{:});
+    end
+       
     function dim = dimensionality(this)
         % Return the number of dimensions of this block matrix (usually 2)
         dim = dimensionality(this.dims);
@@ -196,6 +214,11 @@ methods
         siz = blockSize(this.dims, varargin{:});
     end
 
+    function n = blockNumber(this)
+        % Return the total number of blocks of this BlockMatrix
+        n = prod(blockSize(this));
+    end
+    
     function n = getBlockNumber(this, varargin)
         % Return the total number of blocks in this block matrix, or the
         % number of blocks in a given dimension
@@ -209,6 +232,10 @@ methods
     
     function n = getBlockNumbers(this)
         % Return the number of blocks in each dimension
+        % deprecated: use blockSize instead
+        
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getBlockNumbers'' is obsolete, use ''blockSize'' instead');
         n = getBlockNumbers(this.dims);
     end
 end

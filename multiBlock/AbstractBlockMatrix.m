@@ -28,14 +28,13 @@ methods (Abstract)
     matrix = getMatrix(this)
     
     % Return the dimensions of the block in the specified dimension
-    dims = getBlockDimensions(this, dim)
+    dims = blockDimensions(this, dim)
     
     % Return the number of dimensions of this block matrix (usually 2)
     dim = dimensionality(this)
        
-    % Return the total number of blocks in this block matrix, 
-    % or the number of blocks in a given dimension
-    n = getBlockNumber(this, varargin)
+    % Return the total number of blocks in this block matrix
+    n = blockNumber(this, varargin)
     
     % Return the number of blocks in each dimension
     n = getBlockNumbers(this)
@@ -170,8 +169,8 @@ methods
         % product within blocks
         
         % check conditions on dimensions
-        dimsA = getBlockDimensions(this);
-        dimsB = getBlockDimensions(that);
+        dimsA = blockDimensions(this);
+        dimsB = blockDimensions(that);
         if dimsA ~= dimsB
             error('Block dimensions of block matrices must be the same');
         end
@@ -249,7 +248,7 @@ methods
         res = BlockMatrix.zeros(dimsC);
 
         % number of blocks to iterate
-        nBlocks = getBlockNumber(dimsA, 2);
+        nBlocks = blockSize(dimsA, 2);
 
         for iRow = 1:blockSize(dimsA, 1)
             for iCol = 1:blockSize(dimsB, 2)
@@ -339,8 +338,8 @@ methods
         % Reveal the structure of the block-Matrix in a condensed way
         
         % extract block partitions in each direction
-        parts1 = getBlockDimensions(this, 1);
-        parts2 = getBlockDimensions(this, 2);
+        parts1 = blockDimensions(this, 1);
+        parts2 = blockDimensions(this, 2);
         
         pattern = ['   ' repmat('%3d', 1, length(parts2)) '\n'];
         fprintf(pattern, parts2.terms);
@@ -364,9 +363,9 @@ methods
         
         % Display information on block sizes
         disp(sprintf('BlockMatrix object with %d rows and %d columns', nRows, nCols)); %#ok<DSPS>
-        parts1 = getBlockDimensions(this.dims, 1);
+        parts1 = blockPartition(this.dims, 1);
         disp(sprintf('  row dims: %s', formatParts(parts1))); %#ok<DSPS>
-        parts2 = getBlockDimensions(this.dims, 2);
+        parts2 = blockPartition(this.dims, 2);
         disp(sprintf('  col dims: %s', formatParts(parts2))); %#ok<DSPS>
 
         if nCols < 20 && nRows < 50
@@ -394,8 +393,8 @@ methods
     
     function displayBlocks(this)
         % Display inner blocks of block matrix object
-        nRowBlocks = length(getBlockDimensions(this.dims, 1));
-        nColBlocks = length(getBlockDimensions(this.dims, 2));
+        nRowBlocks = blockSize(this.dims, 1);
+        nColBlocks = blockSize(this.dims, 2);
         
         for row = 1:nRowBlocks
             for col = 1:nColBlocks
@@ -412,8 +411,8 @@ methods
         % get Block dimensions in each dimensions,
         % for the moment as a row vector of positive integers,
         % later as an instance of IntegerPartition
-        dims1 = getBlockDimensions(this, 1);
-        dims2 = getBlockDimensions(this, 2);
+        dims1 = blockDimensions(this, 1);
+        dims2 = blockDimensions(this, 2);
         
         % get BlockMatrix total size
         nRowBlocks = length(dims1);

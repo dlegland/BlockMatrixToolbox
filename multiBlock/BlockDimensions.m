@@ -99,9 +99,9 @@ end % end constructors
 %% Methods
 
 methods
-    function p = getPartitions(this)
+    function p = partitions(this)
         % return the vector containing all the block partitions
-        % see also: getDimensions
+        % see also: dimensions
         
         % dimensionality of this BlockDimensions
         nd = length(this.parts);
@@ -121,9 +121,16 @@ methods
         end
     end
     
-    function dims = getDimensions(this)
+    function p = getPartitions(this)
+        % deprecated: use "partitions" instead
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getPartitions'' is obsolete, use ''partitions'' instead');
+        p = partitions(this);
+    end
+    
+    function dims = dimensions(this)
         % return the vector containing all the dimensions
-        % see also: getPartitions
+        % see also: partitions
         
         % dimensionality of this BlockDimensions
         nd = length(this.parts);
@@ -135,6 +142,21 @@ methods
         end
     end
     
+    function p = getDimensions(this)
+        % deprecated: use "dimensions" instead
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getDimensions'' is obsolete, use ''dimensions'' instead');
+        p = partitions(this);
+    end
+
+    function dims = blockPartition(this, dim)
+        % Return the dimensions of the block in the specified dimension
+        %
+        % DIMS = blockPartition(BD, IND)
+        % DIMS is an IntegerPartition
+        dims = this.parts{dim};
+    end
+
     function dims = getBlockDimensions(this, dim)
         % Return the dimensions of the block in the specified dimension
         %
@@ -193,6 +215,16 @@ methods
         end
     end
     
+    function n = blockNumber(this)
+        % Return the total number of blocks defined by this BlockDimensions
+        
+        % iterate over dimensions, to multiplies block numbers
+        n = 1;
+        for i = 1:length(this.parts)
+            n = n * length(this.parts{i});
+        end
+    end
+    
     function n = getBlockNumber(this, varargin)
         % Return the total number of blocks
         %
@@ -224,6 +256,10 @@ methods
         % N = getBlockNumbers(BD);
         % N is a 1-by-ND row vector
         %
+        % deprecated: use blockSize instead
+        
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getBlockNumbers'' is obsolete, use ''blockSize'' instead');
         
         nd = length(this.parts);
         n = zeros(1, nd);

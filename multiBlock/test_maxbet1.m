@@ -29,7 +29,7 @@ data = BlockMatrix(rand(4, 7), mdims);
 % display the BlockMatrix
 disp('Block matrix:');
 disp(data);
-displayData(data);
+% displayData(data);
 
 
 %% Cree une bloc-matrice pour les vecteurs
@@ -43,9 +43,9 @@ vdims = BlockDimensions({[2 3 2], 1});
 tt = BlockMatrix(rand(7, 1), vdims);
 
 % display the block-vector (transposed)
-disp('Input vector:');
-disp(tt);
-displayData(tt');
+disp('Transpose of input vector t:');
+disp(tt');
+% displayData(tt');
 
 
 %% Run the maxbet procedure
@@ -54,6 +54,6 @@ displayData(tt');
 q = maxbet_procedure1(data, tt, .01);
 
 % display the result (transposed)
-disp('Result q:');
-disp(q);
-displayData(q')
+disp('Transpose of result q:');
+disp(q');
+% displayData(q')

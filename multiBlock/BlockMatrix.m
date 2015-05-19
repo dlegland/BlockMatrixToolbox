@@ -49,8 +49,10 @@ methods (Static)
             error('Requires an instance of BlockDimensions as input');
         end
         
-        arraySize = getSize(blockDims);
-        array = zeros(arraySize);
+        % create empty array with appropriate size
+        array = zeros(size(blockDims));
+        
+        % encapsulate into BlockMatrix object
         res = BlockMatrix(array, blockDims);
     end
 end
@@ -213,23 +215,31 @@ end
 %% Methods that depends uniquely on BlockDimensions object
 
 methods
-    function dims = getBlockDimensions(this, varargin)
+    function dims = blockDimensions(this, varargin)
         % Return the block-dimensions of this block-matrix
         %
-        %   DIMS = getBlockDimensions(BM)
+        %   DIMS = blockDimensions(BM)
         %   Returns the block-dimension of this block matrix, as a
         %   BlockDimension object.
         %   
-        %   DIMS = getBlockDimensions(BM, IND)
+        %   DIMS = blockDimensions(BM, IND)
         %   Returns the BlockDimension object for the specified dimension,
         %   as a list of integers (subject to changes in future)
         %
+        
         if nargin == 1
             dims = this.dims;
         else
             dim = varargin{1};
             dims = getBlockDimensions(this.dims, dim);
         end
+    end
+
+    function dims = getBlockDimensions(this, varargin)
+        % deprecated: use size instead
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getBlockDimensions'' is obsolete, use ''blockDimensions'' instead');
+        dims = blockDimensions(this, varargin{:});
     end
     
     function dim = dimensionality(this)
@@ -246,7 +256,7 @@ methods
     end
     
     function siz = blockSize(this, varargin)
-        % Return the number of blocks of this BlockMatrix
+        % Return the number of blocks in each direction
         %
         % N = blockSize(BM);
         % N = blockSize(BM, DIM);
@@ -254,6 +264,11 @@ methods
         siz = blockSize(this.dims, varargin{:});
     end
 
+    function n = blockNumber(this)
+        % Return the total number of blocks of this BlockMatrix
+        n = prod(blockSize(this));
+    end
+    
     function n = getBlockNumber(this, varargin)
         % Return the total number of blocks in this block matrix, or the
         % number of blocks in a given dimension
@@ -267,6 +282,10 @@ methods
     
     function n = getBlockNumbers(this)
         % Return the number of blocks in each dimension
+        % deprecated: use blockSize instead
+        
+        warning('BlockMatrixToolbox:deprecated', ...
+            'method ''getBlockNumbers'' is obsolete, use ''blockSize'' instead');
         n = getBlockNumbers(this.dims);
     end
 end
@@ -290,7 +309,7 @@ methods
         % overload the transpose operator for BlockMatrix object
         
         % ensure the new matrix is a rectangular array, with the new size
-        siz = getSize(this);
+        siz = size(this);
         data2 = reshape(this.data, siz)';
         
         % transpose the BlockDimensions object, and create new BlockMatrix
