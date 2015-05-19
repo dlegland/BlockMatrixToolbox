@@ -65,10 +65,6 @@ end % end constructors
 
 %% Methods
 methods
-    function n = length(this)
-        n = length(this.terms);
-    end
-    
     function p = term(this, index)
         % returns the size of the i-th partition
         p = this.terms(index);
@@ -76,7 +72,26 @@ methods
     
     function n = integer(this)
         % returns the value of the partitioned integer
+        % deprecated: use sum instead
+        warning('deprecated: use sum instead');
         n = sum(this.terms);
+    end
+    
+    function inds = blockIndices(this, index)
+        % returns the linear indices of the elements in the i-th block
+        inds = (1:this.terms(index)) + sum(this.terms(1:index-1));
+    end
+
+    function tf = isUniform(this)
+        % returns true if all terms are equal
+        tf = all(this.terms == this.terms(1));
+    end
+end % end methods
+
+%% Overload some native methods
+methods
+    function n = length(this)
+        n = length(this.terms);
     end
     
     function n = sum(this)
@@ -85,27 +100,94 @@ methods
         n = sum(this.terms);
     end
 
-    function inds = blockIndices(this, index)
-        % returns the linear indices of the elements in the i-th block
-        inds = (1:this.terms(index)) + sum(this.terms(1:index-1));
+    function res = mtimes(this, that)
+        % multiplies a partition by a scalar integer
+        %
+        % P2 = mtimes(P1, S)
+        % P2 = mtimes(S, P1)
+        %
+        % Example
+        % P = IntegerPartition([1 2 3]);
+        % P2 = P * 3
+        % P2 = 
+        % IntegerPartition object with 3 terms
+        %   ( 3, 6, 9)
+        
+        
+        % one of the two arguments is an integer
+        % -> identify arguments
+        if isa(this, 'IntegerPartition')
+            part = this;
+            arg = that;
+        else
+            part = that;
+            arg = this;
+        end
+        
+        % check validity (scalar and integer)
+        if ~isscalar(arg) || mod(arg, 1) ~= 0
+            error('second argument must be a scalar integer');
+        end
+        
+        % create result
+        newTerms = part.terms * arg;
+        res = IntegerPartition(newTerms);
     end
-
-end % end methods
-
-%% Overload some native methods
-methods
+    
     function res = times(this, that)
         % multiplies two partitions element-wise
         %
         % P3 = times(P1, P2)
         % P3 = P1 .* P2
         
+        if ~isa(this, 'IntegerPartition') || ~isa(that, 'IntegerPartition')
+            error('Both arguments must be IntegerPartition');
+        end
+        
+        % Both arguments are instances of integer partition
+        % -> use element-wise multiplication
+        
+        % check length
         if length(this) ~= length(that)
             error('The two partitions must have the same length');
         end
         
         newTerms = this.terms .* that.terms;
         res = IntegerPartition(newTerms);
+    end
+    
+    function res = plus(this, that)
+        % adds two partitions element-wise
+        %
+        % P3 = plus(P1, P2)
+        % P3 = P1 + P2
+        
+        if isa(this, 'IntegerPartition') && isa(that, 'IntegerPartition')
+            % Both arguments are instances of integer partition
+            % -> use element-wise addition
+
+            % check length
+            if length(this) ~= length(that)
+                error('The two partitions must have the same length');
+            end
+
+            newTerms = this.terms + that.terms;
+            res = IntegerPartition(newTerms);
+        else
+            
+            % one of the two arguments is numeric
+            % -> identify arguments
+            if isa(this, 'IntegerPartition')
+                part = this;
+                arg = that;
+            else
+                part = that;
+                arg = this;
+            end
+            
+            newTerms = part.terms + arg;
+            res = IntegerPartition(newTerms);
+        end
     end
     
     function res = horzcat(this, varargin)
