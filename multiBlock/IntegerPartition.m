@@ -190,6 +190,20 @@ methods
         end
     end
     
+    function res = mrdivide(this, arg)
+        % divide partiton terms by an integer
+        
+        if ~isscalar(arg) || mod(arg, 1) ~= 0
+            error('second argument must be an integer');
+        end
+        if any(mod(this.terms, arg) ~= 0)
+            error('at least one term is not divisible by %d', arg);
+        end
+        
+        newTerms = this.terms / arg;
+        res = IntegerPartition(newTerms);
+    end
+    
     function res = horzcat(this, varargin)
         % Overload the horizontal concatenation operator
         
