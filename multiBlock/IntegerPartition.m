@@ -94,6 +94,20 @@ end % end methods
 
 %% Overload some native methods
 methods
+    function res = times(this, that)
+        % multiplies two partitions element-wise
+        %
+        % P3 = times(P1, P2)
+        % P3 = P1 .* P2
+        
+        if length(this) ~= length(that)
+            error('The two partitions must have the same length');
+        end
+        
+        newTerms = this.terms .* that.terms;
+        res = IntegerPartition(newTerms);
+    end
+    
     function res = horzcat(this, varargin)
         % Overload the horizontal concatenation operator
         
