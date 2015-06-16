@@ -238,6 +238,11 @@ methods
         % Check if a BlockMatrix is divided in 1-1 blocks in each direction
         tf = all(blockSize(this) == size(this));
     end
+    
+    function tf = isVectorBlock(this)
+        % Check if a BlockMatrix is divided in 1 block in at least one direction
+        tf = any(blockSize(this) == 1);
+    end
 end
 
 %% Overload some arithmetic methods
