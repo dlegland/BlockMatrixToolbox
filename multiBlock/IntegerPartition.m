@@ -29,6 +29,21 @@ properties
 end % end properties
 
 
+%% Static methods
+methods (Static)
+    function res = ones(n)
+        % Returns a new partition formed only by ones
+        %
+        % Example
+        % I4 = IntegerPartition.ones(4)
+        % I4 =
+        % IntegerPartition object with 4 terms
+        %     (1, 1, 1, 1)
+        res = IntegerPartition(ones(1, n));
+    end
+end
+
+
 %% Constructor
 methods
     function this = IntegerPartition(varargin)
@@ -66,24 +81,24 @@ end % end constructors
 %% Methods
 methods
     function p = term(this, index)
-        % returns the size of the i-th partition
+        % Returns the size of the i-th partition
         p = this.terms(index);
     end
     
     function n = integer(this)
-        % returns the value of the partitioned integer
+        % Returns the value of the partitioned integer
         % deprecated: use sum instead
         warning('deprecated: use sum instead');
         n = sum(this.terms);
     end
     
     function inds = blockIndices(this, index)
-        % returns the linear indices of the elements in the i-th block
+        % Returns the linear indices of the elements in the i-th block
         inds = (1:this.terms(index)) + sum(this.terms(1:index-1));
     end
 
     function tf = isUniform(this)
-        % returns true if all terms are equal
+        % Returns true if all terms are equal
         tf = all(this.terms == this.terms(1));
     end
 end % end methods
@@ -91,17 +106,18 @@ end % end methods
 %% Overload some native methods
 methods
     function n = length(this)
+        % Returns the number of terms of this partition
         n = length(this.terms);
     end
     
     function n = sum(this)
-        % returns the sum of the terms
+        % Returns the sum of the terms
         % (returns the same result as the "integer" function)
         n = sum(this.terms);
     end
 
     function res = mtimes(this, that)
-        % multiplies a partition by a scalar integer
+        % Multiplies a partition by a scalar integer
         %
         % P2 = mtimes(P1, S)
         % P2 = mtimes(S, P1)
@@ -135,7 +151,7 @@ methods
     end
     
     function res = times(this, that)
-        % multiplies two partitions element-wise
+        % Multiplies two partitions element-wise
         %
         % P3 = times(P1, P2)
         % P3 = P1 .* P2
@@ -157,7 +173,7 @@ methods
     end
     
     function res = plus(this, that)
-        % adds two partitions element-wise
+        % Adds two partitions element-wise
         %
         % P3 = plus(P1, P2)
         % P3 = P1 + P2
@@ -191,7 +207,7 @@ methods
     end
     
     function res = mrdivide(this, arg)
-        % divide partiton terms by an integer
+        % Divides partiton terms by an integer
         
         if ~isscalar(arg) || mod(arg, 1) ~= 0
             error('second argument must be an integer');
@@ -221,7 +237,7 @@ methods
     end
     
     function varargout = subsref(this, subs)
-        % returns the term of this partition at the given index
+        % Returns the term of this partition at the given index
         %
         % P = IntegerPartition([2 3 2]);
         % P(2)
@@ -275,7 +291,7 @@ methods
     end
     
     function b = eq(this, that)
-        % tests whether two compositions are the same or not
+        % Tests whether two compositions are the same or not
         
         if ~isa(this, 'IntegerPartition') || ~isa(that, 'IntegerPartition')
             b = false;
