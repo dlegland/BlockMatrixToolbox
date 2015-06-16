@@ -194,6 +194,36 @@ methods
         end
     end
     
+    function res = blockProduct_su(this, that)
+        % compute 'su'-type block matrix product
+        % It corresponds to scalar product along blocks, and usual
+        % product within blocks
+        
+        % check conditions on dimensions
+        dimsA = getBlockDimensions(this);
+        if getBlockNumber(dimsA, 1) ~= 1 || getBlockNumber(dimsA, 2) ~= 1
+            error('Block dimensions of first block matrix should equal ((1),(1))');
+        end
+        
+        % create empty result with same dims
+        res = BlockMatrix.zeros(dimsA);
+        
+        % iterate over blocks
+        for iBlock = 1:getBlockNumber(dimsA, 1)
+            for jBlock = 1:getBlockNumber(dimsA, 2)
+                % extract blocks of the two input block matrices
+                blockA = getBlock(this, iBlock, jBlock);
+                blockB = getBlock(that, iBlock, jBlock);
+                
+                % compute 'h'-product of blocks
+                resBlock = blockA .* blockB;
+                
+                % assign result
+                setBlock(res, iBlock, jBlock, resBlock);
+            end
+        end
+    end
+    
 end
 
 %% Utility methods
