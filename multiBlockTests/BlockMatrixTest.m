@@ -64,6 +64,26 @@ methods (Test)
         testCase.verifyEqual(siz2, 7);
     end
     
+    function test_blockSize(testCase)
+        data = reshape(1:28, [4 7]);
+        parts = {[2 2], [2 3 2]};
+        BM = BlockMatrix(data, parts);
+        
+        siz = blockSize(BM);
+        testCase.verifyEqual(siz(1), 2);
+        testCase.verifyEqual(siz(2), 3);
+    end
+    
+    function test_blockSize_two_outputs(testCase)
+        data = reshape(1:28, [4 7]);
+        parts = {[2 2], [2 3 2]};
+        BM = BlockMatrix(data, parts);
+        
+        [siz1, siz2] = blockSize(BM);
+        testCase.verifyEqual(siz1, 2);
+        testCase.verifyEqual(siz2, 3);
+    end
+    
     function test_cat_dir1(testCase)
         data = reshape(1:28, [4 7]);
         parts = {[2 2], [2 3 2]};

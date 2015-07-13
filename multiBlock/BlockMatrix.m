@@ -255,13 +255,19 @@ methods
         siz = size(this.dims, varargin{:});
     end
     
-    function siz = blockSize(this, varargin)
+    function varargout = blockSize(this, varargin)
         % Return the number of blocks in each direction
         %
         % N = blockSize(BM);
         % N = blockSize(BM, DIM);
+        % [N1, N2] = blockSize(BM);
         %
-        siz = blockSize(this.dims, varargin{:});
+        
+        if nargout <= 1
+            varargout = {blockSize(this.dims, varargin{:})};
+        else
+            varargout = {blockSize(this.dims, 1), blockSize(this.dims, 2)};
+        end
     end
 
     function n = blockNumber(this)
