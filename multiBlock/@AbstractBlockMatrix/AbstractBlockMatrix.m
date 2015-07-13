@@ -21,7 +21,7 @@ classdef AbstractBlockMatrix < handle
 % no properties are defined, nor constructor
 
 %% Interface Methods
-% Methods in this bloc are declared for implementation in sub-classes
+% Methods in this cell are declared for implementation in sub-classes
 
 methods (Abstract)
     % Returns the content of this block-matrix as a matlab array
@@ -94,136 +94,66 @@ methods
         end
         
         switch lower(type(1))
-            case 'u'
-                % usual product along blocks
-                % we need: blockdims1(2) == blockdims2(1)
-                
+
+            case 's'
+                % scalar product along blocks
+                % we need one scalar
                 switch lower(type(2))
-                    case 'u'
-                        res = blockProduct_uu(this, that);
-                    case 'h'
-                        error('Block Product type "uh" not yet implemented');
-                    case 'k'
-                        error('Block Product type "uk" not yet implemented');
                     case 's'
-                        error('Block Product type "us" not yet implemented');
+                        res = blockProduct_ss(this, that);
+                    case 'h'
+                        res = blockProduct_sh(this, that);
+                    case 'u'
+                        res = blockProduct_su(this, that);
+                    case 'k'
+                        res = blockProduct_sk(this, that);
                 end
                 
             case 'h'
                 % hadamard product along blocks
                 % we need: same number of blocks in each direction
-                
                 switch lower(type(2))
-                    case 'u'
-                        error('Block Product type "hu" not yet implemented');
+                    case 's'
+                        res = blockProduct_hs(this, that);
                     case 'h'
                         res = blockProduct_hh(this, that);
+                    case 'u'
+                        res = blockProduct_hu(this, that);
                     case 'k'
-                        error('Block Product type "hk" not yet implemented');
+                        res = blockProduct_hk(this, that);
+                end
+                
+            case 'u'
+                % usual product along blocks
+                % we need: blockdims1(2) == blockdims2(1)
+                switch lower(type(2))
                     case 's'
-                        error('Block Product type "hs" not yet implemented');
+                        res = blockProduct_us(this, that);
+                    case 'h'
+                        res = blockProduct_uh(this, that);
+                    case 'u'
+                        res = blockProduct_uu(this, that);
+                    case 'k'
+                        res = blockProduct_uk(this, that);
                 end
                 
             case 'k'
                 % kroenecker product along blocks
                 % we need: (what ?)
-                
                 switch lower(type(2))
-                    case 'u'
-                        error('Block Product type "ku" not yet implemented');
-                    case 'h'
-                        error('Block Product type "kh" not yet implemented');
-                    case 'k'
-                        error('Block Product type "kk" not yet implemented');
                     case 's'
-                        error('Block Product type "ks" not yet implemented');
+                        res = blockProduct_sk(this, that);
+                    case 'h'
+                        res = blockProduct_hk(this, that);
+                    case 'u'
+                        res = blockProduct_uk(this, that);
+                    case 'k'
+                        error('The ''kk''-type product is not implemented');
                 end
                 
-            case 's'
-                % scalar product along blocks
-                % we need one scalar
-                
-                switch lower(type(2))
-                    case 'u'
-                        error('Block Product type "su" not yet implemented');
-                    case 'h'
-                        error('Block Product type "sh" not yet implemented');
-                    case 'k'
-                        error('Block Product type "sk" not yet implemented');
-                    case 's'
-                        error('Block Product type "ss" not yet implemented');
-                end
         end
         
     end
-    
-    function res = blockProduct_uu(this, that)
-        % compute 'uu'-type block matrix product
-        % It corresponds to classical matrix product
-        res = mtimes(this, that);
-    end
-    
-    function res = blockProduct_hh(this, that)
-        % compute 'hh'-type block matrix product
-        % It corresponds to hadamard product along blocks, and hadamard
-        % product within blocks
-        
-        % check conditions on dimensions
-        dimsA = blockDimensions(this);
-        dimsB = blockDimensions(that);
-        if dimsA ~= dimsB
-            error('Block dimensions of block matrices must be the same');
-        end
-        
-        % create empty result with same dims
-        res = BlockMatrix.zeros(dimsA);
-        
-        % iterate over blocks
-        for iBlock = 1:blockSize(dimsA, 1)
-            for jBlock = 1:blockSize(dimsA, 2)
-                % extract blocks of the two input block matrices
-                blockA = getBlock(this, iBlock, jBlock);
-                blockB = getBlock(that, iBlock, jBlock);
-                
-                % compute 'h'-product of blocks
-                resBlock = blockA .* blockB;
-                
-                % assign result
-                setBlock(res, iBlock, jBlock, resBlock);
-            end
-        end
-    end
-    
-    function res = blockProduct_su(this, that)
-        % compute 'su'-type block matrix product
-        % It corresponds to scalar product along blocks, and usual
-        % product within blocks
-        
-        % check conditions on dimensions
-        dimsA = getBlockDimensions(this);
-        if getBlockNumber(dimsA, 1) ~= 1 || getBlockNumber(dimsA, 2) ~= 1
-            error('Block dimensions of first block matrix should equal ((1),(1))');
-        end
-        
-        % create empty result with same dims
-        res = BlockMatrix.zeros(dimsA);
-        
-        % iterate over blocks
-        for iBlock = 1:getBlockNumber(dimsA, 1)
-            for jBlock = 1:getBlockNumber(dimsA, 2)
-                % extract blocks of the two input block matrices
-                blockA = getBlock(this, iBlock, jBlock);
-                blockB = getBlock(that, iBlock, jBlock);
-                
-                % compute 'h'-product of blocks
-                resBlock = blockA .* blockB;
-                
-                % assign result
-                setBlock(res, iBlock, jBlock, resBlock);
-            end
-        end
-    end
-    
 end
 
 
