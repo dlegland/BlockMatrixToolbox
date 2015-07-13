@@ -24,6 +24,7 @@ classdef IntegerPartition < handle
 %% Properties
 properties
     % the partition of the integer
+    % given as a n-by-1 row vector of partitions
     terms;
     
 end % end properties

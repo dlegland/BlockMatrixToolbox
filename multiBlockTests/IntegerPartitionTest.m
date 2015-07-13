@@ -22,26 +22,26 @@ end % end properties
 
 %% Methods
 methods (Test)
-    function testConstructor(testCase)
+    function test_IntegerPartition_init(testCase)
          
         % create the IntegerPartition object
         terms = [2 3 2];
-        comp = IntegerPartition(terms);
+        part = IntegerPartition(terms);
         
-        testCase.verifyEqual(terms, comp.terms);
+        testCase.verifyEqual(terms, part.terms);
     end
 
-    function testCopyConstructor(testCase)
+    function test_IntegerPartition_copy(testCase)
          
         % create the IntegerPartition object
         terms = [2 3 2];
-        comp = IntegerPartition(terms);
-        copy = IntegerPartition(comp);
+        part = IntegerPartition(terms);
+        copy = IntegerPartition(part);
         
-        testCase.verifyEqual(comp, copy);
+        testCase.verifyEqual(part, copy);
     end
     
-    function testLength(testCase)
+    function test_length(testCase)
         
         % create the IntegerPartition object
         terms = [2 3 2];
@@ -50,19 +50,37 @@ methods (Test)
         testCase.verifyEqual(3, length(comp));
     end
     
-    function testEquals(testCase)
+    function test_isUniform_true(testCase)
+        
+        % create the IntegerPartition object
+        terms = [2 2 2];
+        part = IntegerPartition(terms);
+        
+        testCase.verifyTrue(isUniform(part));
+    end
+    
+    function test_isUniform_false(testCase)
         
         % create the IntegerPartition object
         terms = [2 3 2];
-        comp1 = IntegerPartition(terms);
-        terms = [2 3 2];
-        comp2 = IntegerPartition(terms);
-        terms = [2 3 1];
-        comp3 = IntegerPartition(terms);
+        part = IntegerPartition(terms);
         
-        testCase.verifyTrue(comp1 == comp2);
-        testCase.verifyTrue(comp2 == comp1);
-        testCase.verifyFalse(comp1 == comp3);
+        testCase.verifyFalse(isUniform(part));
+    end
+    
+    function test_equals(testCase)
+        
+        % create the IntegerPartition object
+        terms = [2 3 2];
+        part1 = IntegerPartition(terms);
+        terms = [2 3 2];
+        part2 = IntegerPartition(terms);
+        terms = [2 3 1];
+        part3 = IntegerPartition(terms);
+        
+        testCase.verifyTrue(part1 == part2);
+        testCase.verifyTrue(part2 == part1);
+        testCase.verifyFalse(part1 == part3);
     end
 
 end % end methods

@@ -15,7 +15,7 @@ classdef BlockMatrixTest < matlab.unittest.TestCase
 % Created: 2015-02-27,    using Matlab 8.4.0.150421 (R2014b)
 % Copyright 2015 INRA - BIA-BIBS.
 
-%% Test Functions
+%% Test Functions for constructor
 methods (Test)
     
     function test_BlockMatrix(testCase)
@@ -28,22 +28,10 @@ methods (Test)
 
         testCase.verifyEqual(isempty(BM), false);
     end
-    
-    function test_transpose(testCase)
-        % test the transpose method
-        
-        data = reshape(1:28, [4 7]);
-        parts = {[2 2], [2 3 2]};
-        BM = BlockMatrix(data, parts);
+end
 
-        BM2 = BM';
-        
-        dim1 = size(BM2, 1);
-        dim2 = size(BM2, 2);
-        testCase.verifyEqual(dim1, 7);
-        testCase.verifyEqual(dim2, 4);
-    end
-    
+%% Test Functions for basic array manipulation
+methods (Test)
     function test_size(testCase)
         data = reshape(1:28, [4 7]);
         parts = {[2 2], [2 3 2]};
@@ -82,6 +70,65 @@ methods (Test)
         [siz1, siz2] = blockSize(BM);
         testCase.verifyEqual(siz1, 2);
         testCase.verifyEqual(siz2, 3);
+    end
+    
+end
+
+%% Test Functions for testing block matrix nature
+methods (Test)
+    function test_isOneBlock_true(testCase)
+       data = reshape(1:28, [7 4])';
+       BM = BlockMatrix(data, {1, 1});
+       testCase.verifyTrue(isOneBlock(BM));
+    end
+    
+    function test_isOneBlock_false(testCase)
+        data = reshape(1:28, [7 4])';
+        BM = BlockMatrix(data, {[2 2], [2 3 2]});
+        testCase.verifyFalse(isOneBlock(BM));
+    end
+    
+    function test_isUniformBlock_true(testCase)
+       data = reshape(1:24, [6 4])';
+       BM = BlockMatrix(data, {[2 2], [3 3]});
+       testCase.verifyTrue(isUniformBlock(BM));
+    end
+    
+    function test_isUniformBlock_false(testCase)
+       data = reshape(1:24, [6 4])';
+       BM = BlockMatrix(data, {[2 2], [4 2]});
+       testCase.verifyFalse(isUniformBlock(BM));
+    end
+    
+    function test_isScalarBlock_true(testCase)
+       data = reshape(1:28, [7 4])';
+       BM = BlockMatrix(data, {ones(1,4), ones(1,7)});
+       testCase.verifyTrue(isScalarBlock(BM));
+    end
+    
+    function test_isScalarBlock_false(testCase)
+        data = reshape(1:28, [7 4])';
+        BM = BlockMatrix(data, {[2 2], [2 3 2]});
+        testCase.verifyFalse(isScalarBlock(BM));
+    end    
+end
+
+%% Test Functions for basic array manipulation
+methods (Test)
+
+    function test_transpose(testCase)
+        % test the transpose method
+        
+        data = reshape(1:28, [4 7]);
+        parts = {[2 2], [2 3 2]};
+        BM = BlockMatrix(data, parts);
+        
+        BM2 = BM';
+        
+        dim1 = size(BM2, 1);
+        dim2 = size(BM2, 2);
+        testCase.verifyEqual(dim1, 7);
+        testCase.verifyEqual(dim2, 4);
     end
     
     function test_cat_dir1(testCase)
@@ -135,6 +182,11 @@ methods (Test)
         testCase.verifyEqual(dim1, 8);
         testCase.verifyEqual(dim2, 7);
     end
+end
+
+
+%% Test Functions for overloadig arithmetic operations
+methods (Test)
     
     function test_times(testCase)
         data1 = reshape(1:28, [4 7]);
@@ -150,6 +202,10 @@ methods (Test)
         testCase.verifyEqual(data3, BM3.data, 'AbsTol', .1);
     end
 
+end
+
+%% Test Functions for array indexing
+methods (Test)
     
     function test_subsref_parens(testCase)
         BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);

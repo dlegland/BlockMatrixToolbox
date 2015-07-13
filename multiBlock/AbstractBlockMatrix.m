@@ -239,6 +239,13 @@ methods
         tf = all(blockSize(this) == size(this));
     end
     
+    function tf = isUniformBlock(this)
+        % Check if a BlockMatrix is divided in blocks with all the same size
+        unif1 = isUniform(blockDimensions(this, 1));
+        unif2 = isUniform(blockDimensions(this, 2));
+        tf = unif1 && unif2;
+    end
+    
     function tf = isVectorBlock(this)
         % Check if a BlockMatrix is divided in 1 block in at least one direction
         tf = any(blockSize(this) == 1);
