@@ -68,6 +68,42 @@ methods (Test)
         testCase.verifyFalse(isUniform(part));
     end
     
+    function test_isScalar_true(testCase)
+        
+        % create the IntegerPartition object
+        terms = 2;
+        part = IntegerPartition(terms);
+        
+        testCase.verifyTrue(isScalar(part));
+    end
+    
+    function test_isScalar_false(testCase)
+        
+        % create the IntegerPartition object
+        terms = [2 2];
+        part = IntegerPartition(terms);
+        
+        testCase.verifyFalse(isScalar(part));
+    end
+    
+    function test_isOnes_true(testCase)
+        
+        % create the IntegerPartition object
+        terms = [1 1 1];
+        part = IntegerPartition(terms);
+        
+        testCase.verifyTrue(isOnes(part));
+    end
+    
+    function test_isOnes_false(testCase)
+        
+        % create the IntegerPartition object
+        terms = [1 2 1];
+        part = IntegerPartition(terms);
+        
+        testCase.verifyFalse(isOnes(part));
+    end
+    
     function test_equals(testCase)
         
         % create the IntegerPartition object

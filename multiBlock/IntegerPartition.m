@@ -98,13 +98,29 @@ methods
         inds = (1:this.terms(index)) + sum(this.terms(1:index-1));
     end
 
+end % end methods
+
+%% boolean methods to identify the type of partition
+methods
     function tf = isUniform(this)
         % Returns true if all terms are equal
         tf = all(this.terms == this.terms(1));
     end
+    
+    function tf = isScalar(this)
+        % Returns true if the length of the partition equals one
+        tf = length(this.terms) == 1;
+    end
+    
+    function tf = isOnes(this)
+        % Returns true if all terms equal one
+        % (the method isUniform will return true as well). 
+        tf = all(this.terms == 1);
+    end
 end % end methods
 
 %% Overload some native methods
+
 methods
     function n = length(this)
         % Returns the number of terms of this partition

@@ -88,6 +88,18 @@ methods (Test)
         testCase.verifyFalse(isOneBlock(BM));
     end
     
+    function test_isScalarBlock_true(testCase)
+        data = reshape(1:28, [7 4])';
+        BM = BlockMatrix(data, {ones(1,4), ones(1,7)});
+        testCase.verifyTrue(isScalarBlock(BM));
+    end
+    
+    function test_isScalarBlock_false(testCase)
+        data = reshape(1:28, [7 4])';
+        BM = BlockMatrix(data, {[2 2], [2 3 2]});
+        testCase.verifyFalse(isScalarBlock(BM));
+    end
+    
     function test_isUniformBlock_true(testCase)
        data = reshape(1:24, [6 4])';
        BM = BlockMatrix(data, {[2 2], [3 3]});
@@ -99,18 +111,19 @@ methods (Test)
        BM = BlockMatrix(data, {[2 2], [4 2]});
        testCase.verifyFalse(isUniformBlock(BM));
     end
-    
-    function test_isScalarBlock_true(testCase)
-       data = reshape(1:28, [7 4])';
-       BM = BlockMatrix(data, {ones(1,4), ones(1,7)});
-       testCase.verifyTrue(isScalarBlock(BM));
+
+    function test_isVectorBlock_true(testCase)
+       data = reshape(1:24, [6 4])';
+       BM = BlockMatrix(data, {1, [2 2 2]});
+       testCase.verifyTrue(isVectorBlock(BM));
     end
     
-    function test_isScalarBlock_false(testCase)
-        data = reshape(1:28, [7 4])';
-        BM = BlockMatrix(data, {[2 2], [2 3 2]});
-        testCase.verifyFalse(isScalarBlock(BM));
-    end    
+    function test_isVectorBlock_false(testCase)
+       data = reshape(1:24, [6 4])';
+       BM = BlockMatrix(data, {[2 2], [4 2]});
+       testCase.verifyFalse(isVectorBlock(BM));
+    end
+
 end
 
 %% Test Functions for basic array manipulation
