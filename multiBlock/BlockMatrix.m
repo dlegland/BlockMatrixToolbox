@@ -252,7 +252,7 @@ methods
         % deprecated: use size instead
         warning('BlockMatrixToolbox:deprecated', ...
             'method ''getSize'' is obsolete, use ''size'' instead');
-        siz = getSize(this.dims, varargin{:});
+        siz = size(this.dims, varargin{:});
     end
     
     function siz = blockSize(this, varargin)
@@ -295,9 +295,18 @@ end
 
 methods   
     
-    function siz = size(this, varargin)
+    function varargout = size(this, varargin)
         % Return the size in each direction of this block matrix object
-        siz = size(this.dims, varargin{:});
+        % 
+        % SIZ = size(BM);
+        % SIZI = size(BM, DIR);
+        % [S1, S2] = size(BM);
+        
+        if nargout <= 1
+            varargout = {size(this.dims, varargin{:})};
+        else
+            varargout = {size(this.dims, 1), size(this.dims, 2)};
+        end
     end
 
     function res = transpose(this)
@@ -333,7 +342,7 @@ methods
         % Overload the horizontal concatenation operator
         
         % initialize block dimension and data to that of first BlockMatrix
-        data2 = reshape(this.data, getSize(this));
+        data2 = reshape(this.data, size(this));
         dims2 = this.dims;
         
         for i = 1:length(varargin)
