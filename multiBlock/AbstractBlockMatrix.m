@@ -226,7 +226,8 @@ methods
     
 end
 
-%% Utility methods
+
+%% Test block partition types
 
 methods
     function tf = isOneBlock(this)
@@ -251,6 +252,7 @@ methods
         tf = any(blockSize(this) == 1);
     end
 end
+
 
 %% Overload some arithmetic methods
 
