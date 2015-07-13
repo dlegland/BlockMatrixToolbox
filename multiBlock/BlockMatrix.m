@@ -297,6 +297,16 @@ methods
 end
 
 
+%% Apply functions on inner data
+methods
+    function res = fapply(fun, this, varargin)
+        % Apply any function to the inner block matrix data
+        
+        newData = fun(this.data, varargin{:});
+        res = BlockMatrix(newData, this.dims);
+    end
+end
+
 %% Overload some native methods
 
 methods   

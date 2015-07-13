@@ -259,6 +259,13 @@ end
 methods
     function res = norm(this, varargin)
         % Computes the Block-norm of this BlockMatrix
+        %
+        % NORM = norm(BM)
+        % returns the norm as a block matrix: the resulting block matrix is
+        % a scalar block matrix (all blocks have 1 row and 1 column), with
+        % the same block-size as the original matrix.
+        % 
+       
         
         % compute size of result (corresponding to the "block-size")
         siz = blockSize(this);

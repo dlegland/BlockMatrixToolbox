@@ -39,7 +39,28 @@ methods (Test)
         siz = [5 7];
         testCase.verifyEqual(siz, size(BD));
     end
-    
+end
+
+%% Test Functions for advanced computations
+methods (Test)
+    function test_fapply(testCase)
+        block1 = [1 2 3;4 5 6];
+        block2 = [7 8 ; 9 10];
+        block3 = [11 ; 12];
+        BD = BlockDiagonal({block1, block2, block3});
+        
+        BD2 = fapply(@sqrt, BD);
+        
+        testCase.verifyEqual(blockSize(BD), blockSize(BD2));
+        for i = 1:3
+            testCase.verifyEqual(sqrt(diagonalBlock(BD, i)), diagonalBlock(BD2, i));
+        end
+    end
+end
+
+
+%% Test Functions for data access and manipulation
+methods (Test)
     function test_diagonalBlock(testCase)
         block1 = [1 2 3;4 5 6];
         block2 = [7 8 ; 9 10];

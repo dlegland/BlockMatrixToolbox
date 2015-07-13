@@ -30,6 +30,22 @@ methods (Test)
     end
 end
 
+
+%% Test Functions for advanced computations
+methods (Test)
+    function test_fapply(testCase)
+        data = reshape(1:28, [7 4])';
+        parts = {[2 2], [2 3 2]};
+        BM = BlockMatrix(data, parts);
+        
+        BM2 = fapply(@sqrt, BM);
+        
+        testCase.verifyEqual(blockSize(BM), blockSize(BM2));
+        testCase.verifyEqual(sqrt(data), BM2.data);
+    end
+end
+
+
 %% Test Functions for basic array manipulation
 methods (Test)
     function test_size(testCase)
@@ -73,6 +89,7 @@ methods (Test)
     end
     
 end
+
 
 %% Test Functions for testing block matrix nature
 methods (Test)

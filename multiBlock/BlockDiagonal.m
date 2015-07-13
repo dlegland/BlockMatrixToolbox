@@ -50,10 +50,12 @@ methods
         if iscell(varargin{1})
             % blocks are given as a cell array of matrices
             this.diags = varargin{1};
+            computeDimensions();
             
         elseif all(cellfun(@isnumeric, varargin))
             % blocks are given as varargin
             this.diags = varargin;
+            computeDimensions();
             
         elseif isa(varargin{1}, 'BlockDiagonal')
             % copy constructor
@@ -65,16 +67,19 @@ methods
             error('input argument must be a cell array of matrices');
         end
         
-        % compute block dimensions
-        nDiags = length(this.diags);
-        dims1 = zeros(1, nDiags);
-        dims2 = zeros(1, nDiags);
-        for i = 1:nDiags
-            siz = size(this.diags{i});
-            dims1(i) = siz(1);
-            dims2(i) = siz(2);
+        
+        function computeDimensions()
+            % inner function that computes block dimensions
+            nDiags = length(this.diags);
+            dims1 = zeros(1, nDiags);
+            dims2 = zeros(1, nDiags);
+            for i = 1:nDiags
+                siz = size(this.diags{i});
+                dims1(i) = siz(1);
+                dims2(i) = siz(2);
+            end
+            this.dims = BlockDimensions({dims1, dims2});
         end
-        this.dims = BlockDimensions({dims1, dims2});
     end
 
 end % end constructors
@@ -249,6 +254,21 @@ methods
         n = getBlockNumbers(this.dims);
     end
 end
+
+
+%% Apply functions on inner data
+methods
+    function res = fapply(fun, this, varargin)
+        % Apply any function to the inner block matrix data
+
+        newData = cell(1, length(this.diags));
+        for i = 1:length(this.diags)
+            newData{i} = fun(this.diags{i}, varargin{:});
+        end
+        res = BlockDiagonal(newData);
+    end
+end
+
 
 %% Overload some native methods
 methods
