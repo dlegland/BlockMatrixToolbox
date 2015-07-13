@@ -258,6 +258,29 @@ end
 
 %% Apply functions on inner data
 methods
+    function res = norm(this, varargin)
+        % Computes the Block-norm of this BlockDiagonal
+        %
+        % NORM = norm(BM)
+        % returns the norm as a block diagonal: the resulting block matrix
+        % is a scalar block diagonal matrix (all blocks have 1 row and 1
+        % column), with the same block-size as the original matrix.
+        % 
+        
+        % compute size of result 
+        nDiags = length(this.diags);
+        resNorm = cell(1, nDiags);
+        
+        % iterate over diagonal blocks
+        for i = 1:nDiags
+            % compute norm of current block
+            resNorm{i} = norm(this.diags{i}, varargin{:});
+        end
+        
+        % convert to block-diagonal instance
+        res = BlockDiagonal(resNorm);
+    end
+    
     function res = fapply(fun, this, varargin)
         % Apply any function to the inner block matrix data
 

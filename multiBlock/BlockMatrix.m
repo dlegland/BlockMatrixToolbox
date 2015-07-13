@@ -299,6 +299,29 @@ end
 
 %% Apply functions on inner data
 methods
+    function res = norm(this, varargin)
+        % Computes the Block-norm of this BlockMatrix
+        %
+        % NORM = norm(BM)
+        % returns the norm as a block matrix: the resulting block matrix is
+        % a scalar block matrix (all blocks have 1 row and 1 column), with
+        % the same block-size as the original matrix.
+        % 
+        
+        % compute size of result (corresponding to the "block-size")
+        siz = blockSize(this);
+        res = scalarBlock(zeros(siz));
+        
+        % iterate over blocks
+        for i = 1:siz(1)
+            for j = 1:siz(2)
+                % compute norm of current block
+                blockNorm = norm(getBlock(this, i, j), varargin{:});
+                setBlock(res, i, j, blockNorm);
+            end
+        end
+    end
+    
     function res = fapply(fun, this, varargin)
         % Apply any function to the inner block matrix data
         

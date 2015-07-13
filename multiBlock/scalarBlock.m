@@ -4,7 +4,7 @@ function BM = scalarBlock(mat)
 %   BM = scalarBlock(MAT)
 %
 %   Example
-%   BM = oneBlock(magic(3));
+%   BM = scalarBlock(magic(3));
 %   reveal(BM)
 %          1  1  1
 %       1  +  +  +

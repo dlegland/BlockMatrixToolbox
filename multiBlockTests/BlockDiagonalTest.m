@@ -43,6 +43,20 @@ end
 
 %% Test Functions for advanced computations
 methods (Test)
+    function test_norm(testCase)
+        diags = {[1 2;3 4], [5 6 7;8 9 10], [11;12]};
+        BM = BlockDiagonal(diags);
+        
+        BM2 = norm(BM);
+
+        % result should be an instance of BlockDiagonal
+        testCase.assertTrue(isa(BM2, 'BlockDiagonal'));
+        % block size of result should match block size of input
+        testCase.verifyEqual(blockSize(BM), blockSize(BM2));
+        % result should be a scalar block matrix (all blocks are 1-by-1).
+        testCase.verifyTrue(isScalarBlock(BM2));
+    end
+    
     function test_fapply(testCase)
         block1 = [1 2 3;4 5 6];
         block2 = [7 8 ; 9 10];

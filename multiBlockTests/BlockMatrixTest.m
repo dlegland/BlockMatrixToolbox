@@ -33,6 +33,21 @@ end
 
 %% Test Functions for advanced computations
 methods (Test)
+    function test_norm(testCase)
+        data = reshape(1:28, [7 4])';
+        parts = {[2 2], [2 3 2]};
+        BM = BlockMatrix(data, parts);
+        
+        BM2 = norm(BM);
+
+        % result should be an instance of BlockMatrix
+        testCase.assertTrue(isa(BM2, 'BlockMatrix'));
+        % block size of result should match block size of input
+        testCase.verifyEqual(blockSize(BM), blockSize(BM2));
+        % result should be a scalar block matrix (all blocks are 1-by-1).
+        testCase.verifyTrue(isScalarBlock(BM2));
+    end
+    
     function test_fapply(testCase)
         data = reshape(1:28, [7 4])';
         parts = {[2 2], [2 3 2]};
