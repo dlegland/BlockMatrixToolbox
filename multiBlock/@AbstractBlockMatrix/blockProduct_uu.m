@@ -25,6 +25,6 @@ end
 
 % create X
 dimsX = BlockDimensions({blockDimensions(A, 1), blockDimensions(B, 2)});
-matA = getmatrix(A);
-matB = asmatrix(B);
-X = blockMatrix(matA*matB, dimsX);
+matA = getMatrix(A);
+matB = getMatrix(B);
+X = BlockMatrix(matA*matB, dimsX);

@@ -187,6 +187,141 @@ end
 %% Overload some arithmetic methods
 
 methods    
+    function res = plus(this, that)
+        % addition of two block-matrices
+        % 
+        % usage:
+        %   X = A + B
+        
+        sizA = size(this);
+        sizB = size(that);
+        if any(sizA ~= sizB) && ~(prod(sizA)==1 || prod(sizB)==1)
+            error('Both inputs must have same size, or one must be scalar');
+        end
+        
+        dataA = this;
+        dataB = that;
+        parent = [];
+        
+        if isa(this, 'AbstractBlockMatrix')
+            dataA = this.data;
+            parent = this;
+        end
+        
+        if isa(that, 'AbstractBlockMatrix')
+            dataB = that.data;
+            parent = that;
+        end
+       
+        % compute data of resulting matrix
+        dataX = dataA + dataB;
+        
+        % create resulting object
+        dimsX = blockDimensions(parent);
+        res = BlockMatrix(dataX, dimsX);
+    end
+    
+    function res = minus(this, that)
+        % subtraction of two block-matrices
+        % 
+        % usage:
+        %   X = A - B
+        
+        sizA = size(this);
+        sizB = size(that);
+        if any(sizA ~= sizB) && ~(prod(sizA)==1 || prod(sizB)==1)
+            error('Both inputs must have same size, or one must be scalar');
+        end
+        
+        dataA = this;
+        dataB = that;
+        parent = [];
+        
+        if isa(this, 'AbstractBlockMatrix')
+            dataA = this.data;
+            parent = this;
+        end
+        
+        if isa(that, 'AbstractBlockMatrix')
+            dataB = that.data;
+            parent = that;
+        end
+       
+        % compute data of resulting matrix
+        dataX = dataA - dataB;
+        
+        % create resulting object
+        dimsX = blockDimensions(parent);
+        res = BlockMatrix(dataX, dimsX);
+    end
+    
+    function res = times(this, that)
+        % subtraction of two block-matrices
+        % 
+        % usage:
+        %   X = A .* B
+        sizA = size(this);
+        sizB = size(that);
+        if any(sizA ~= sizB) && ~(prod(sizA)==1 || prod(sizB)==1)
+            error('Both inputs must have same size, or one must be scalar');
+        end
+        
+        dataA = this;
+        dataB = that;
+        parent = [];
+        
+        if isa(this, 'AbstractBlockMatrix')
+            dataA = this.data;
+            parent = this;
+        end
+        
+        if isa(that, 'AbstractBlockMatrix')
+            dataB = that.data;
+            parent = that;
+        end
+       
+        % compute data of resulting matrix
+        dataX = dataA .* dataB;
+        
+        % create resulting object
+        dimsX = blockDimensions(parent);
+        res = BlockMatrix(dataX, dimsX);
+    end
+    
+    function res = rdivide(this, that)
+        % division of two block-matrices
+        % 
+        % usage:
+        %   X = A ./ B
+        
+        sizA = size(this);
+        sizB = size(that);
+        if any(sizA ~= sizB) && ~(prod(sizA)==1 || prod(sizB)==1)
+            error('Both inputs must have same size, or one must be scalar');
+        end
+        
+        dataA = this;
+        dataB = that;
+        parent = [];
+        
+        if isa(this, 'AbstractBlockMatrix')
+            dataA = this.data;
+            parent = this;
+        end
+        
+        if isa(that, 'AbstractBlockMatrix')
+            dataB = that.data;
+            parent = that;
+        end
+       
+        % compute data of resulting matrix
+        dataX = dataA ./ dataB;
+        
+        % create resulting object
+        dimsX = blockDimensions(parent);
+        res = BlockMatrix(dataX, dimsX);
+    end
+    
     function res = mtimes(this, that)
         % Multiplies two instances of BlockMatrix
         % 

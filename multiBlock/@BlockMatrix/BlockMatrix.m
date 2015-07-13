@@ -323,7 +323,7 @@ methods
 end
 
 
-%% Apply functions on inner data
+%% Overload some arithmetic operators
 methods
     function res = norm(this, varargin)
         % Computes the Block-norm of this BlockMatrix
@@ -356,7 +356,8 @@ methods
     end
 end
 
-%% Overload some native methods
+
+%% Overload array manipulation methods
 
 methods   
     
@@ -446,8 +447,12 @@ methods
         
         res = BlockMatrix(data2, dims2);
     end
+end    
     
-    
+
+%% Overload array indexing methods
+
+methods
     function varargout = subsasgn(this, subs, value)
         % Override subsasgn function for BlockMatrix objects
         
