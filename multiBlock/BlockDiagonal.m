@@ -160,6 +160,16 @@ methods
         % extract data element corresponding to block. 
         this.diags{row} = blockData;
     end
+    
+    function block = diagonalBlock(this, ind)
+        % Return the block at a specified index on the diagonal
+        block = this.diags{ind};
+    end
+    
+    function blocks = diagonalBlocks(this)
+        % Return the list of blocks on the diagonal
+        blocks = this.diags;
+    end
 end
 
 
