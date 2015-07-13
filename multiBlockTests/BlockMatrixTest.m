@@ -18,7 +18,7 @@ classdef BlockMatrixTest < matlab.unittest.TestCase
 %% Test Functions
 methods (Test)
     
-    function testBlockMatrix(testCase)
+    function test_BlockMatrix(testCase)
         % test for constructor
 
         % create the BlockMatrix object
@@ -29,7 +29,7 @@ methods (Test)
         testCase.verifyEqual(isempty(BM), false);
     end
     
-    function testTranspose(testCase)
+    function test_transpose(testCase)
         % test the transpose method
         
         data = reshape(1:28, [4 7]);
@@ -38,65 +38,85 @@ methods (Test)
 
         BM2 = BM';
         
-        dim1 = getSize(BM2, 1);
-        dim2 = getSize(BM2, 2);
+        dim1 = size(BM2, 1);
+        dim2 = size(BM2, 2);
         testCase.verifyEqual(dim1, 7);
         testCase.verifyEqual(dim2, 4);
     end
     
-    function testCatDir1(testCase)
+    function test_size(testCase)
+        data = reshape(1:28, [4 7]);
+        parts = {[2 2], [2 3 2]};
+        BM = BlockMatrix(data, parts);
+        
+        siz = size(BM);
+        testCase.verifyEqual(siz(1), 4);
+        testCase.verifyEqual(siz(2), 7);
+    end
+    
+    function test_size_two_outputs(testCase)
+        data = reshape(1:28, [4 7]);
+        parts = {[2 2], [2 3 2]};
+        BM = BlockMatrix(data, parts);
+        
+        [siz1, siz2] = size(BM);
+        testCase.verifyEqual(siz1, 4);
+        testCase.verifyEqual(siz2, 7);
+    end
+    
+    function test_cat_dir1(testCase)
         data = reshape(1:28, [4 7]);
         parts = {[2 2], [2 3 2]};
         BM = BlockMatrix(data, parts);
 
         BM2 = cat(1, BM, BM);
 
-        dim1 = getSize(BM2, 1);
-        dim2 = getSize(BM2, 2);
+        dim1 = size(BM2, 1);
+        dim2 = size(BM2, 2);
         testCase.verifyEqual(dim1, 8);
         testCase.verifyEqual(dim2, 7);
     end
     
-    function testCatDir2(testCase)
+    function test_cat_dir2(testCase)
         data = reshape(1:28, [4 7]);
         parts = {[2 2], [2 3 2]};
         BM = BlockMatrix(data, parts);
 
         BM2 = cat(2, BM, BM);
 
-        dim1 = getSize(BM2, 1);
-        dim2 = getSize(BM2, 2);
+        dim1 = size(BM2, 1);
+        dim2 = size(BM2, 2);
         testCase.verifyEqual(dim1, 4);
         testCase.verifyEqual(dim2, 14);
     end
     
-    function testHorzcat(testCase)
+    function test_horzcat(testCase)
         data = reshape(1:28, [4 7]);
         parts = {[2 2], [2 3 2]};
         BM = BlockMatrix(data, parts);
 
         BM2 = [BM BM];
 
-        dim1 = getSize(BM2, 1);
-        dim2 = getSize(BM2, 2);
+        dim1 = size(BM2, 1);
+        dim2 = size(BM2, 2);
         testCase.verifyEqual(dim1, 4);
         testCase.verifyEqual(dim2, 14);
     end
     
-    function testVertcat(testCase)
+    function test_vertcat(testCase)
         data = reshape(1:28, [4 7]);
         parts = {[2 2], [2 3 2]};
         BM = BlockMatrix(data, parts);
 
         BM2 = [BM ; BM];
 
-        dim1 = getSize(BM2, 1);
-        dim2 = getSize(BM2, 2);
+        dim1 = size(BM2, 1);
+        dim2 = size(BM2, 2);
         testCase.verifyEqual(dim1, 8);
         testCase.verifyEqual(dim2, 7);
     end
     
-    function testTimes(testCase)
+    function test_times(testCase)
         data1 = reshape(1:28, [4 7]);
         parts1 = {[2 2], [2 3 2]};
         BM1 = BlockMatrix(data1, parts1);

@@ -26,7 +26,7 @@ methods (Test)
         BD = BlockDiagonal({rand(2, 3), rand(2, 2), rand(1, 2)});
         
         siz = [5 7];
-        testCase.verifyEqual(siz, getSize(BD));
+        testCase.verifyEqual(siz, size(BD));
     end
     
     function testCopyConstructor(testCase)
@@ -37,7 +37,7 @@ methods (Test)
         BD = BlockDiagonal(BD0);
         
         siz = [5 7];
-        testCase.verifyEqual(siz, getSize(BD));
+        testCase.verifyEqual(siz, size(BD));
     end
     
 end % end methods
