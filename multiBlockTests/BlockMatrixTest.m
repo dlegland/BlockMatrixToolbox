@@ -110,7 +110,7 @@ end
 methods (Test)
     function test_isOneBlock_true(testCase)
        data = reshape(1:28, [7 4])';
-       BM = BlockMatrix(data, {1, 1});
+       BM = BlockMatrix(data, {4, 7});
        testCase.verifyTrue(isOneBlock(BM));
     end
     
@@ -146,7 +146,7 @@ methods (Test)
 
     function test_isVectorBlock_true(testCase)
        data = reshape(1:24, [6 4])';
-       BM = BlockMatrix(data, {1, [2 2 2]});
+       BM = BlockMatrix(data, {4, [2 2 2]});
        testCase.verifyTrue(isVectorBlock(BM));
     end
     

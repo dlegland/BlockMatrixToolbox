@@ -30,12 +30,11 @@ classdef BlockMatrix < AbstractBlockMatrix
 
 %% Properties
 properties
-    % contains the dimensions of blocs in each dimension, as a
+    % contains the dimensions of blocks in each dimension, as a
     % BlockDimensions object
     dims;
     
-    % contains the data, as a vector or an array. 
-    % Idea is to access only via linear indexing
+    % contains the data, as an array. 
     data;
     
 end % end properties
@@ -86,9 +85,9 @@ methods
                 error('first argument must be a matrix or a block matrix');
             end
             
-            % second argument represents block dimension. This can be
-            % either a BlockDimension object, or a cell array containing
-            % the block sizes in each dimension.
+            % Second argument represents block dimension. It can be either
+            % a BlockDimension object, or a cell array containing the block
+            % sizes in each dimension. 
             var2 = varargin{2};
             if isa(var2, 'BlockDimensions')
                 this.dims = var2;
@@ -97,6 +96,9 @@ methods
             else
                 error('second argument must be a cell array or a BlockDimensions object');
             end
+
+            % also checks data and block dimensions match together
+            checkDimensionsValidity();
             
         elseif nargin == 3
             % get data array and check validity
@@ -110,6 +112,9 @@ methods
             coldims = IntegerPartition(varargin{3});
             this.dims = BlockDimensions({rowdims, coldims});
             
+            % also checks data and block dimensions match together
+            checkDimensionsValidity();
+            
         elseif nargin == 1
             % copy constructor, from another BlockMatrix object
             if isa(varargin{1}, 'BlockMatrix')
@@ -117,18 +122,39 @@ methods
                 this.data = bm.data;
                 this.dims = bm.dims;
             else
-                error('copy constructor requires a block matrix object');
+                error('copy constructor requires another BlockMatrix object');
             end
             
         elseif isempty(varargin)
             % empty constructor: populate with default data
-            this.data = 1:28;
+            this.data = reshape(1:28, [7 4])';
             this.dims = BlockDimensions({[2 2], [2 3 2]});
             
         else
             error('Requires two or three input arguments');
         end
 
+        
+        function checkDimensionsValidity()
+            % checks that data and block dimensions match together
+
+            % string pattern for error message
+            pattern = 'Input data have %1$d %3$s, but block dimensions specifies %2$d %3$s';
+
+            % check rows
+            siz1 = size(this.data, 1);
+            bdim1 = sum(this.dims{1});
+            if siz1 ~= bdim1
+                error(pattern, siz1, bdim1, 'rows');
+            end
+            
+            % check columns
+            siz2 = size(this.data, 2);
+            bdim2 = sum(this.dims{2});
+            if siz2 ~= bdim2
+                error(pattern, siz2, bdim2, 'columns');
+            end
+        end
     end
 
 end % end constructors
