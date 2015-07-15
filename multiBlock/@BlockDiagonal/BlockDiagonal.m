@@ -33,14 +33,36 @@ properties
     
 end % end properties
 
+%% Static methods
+methods (Static)
+    function BM = scalarBlock(vect)
+        %SCALARBLOCK  Converts a vector to a BlockDiagonal with only scalar blocks
+        %
+        %   BDM = scalarBlock(VECT)
+        %
+        %   Example
+        %   BDM = BlockDiagonal.scalarBlock([1 2 3]);
+        %   reveal(BDM)
+        %          1  1  1
+        %       1  +  +  +
+        %       1  +  +  +
+        %       1  +  +  +
+        %
+        %   See also
+        %     BlockDiagonal, BlockMatrix.scalarBlock
+        
+        BM = BlockDiagonal(num2cell(vect));
+    end
+end
+
 
 %% Constructor
 methods
     function this = BlockDiagonal(varargin)
         % Constructor for BlockDiagonal class
         %
-        %   diagos = {rand(2,3), rand(2,2), rand(3, 2)};
-        %   BD = BlockDiagonal(diagos);
+        %   diagBlocks = {rand(2,3), rand(2,2), rand(3, 2)};
+        %   BD = BlockDiagonal(diagBlocks);
         %
         
         if nargin == 0

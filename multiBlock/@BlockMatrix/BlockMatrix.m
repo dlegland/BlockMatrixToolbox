@@ -54,6 +54,46 @@ methods (Static)
         % encapsulate into BlockMatrix object
         res = BlockMatrix(array, blockDims);
     end
+    
+    function BM = oneBlock(mat)
+        %ONEBLOCK Converts a matrix to a 1-1 BlockMatrix
+        %
+        %   output = oneBlock(input)
+        %
+        %   Example
+        %   BM = BlockMatrix.oneBlock(magic(3));
+        %   reveal(BM)
+        %       3
+        %    3  +
+        %
+        %   See also
+        %     BlockMatrix, scalarBlock
+        
+        n = size(mat, 1);
+        p = size(mat, 2);
+        BM = BlockMatrix(mat, n, p);
+    end
+    
+    function BM = scalarBlock(mat)
+        %SCALARBLOCK  Converts a matrix to a BlockMatrix with only scalar blocks
+        %
+        %   BM = scalarBlock(MAT)
+        %
+        %   Example
+        %   BM = BlockMatrix.scalarBlock(magic(3));
+        %   reveal(BM)
+        %          1  1  1
+        %       1  +  +  +
+        %       1  +  +  +
+        %       1  +  +  +
+        %
+        %   See also
+        %     BlockMatrix, oneBlock
+        
+        n = size(mat, 1);
+        p = size(mat, 2);
+        BM = BlockMatrix(mat, ones(1, n), ones(1, p));
+    end
 end
 
 %% Constructor
