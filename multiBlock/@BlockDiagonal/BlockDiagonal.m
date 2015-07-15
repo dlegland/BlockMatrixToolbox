@@ -1,4 +1,4 @@
-classdef BlockDiagonal < AbstractBlockMatrix
+classdef (InferiorClasses = {?AbstractBlockMatrix}) BlockDiagonal <  AbstractBlockMatrix
 %BLOCKDIAGONAL Block Matrix with zeros blocks except on diagonal blocks
 %
 %   BlockDiagonal objects are constructed from the list of blocks located
