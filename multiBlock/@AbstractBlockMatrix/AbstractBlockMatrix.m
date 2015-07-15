@@ -468,7 +468,8 @@ methods
         nCols = dim(2);
         
         % Display information on block sizes
-        disp(sprintf('BlockMatrix object with %d rows and %d columns', nRows, nCols)); %#ok<DSPS>
+        className = class(this);
+        disp(sprintf('%s object with %d rows and %d columns', className, nRows, nCols)); %#ok<DSPS>
         parts1 = blockPartition(this.dims, 1);
         disp(sprintf('  row dims: %s', formatParts(parts1))); %#ok<DSPS>
         parts2 = blockPartition(this.dims, 2);
