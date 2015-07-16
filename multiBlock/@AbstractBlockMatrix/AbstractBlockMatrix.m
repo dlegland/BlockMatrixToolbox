@@ -152,7 +152,36 @@ methods
                 end
                 
         end
+    end
+    
+    function nr = blockRows(this)
+        % return the number of block rows
+        %
+        % Example:
+        % BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
+        % blockRows(BM)
+        % ans = 
+        %     2
+        %
+        % See also
+        %    blockSize, blockCols
         
+        nr = blockSize(this, 1);
+    end
+    
+    function nc = blockCols(this)
+        % return the number of block columns
+        %
+        % Example:
+        % BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
+        % blockCols(BM)
+        % ans = 
+        %     3
+        %
+        % See also
+        %    blockSize, blockRows
+        
+        nc = blockSize(this, 2);
     end
 end
 
