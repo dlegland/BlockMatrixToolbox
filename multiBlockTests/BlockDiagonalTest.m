@@ -43,11 +43,11 @@ end
 
 %% Test Functions for advanced computations
 methods (Test)
-    function test_norm(testCase)
+    function test_blockNorm(testCase)
         diags = {[1 2;3 4], [5 6 7;8 9 10], [11;12]};
         BM = BlockDiagonal(diags);
         
-        BM2 = norm(BM);
+        BM2 = blockNorm(BM);
 
         % result should be an instance of BlockDiagonal
         testCase.assertTrue(isa(BM2, 'BlockDiagonal'));

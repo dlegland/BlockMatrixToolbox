@@ -365,10 +365,10 @@ end
 
 %% Overload some arithmetic operators
 methods
-    function res = norm(this, varargin)
+    function res = blockNorm(this, varargin)
         % Computes the Block-norm of this BlockMatrix
         %
-        % NORM = norm(BM)
+        % NORM = blockNorm(BM)
         % returns the norm as a block matrix: the resulting block matrix is
         % a scalar block matrix (all blocks have 1 row and 1 column), with
         % the same block-size as the original matrix.

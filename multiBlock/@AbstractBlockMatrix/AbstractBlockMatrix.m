@@ -215,7 +215,16 @@ end
 
 %% Overload some arithmetic methods
 
-methods    
+methods
+    function res = norm(this, varargin)
+        % Computes the norm of this BlockMatrix
+        %
+        % NORM = norm(BM)
+        % returns the norm as a scalar
+        % 
+        res = norm(getMatrix(this), varargin{:});
+    end
+
     function res = plus(this, that)
         % addition of two block-matrices
         % 

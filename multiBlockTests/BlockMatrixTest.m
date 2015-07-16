@@ -33,12 +33,12 @@ end
 
 %% Test Functions for advanced computations
 methods (Test)
-    function test_norm(testCase)
+    function test_blockNorm(testCase)
         data = reshape(1:28, [7 4])';
         parts = {[2 2], [2 3 2]};
         BM = BlockMatrix(data, parts);
         
-        BM2 = norm(BM);
+        BM2 = blockNorm(BM);
 
         % result should be an instance of BlockMatrix
         testCase.assertTrue(isa(BM2, 'BlockMatrix'));

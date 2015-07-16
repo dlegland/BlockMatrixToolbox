@@ -280,10 +280,10 @@ end
 
 %% Apply functions on inner data
 methods
-    function res = norm(this, varargin)
+    function res = blockNorm(this, varargin)
         % Computes the Block-norm of this BlockDiagonal
         %
-        % NORM = norm(BM)
+        % NORM = blockNorm(BM)
         % returns the norm as a block diagonal: the resulting block matrix
         % is a scalar block diagonal matrix (all blocks have 1 row and 1
         % column), with the same block-size as the original matrix.
@@ -302,7 +302,7 @@ methods
         % convert to block-diagonal instance
         res = BlockDiagonal(resNorm);
     end
-    
+        
     function res = fapply(fun, this, varargin)
         % Apply any function to the inner block matrix data
 
@@ -313,7 +313,7 @@ methods
         res = BlockDiagonal(newData);
     end
     
-        function reveal(this)
+    function reveal(this)
         % Reveal the structure of the block-Diagonal Matrix in a condensed way
         
         % extract block partitions in each direction
