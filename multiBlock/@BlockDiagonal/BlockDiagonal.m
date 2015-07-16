@@ -312,6 +312,27 @@ methods
         end
         res = BlockDiagonal(newData);
     end
+    
+        function reveal(this)
+        % Reveal the structure of the block-Diagonal Matrix in a condensed way
+        
+        % extract block partitions in each direction
+        parts1 = blockDimensions(this, 1);
+        parts2 = blockDimensions(this, 2);
+        
+        % display first line with size of column blocks
+        pattern = ['   ' repmat('%3d', 1, length(parts2)) '\n'];
+        fprintf(pattern, parts2.terms);
+        
+        % display each block-row, with '0' for non-diagonal blocks
+        pattern = '%3d%s\n';
+        for iRow = 1:length(parts1)
+            str1 = repmat('  0', 1, max(0, iRow - 1));
+            str2 = repmat('  0', 1, max(0, length(parts1) - iRow));
+            fprintf(pattern, parts1(iRow), [str1 '  +' str2]);
+        end
+    end
+
 end
 
 
