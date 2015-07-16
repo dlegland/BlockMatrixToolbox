@@ -101,8 +101,19 @@ methods
     function this = BlockMatrix(varargin)
         % Constructor for BlockMatrix class
         %
-        %   data = reshape(1:28, [4 7]);
+        %   BM = BlockMatrix(DATA, DIMS);
+        %   Creates a new BlockMatrix instance from a data array and a
+        %   BlockDimensions object.
+        %   BM = BlockMatrix(DATA, DIMS1, DIMS2);
+        %   Creates a new BlockMatrix instance from a data array and the
+        %   block dimensions for rows and columns.
+        %   BM = BlockMatrix(BM0);
+        %   Creates a new BlockMatrix instance from an existing BlockMatrix
+        %   that can also be a BlockDiagonal object.
+        %   
+        %   Examples:
         %   % construction from a cell array of integer partitions
+        %   data = reshape(1:28, [7 4])';
         %   BM = BlockMatrix(data, {[2 2], [2 3 2]});
         %   % construction from integer partitions in each direction
         %   BM = BlockMatrix(data, [2 2], [2 3 2]);
@@ -117,10 +128,10 @@ methods
                 % initialisation constructor
                 this.data = varargin{1};
                 
-            elseif isa(varargin{1}, 'BlockMatrix')
+            elseif isa(varargin{1}, 'AbstractBlockMatrix')
                 % copy constructor
                 bm = varargin{1};
-                this.data = bm.data;
+                this.data = getMatrix(bm);
             else
                 error('first argument must be a matrix or a block matrix');
             end
@@ -157,10 +168,10 @@ methods
             
         elseif nargin == 1
             % copy constructor, from another BlockMatrix object
-            if isa(varargin{1}, 'BlockMatrix')
+            if isa(varargin{1}, 'AbstractBlockMatrix')
                 bm = varargin{1};
-                this.data = bm.data;
-                this.dims = bm.dims;
+                this.data = getMatrix(bm);
+                this.dims = blockDimensions(bm);
             else
                 error('copy constructor requires another BlockMatrix object');
             end
@@ -286,11 +297,11 @@ methods
         %
         %   DIMS = blockDimensions(BM)
         %   Returns the block-dimension of this block matrix, as a
-        %   BlockDimension object.
+        %   BlockDimensions object.
         %   
         %   DIMS = blockDimensions(BM, IND)
-        %   Returns the BlockDimension object for the specified dimension,
-        %   as a list of integers (subject to changes in future)
+        %   Returns the Block Dimension for the specified dimension, as an
+        %   instance of IntegerPartition. 
         %
         
         if nargin == 1

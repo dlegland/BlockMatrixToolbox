@@ -85,6 +85,21 @@ methods
             this.diags = var1.diags;
             this.dims = var1.dims;
             
+        elseif isa(varargin{1}, 'AbstractBlockMatrix')
+            % copy constructor from another type of BlockMatrix object
+            bm = varargin{1};
+            blocks = cell(1, blockNumber(bm));
+            iBlock = 0;
+            for i = 1:blockSize(bm, 1)
+                for j = 1:blockSize(bm, 2)
+                    iBlock = iBlock + 1;
+                    blocks{iBlock} = getBlock(bm, i, j);
+                end
+            end
+            
+            this.diags = blocks;
+            computeDimensions();
+
         else
             error('input argument must be a cell array of matrices');
         end
@@ -95,10 +110,10 @@ methods
             nDiags = length(this.diags);
             dims1 = zeros(1, nDiags);
             dims2 = zeros(1, nDiags);
-            for i = 1:nDiags
-                siz = size(this.diags{i});
-                dims1(i) = siz(1);
-                dims2(i) = siz(2);
+            for iDiag = 1:nDiags
+                siz = size(this.diags{iDiag});
+                dims1(iDiag) = siz(1);
+                dims2(iDiag) = siz(2);
             end
             this.dims = BlockDimensions({dims1, dims2});
         end
@@ -207,11 +222,11 @@ methods
         %
         %   DIMS = blockDimensions(BM)
         %   Returns the block-dimension of this block matrix, as a
-        %   BlockDimension object.
+        %   BlockDimensions object.
         %   
         %   DIMS = blockDimensions(BM, IND)
-        %   Returns the BlockDimension object for the specified dimension,
-        %   as a list of integers (subject to changes in future)
+        %   Returns the BlockDimension for the specified dimension,as an
+        %   instance of IntegerPartition. 
         %
         if nargin == 1
             dims = this.dims;
