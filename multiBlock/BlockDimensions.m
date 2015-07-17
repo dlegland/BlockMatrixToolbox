@@ -425,7 +425,14 @@ methods
     end
     
     function b = eq(this, that)
-        % tests whether two block dimensions are the same or not
+        % compare integer partitions of two block dimensions
+        %
+        % BD1 = BlockDimensions( {[2 2], [2, 3, 2]} );
+        % BD2 = BlockDimensions( {[2 2], [2, 2, 3]} );
+        % BD1 == BD2
+        % ans = 
+        %      1    0
+        %
         
         % both objects should be of the right class
         if ~isa(this, 'BlockDimensions') || ~isa(that, 'BlockDimensions')
@@ -435,12 +442,11 @@ methods
         
         % both objects should have same dimensionality
         if length(this.parts) ~= length(that.parts)
-            b = false;
-            return;
+            error('BlockDimensions objects must have same dimensionality');
         end
         
         % all partitions should be equal
-        b = all(cellfun(@eq, this.parts, that.parts));
+        b = cellfun(@eq, this.parts, that.parts);
     end
     
     function b = ne(this, that)
