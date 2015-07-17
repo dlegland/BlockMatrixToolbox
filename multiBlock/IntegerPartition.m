@@ -42,8 +42,133 @@ methods (Static)
         %     (1, 1, 1, 1)
         res = IntegerPartition(ones(1, n));
     end
+    
+    function count = countPartitions(n, s)
+        % Count the number of partitions of integer N into S parts.
+        %
+        % NP = IntegerPartition.countPartitions(N, S)
+        % N:    the integer to be partitioned
+        % S:    the number of partitions
+        % NP:   the total number of ways the integer N can be partitioned
+        %       into S parts.
+        %
+        % See also
+        %   randomPartition, choosePartition
+        
+        % get the singleton instance of the dictionary
+        dict = IntegerPartition.getDictionaryInstance();
+        
+        % compute key for current case
+        key = sprintf('%d.%d', n, s);
+        
+        % cjeck if result was already computed
+        if isKey(dict, key)
+            count = dict(key);
+            return;
+        end
+        
+        % case of S partitions of 1 element, or 1 partition -> only one possibility
+        if n == s || s == 1
+            count = 1;
+            dict(key) = count; %#ok<NASGU>
+            return;
+        end
+        
+        count = 0;
+        for k = 1:(n-s+1)
+            count = count + IntegerPartition.countPartitions(n-k, s-1);
+        end
+        dict(key) = count; %#ok<NASGU>
+    end
+    
+    function ip = choosePartition(n, s, r)
+        %CHOOSEPARTITION Choose a partition from its index
+        %
+        %   C = IntegerPartition.choosePartition(N, S, R)
+        %   N: the integer to be partitioned
+        %   S: the number of partitions
+        %   R: the index of the partition, between 1 and countPartitions(N, S)
+        %
+        %   Example
+        %     IntegerPartition.choosePartition(10, 4, 12)
+        %
+        %   See also
+        %     countPartitions, randomPartition
+        
+        % get the singleton instance of the dictionary
+        dict = IntegerPartition.getDictionaryInstance();
+        
+        % allocate memory for result
+        parts = zeros(1, s);
+        
+        % init for first iteration
+        ni = n;
+        si = s;
+        ri = r;
+        
+        % iterate over the partitions
+        for i = 1:s-1
+            % compute maximal admissible value for left-most partition
+            kiMax = ni + 1 - si;
+            
+            % for each admissible value, retrieve the number of partitions
+            partsi = zeros(1, kiMax);
+            for ki = 1:kiMax
+                % compute key for current case
+                key = sprintf('%d.%d', ni-ki, si-1);
+                if isKey(dict, key)
+                    partsi(ki) = dict(key);
+                else
+                    disp(sprintf('strange, key %s is not stored...', key)); %#ok<DSPS>
+                    partsi(ki) = IntegerPartition.countPartitions(ni, si);
+                    dict(key) = partsi(ki);
+                end
+            end
+            
+            % identify the value of current partition corresponding to chosen
+            % integer
+            ind = find(cumsum(partsi) >= ri, 1, 'first');
+            parts(i) = ind;
+            
+            % prepare for next iteration
+            ni = ni - ind;
+            si = si - 1;
+            ri = ri - sum(partsi(1:ind-1));
+        end
+        
+        % compute the value of the last partition
+        parts(end) = n - sum(parts(1:end-1));
+        
+        % convert to IntegerPartition class
+        ip = IntegerPartition(parts);
+    end
+    
+    function ip = randomPartition(n, s)
+        %RANDOMPARTITION Choose a random partition of integer N into S parts
+        %
+        %   PARTS = IntegerPartition.randomPartition(N, S)
+        %   N: the integer to be partitioned
+        %   S: the number of partitions
+        %
+        %   Example
+        %     IntegerPartition.randomPartition(10, 4)
+        %
+        %   See also
+        %     countPartitions, choosePartition
+        
+        np = IntegerPartition.countPartitions(n, s);
+        index = randi(np);
+        ip = IntegerPartition.choosePartition(n, s, index);
+    end
 end
 
+% methods (Static, Access = private)
+methods (Static)
+    function dict = getDictionaryInstance()
+        % Return the instance of dictionary storing partition counts
+        dict = getDictionary(PartitionCountDictionary.getInstance());
+    end
+end
 
 %% Constructor
 methods
