@@ -109,6 +109,15 @@ methods (Test)
         end            
     end
     
+    function test_blockProduct_sk(testCase)
+        A = oneBlock(reshape(1:4, [2 2]));
+        B = BlockMatrix(reshape(1:36, [6 6]), {[3 3], [2 2 2]});
+        X = blockProduct_sk(A, B);
+        
+        testCase.verifyEqual(size(A) .* size(B), size(X));
+        testCase.verifyEqual(blockSize(B), blockSize(X));        
+    end
+    
     function test_blockProduct_hs(testCase)
         A = scalarBlock(reshape(1:4, [2 2]));
         B = BlockMatrix(reshape(1:16, [4 4]), {[2 2], [2 2]});
@@ -142,7 +151,7 @@ methods (Test)
     function test_blockProduct_hu(testCase)
         A = BlockMatrix(reshape(1:20, [5 4]), {[3 2], [2 2]});
         B = BlockMatrix(reshape(1:12, [4 3]), {[2 2], [2 1]});
-        X = blockProduct_hu(A,B);
+        X = blockProduct_hu(A, B);
         
         % verify validity of sizes
         testCase.verifyEqual(size(A, 1), size(X, 1));
@@ -161,9 +170,87 @@ methods (Test)
                 testCase.verifyEqual(block, X{iBlock, jBlock});
             end
         end
-
     end
-end
+    
+    function test_blockProduct_hk(testCase)
+        A = BlockMatrix(reshape(1:12, [3 4])', [2 2], [1 1 1]);
+        B = BlockMatrix(reshape(1:36, [4 9]), [2 2], [3 3 3]);
+        X = blockProduct_hk(A, B);
+       
+        testCase.verifyEqual(blockSize(A, 1), blockSize(X, 1));
+        testCase.verifyEqual(blockSize(B, 2), blockSize(X, 2));
+        
+        dimsA = blockDimensions(A);
+        dimsB = blockDimensions(B);
+        dimsX = blockDimensions(X);
+        testCase.verifyEqual(dimsA{1} .* dimsB{1}, dimsX{1});
+        testCase.verifyEqual(dimsA{2} .* dimsB{2}, dimsX{2});
+        
+    end
+    
+    function test_blockProduct_us(testCase)
+        A = BlockMatrix.scalarBlock([1 2 3; 3 2 1]);
+        dataB = reshape(1:36, [4 9])';
+        B = BlockMatrix(dataB, {[3 3 3], [2 2]});
+        X = blockProduct_us(A, B);
+        
+        testCase.verifyEqual(blockSize(A, 1), blockSize(X, 1));
+        testCase.verifyEqual(blockSize(B, 2), blockSize(X, 2));
+    end
+    
+    function test_blockProduct_uh(testCase)
+        A = BlockMatrix(reshape(1:36, [9 4])', {[2 2], [3 3 3]});
+        B = BlockMatrix(reshape(1:36, [6 6]), {[2 2 2], [3 3]});
+        X = blockProduct_uh(A, B);
+        
+        testCase.verifyEqual(blockSize(A, 1), blockSize(X, 1));
+        testCase.verifyEqual(blockSize(B, 2), blockSize(X, 2));
+    end
+    
+    function test_blockProduct_uu(testCase)
+        A = BlockMatrix(reshape(1:36, [6 6]), {[2 2 2], [3 3]});
+        B = BlockMatrix(reshape(1:36, [6 6]), {[3 3], [2 1 2 1]});
+        X = blockProduct_uu(A, B);
+        
+        testCase.verifyEqual(blockSize(A, 1), blockSize(X, 1));
+        testCase.verifyEqual(blockSize(B, 2), blockSize(X, 2));
+    end
+    
+    function test_blockProduct_uk(testCase)
+        A = BlockMatrix(reshape(1:12, [3 4]), 3, [1 1 1 1 ]);
+        B = BlockMatrix(reshape(1:12, [4 3]), [1 1 1 1], [1 2]);
+        X = blockProduct_uk(A, B);
+        
+        testCase.verifyEqual(blockSize(A, 1), blockSize(X, 1));
+        testCase.verifyEqual(blockSize(B, 2), blockSize(X, 2));
+    end
+    
+    function test_blockProduct_ks(testCase)
+        A = BlockMatrix.scalarBlock(reshape(1:4, [2 2]));
+        B = BlockMatrix.oneBlock(reshape(1:9, [3 3]));
+        X = blockProduct_ks(A, B);
+       
+        testCase.verifyEqual(blockSize(A), blockSize(X));
+        testCase.verifyEqual(size(A) .* size(B), size(X));
+    end
+    
+    function test_blockProduct_kh(testCase)
+        A = BlockMatrix(reshape(1:36, [9 4]), {[3 3 3], [2 2]});
+        B = BlockMatrix.oneBlock(2*ones(3,2));
+        X = blockProduct_kh(A, B);
+        
+        testCase.verifyEqual(blockSize(A), blockSize(X));
+    end
+    
+   function test_blockProduct_ku(testCase)
+       A = BlockMatrix(reshape(1:36, [6 6]), {[2 2 2], [3 3]});
+       B = BlockMatrix.oneBlock(ones(3,2));
+       X = blockProduct_ku(A, B);
+       
+       testCase.verifyEqual(blockSize(A), blockSize(X));
+   end
+end % end of blockProduct test cases
+
 
 %% Test Functions for basic array manipulation
 methods (Test)

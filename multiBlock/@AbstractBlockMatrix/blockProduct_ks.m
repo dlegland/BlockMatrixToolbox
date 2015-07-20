@@ -7,9 +7,9 @@ function X = blockProduct_ks(A, B)
 % A must be a scalar Block Matrix and B must be one Block-Matrix.
 %
 % Example
-%   A = scalarBlock(reshape(1:4, [2 2]))
+%   A = BlockMatrix.scalarBlock(reshape(1:4, [2 2]));
 %   disp(A);
-%   B = oneBlock(reshape(1:4, [2 2]))
+%   B = BlockMatrix.oneBlock(reshape(1:4, [2 2]));
 %   X = blockProduct_ks(A,B)
 %
 
@@ -19,14 +19,17 @@ function X = blockProduct_ks(A, B)
 % Created: 2015-06-00,  using Matlab(R2015a)
 
 % check conditions on dimensions
-[nA, pA] = size(getMatrix(A));
-kA = blockSize(A,1);
-kbarA = blockSize(A,2);
-kB = blockSize(B,1);
-kbarB = blockSize(B,2);
+[nA, pA] = size(A);
+kA      = blockSize(A,1);
+kbarA   = blockSize(A,2);
+kB      = blockSize(B,1);
+kbarB   = blockSize(B,2);
 
-if or(all([nA,pA]~=[kA,kbarA]), all([kB,kbarB]~=[1,1]))
-    error(' Blocks of A must be a scalars and B must be one block-matrix');
+if any([nA,pA] ~= [kA,kbarA])
+    error('Blocks of A must be a scalars');
+end
+if any([kB,kbarB] ~= [1,1])
+    error('B must be one block-matrix');
 end
 
 % create X

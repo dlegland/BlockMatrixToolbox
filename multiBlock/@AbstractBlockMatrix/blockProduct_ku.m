@@ -4,11 +4,11 @@ function X = blockProduct_ku(A, B)
 % It corresponds to kronecker product along the blocks, and usual product
 % within the blocks. 
 %
-% Transposition rule : blockProduct_ku(A, B)=(blockProduct_su(B', A'))'
+% Transposition rule: blockProduct_ku(A, B)=(blockProduct_su(B', A'))'
 %
 % Example:
 %   A = BlockMatrix(reshape(1:36, [6 6]), {[2 2 2], [3 3]});
-%   B = oneBlock(ones(3,2));
+%   B = BlockMatrix.oneBlock(ones(3,2));
 %   X = blockProduct_ku(A,B);
 %
 
@@ -20,10 +20,10 @@ function X = blockProduct_ku(A, B)
 % check conditions on dimensions
 AA = B';
 BB = A';
-kBB = blockSize(BB,1);%
-browstest = IntegerPartition(size(getMatrix(AA),2) * ones(1,kBB));
+kBB = blockSize(BB,1);
+browstest = IntegerPartition.ones(kBB) * size(AA,2);
 browsBB = IntegerPartition(blockDimensions(BB,1));
-if or(all(blockSize(AA)~=[1, 1]), all(browstest~=browsBB))
+if any(blockSize(AA) ~= [1 1]) || any(browstest ~= browsBB)
     error('column blocks of A must be uniform with each part equals size(B,1)');
 end
 

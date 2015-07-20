@@ -4,14 +4,16 @@ function X = blockProduct_us(A, B)
 % It corresponds to usual product along the blocks and scalar product
 % within the blocks. 
 %
-% A must be a scalar block-matrix, the number of column-blocks of A, the
-% number of row-blocks of B must be the same, and the row partition of B
-% must be uniform.
+% Validity conditions:
+% * A must be a scalar block-matrix
+% * the number of column-blocks of A must be the same as the number of
+%   row-blocks of B  
+% * the row partition of B must be uniform
 %
-% Example :
-%   B = BlockMatrix(reshape(1:36, [9 4]), {[3 3 3], [2 2]});
+% Example:
+%   A = BlockMatrix.scalarBlock([1 2 3;3 2 1]);
+%   B = BlockMatrix(reshape(1:36, [4 9])', {[3 3 3], [2 2]});
 %   disp(B);
-%   A = scalarBlock(ones(2,3));
 %   X = blockProduct_us(A, B)
 %
 
@@ -21,12 +23,18 @@ function X = blockProduct_us(A, B)
 % Created: 2015-06-00,  using Matlab(R2015a)
 
 % check conditions on block dimensions
-[nA, pA] = size(getMatrix(A));
-nB = size(getMatrix(B),1);
-kA = blockSize(A,1);
-kbarA = blockSize(A,2);
-if or(round((nB/pA))~=(nB/pA),or(all([kA kbarA]~=size(getMatrix(A))), all(IntegerPartition(round((nB/pA)*ones(1,pA)))~=blockDimensions(B,1))))
-    error('Each block from A must be a scalar and the block structure of A and B must be same and the rows of the blocks from B must be of the same size');
+[nA, pA] = size(A);
+nB = size(B, 1);
+kA = blockSize(A, 1);
+kbarA = blockSize(A, 2);
+if any([kA kbarA] ~= size(A))
+    error('Each block from A must be a scalar');
+end
+if round((nB/pA)) ~= (nB/pA)
+    error('The block structure of A and B must be same');
+end
+if any(IntegerPartition(round((nB/pA)*ones(1,pA))) ~= blockDimensions(B,1))
+    error('The rows of the blocks from B must be of the same size');
 end
 
 % create blockdims of res
