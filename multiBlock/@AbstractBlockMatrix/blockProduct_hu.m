@@ -1,10 +1,10 @@
 function X = blockProduct_hu(A, B)
 % compute 'hu'-type product for block matrices.
-
+%
 % It corresponds to hadamard product along the blocks and usual product
 % within the blocks. 
 %
-% block-columns of A and than block-rows of B must be the same.
+% block-columns of A and block-rows of B must be the same.
 %
 % Example:
 %    A = BlockMatrix(reshape(1:20, [5 4]), {[3 2], [2 2]});
@@ -21,19 +21,23 @@ function X = blockProduct_hu(A, B)
 % Created: 2015-06-00,  using Matlab(R2015a)
 
 % check conditions on block dimensions
-kA = blockSize(A,1);
-kbarA = blockSize(A,2);
-kB = blockSize(B,1);
-kbarB = blockSize(B,2);
-bcol = blockDimensions(A,2);
-brows = blockDimensions(B,1);
+kA      = blockSize(A, 1);
+kbarA   = blockSize(A, 2);
+kB      = blockSize(B, 1);
+kbarB   = blockSize(B, 2);
+acols   = blockDimensions(A, 2);
+brows   = blockDimensions(B, 1);
 
-if or(all(brows ~=  bcol),all([kA kbarA]~=[kB kbarB]))
-    error('Block columns of A and Block rows of A must be the same');
+if kA ~= kB || kbarA ~= kbarB
+    error('Inputs A and B must have same block size');
+end
+if any(acols ~= brows)
+    error('Block columns of A must match block rows of B');
 end
 
 % create blockdims of X
-X = BlockMatrix.zeros(BlockDimensions({blockDimensions(A,1), blockDimensions(B,2)}));
+newDim = BlockDimensions({blockDimensions(A,1), blockDimensions(B,2)});
+X = BlockMatrix.zeros(newDim);
 
 for iBlock = 1:blockSize(A, 1)
     for jBlock = 1:blockSize(A, 2)
@@ -43,6 +47,6 @@ for iBlock = 1:blockSize(A, 1)
         % compute 'u'-product of blocks
         XBlock = BlockA * BlockB;
         % assign result
-        setBlock(X, iBlock, jBlock,XBlock);
+        setBlock(X, iBlock, jBlock, XBlock);
     end
 end

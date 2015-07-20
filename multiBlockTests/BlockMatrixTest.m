@@ -108,6 +108,61 @@ methods (Test)
             end
         end            
     end
+    
+    function test_blockProduct_hs(testCase)
+        A = scalarBlock(reshape(1:4, [2 2]));
+        B = BlockMatrix(reshape(1:16, [4 4]), {[2 2], [2 2]});
+        X = blockProduct_hs(A, B);
+ 
+        testCase.verifyEqual(size(B), size(X));
+        testCase.verifyEqual(blockSize(B), blockSize(X));
+        
+        for iBlock = 1:blockSize(B, 1)
+            for jBlock = 1:blockSize(B, 2)
+                block = A(iBlock, jBlock) * B{iBlock, jBlock};
+                testCase.verifyEqual(block, X{iBlock, jBlock});
+            end
+        end            
+    end
+    
+    function test_blockProduct_hh(testCase)
+        dataA = reshape(1:36, [6 6]);
+        dims = BlockDimensions({[3 3], [2 2 2]});
+        A = BlockMatrix(dataA, dims);
+        dataB = magic(6);
+        B = BlockMatrix(dataB, dims);
+        X = blockProduct_hh(A, B);
+
+        testCase.verifyEqual(size(B), size(X));
+        testCase.verifyEqual(blockSize(B), blockSize(X));
+        exp = dataA .* dataB;
+        testCase.verifyEqual(exp, getMatrix(X));
+    end
+    
+    function test_blockProduct_hu(testCase)
+        A = BlockMatrix(reshape(1:20, [5 4]), {[3 2], [2 2]});
+        B = BlockMatrix(reshape(1:12, [4 3]), {[2 2], [2 1]});
+        X = blockProduct_hu(A,B);
+        
+        % verify validity of sizes
+        testCase.verifyEqual(size(A, 1), size(X, 1));
+        testCase.verifyEqual(size(B, 2), size(X, 2));
+        
+        % verify validity of block-sizes
+        dimsA = blockDimensions(A);
+        dimsB = blockDimensions(B);
+        dimsX = blockDimensions(X);
+        testCase.verifyEqual(dimsA{1}, dimsX{1});
+        testCase.verifyEqual(dimsB{2}, dimsX{2});
+        
+        for iBlock = 1:blockSize(A, 1)
+            for jBlock = 1:blockSize(A, 2)
+                block = A{iBlock, jBlock} * B{iBlock, jBlock};
+                testCase.verifyEqual(block, X{iBlock, jBlock});
+            end
+        end
+
+    end
 end
 
 %% Test Functions for basic array manipulation
