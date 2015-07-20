@@ -418,6 +418,18 @@ methods
         % SIZ = size(BM);
         % SIZI = size(BM, DIR);
         % [S1, S2] = size(BM);
+        % Results are equivalent as using size() on the result of
+        % getMatrix(A).
+        %
+        % Example
+        %   BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
+        %   size(BM)
+        %   ans =
+        %        4   7
+        %
+        % See also
+        %   blockSize
+        
         
         if nargout <= 1
             varargout = {size(this.dims, varargin{:})};

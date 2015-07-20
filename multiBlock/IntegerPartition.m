@@ -24,7 +24,7 @@ classdef IntegerPartition < handle
 %% Properties
 properties
     % the partition of the integer
-    % given as a n-by-1 row vector of partitions
+    % given as a 1-by-N row vector of partitions
     terms;
     
 end % end properties
@@ -183,12 +183,14 @@ methods
     % Copy constructor
     
         if nargin == 1 && isnumeric(varargin{1})
-            % initialisation constructor
+            % initialisation constructor from numeric array
             var1 = varargin{1};
             if any(var1 <= 0) || any(round(var1) ~= var1)
                 error('Requires only positive integers');
             end
-            this.terms = varargin{1};
+            
+            % ensures terms are stored in row vector
+            this.terms = varargin{1}(:)';
             
         elseif nargin == 1 && isa(varargin{1}, 'IntegerPartition')
             % copy constructor

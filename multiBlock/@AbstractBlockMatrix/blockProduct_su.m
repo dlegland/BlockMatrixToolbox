@@ -7,9 +7,9 @@ function X = blockProduct_su(A, B)
 % rowblocks of B must be uniform with each parts equals columns of A.
 %
 % Example:
+%   A = BlockMatrix.oneBlock(ones(2,3));
 %   B = BlockMatrix(reshape(1:36, [6 6]), {[3 3], [2 2 2]});
 %   disp(B);
-%   A = oneBlock(ones(2,3));
 %   X = blockProduct_su(A, B);
 %
 % Reference: M. Günther, L. Klotz. Linear Algebra and its Applications.
@@ -31,7 +31,7 @@ end
 
 % create X
 matA = getMatrix(A);
-browsX = IntegerPartition(size(getMatrix(A),1)*ones(kB,1));
+browsX = IntegerPartition(size(A,1) * ones(1, kB));
 bcolX = blockDimensions(B,2);
 X = BlockMatrix.zeros(BlockDimensions({browsX, bcolX}));
 

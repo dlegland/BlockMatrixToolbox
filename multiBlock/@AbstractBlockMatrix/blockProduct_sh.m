@@ -9,8 +9,8 @@ function X = blockProduct_sh(A, B)
 % size(A).
 %
 % Example:
+%   A = BlockMatrix.oneBlock(2*ones(2,3));
 %   B = BlockMatrix(reshape(1:36, [4 9]), {[2 2], [3 3 3]});
-%   A = oneBlock(2*ones(2,3));
 %   X = blockProduct_sh(A,B)
 %
 
@@ -22,8 +22,8 @@ function X = blockProduct_sh(A, B)
 % check conditions on dimensions
 kB = blockSize(B,1);
 kbarB = blockSize(B,2);
-p1 = IntegerPartition(size(getMatrix(A),1)*ones(1,kB));
-p2 = IntegerPartition(size(getMatrix(A),2)*ones(1,kbarB));
+p1 = IntegerPartition(size(A, 1) * ones(1,kB));
+p2 = IntegerPartition(size(A, 2) * ones(1,kbarB));
 Bdimtest = BlockDimensions({p1, p2});
 
 if all(Bdimtest ~= blockDimensions(B))
@@ -44,5 +44,4 @@ for iBlock = 1:1:blockSize(B, 1)
         % assign result
         setBlock(X, iBlock, jBlock, XBlock);
     end
-end
 end

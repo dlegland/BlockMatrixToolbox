@@ -1,15 +1,16 @@
 function X = blockProduct_ss(lambda,A)
 % compute 'ss'-type product for block matrices.
-
+%
+% AA = blockProduct_ss(lambda, A)
 % It corresponds to scalar product along blocks, and scalar product within
 % blocks. 
 %
-% lambda must be one Block  matrix with a scalar Block.
+% lambda must be a one Block matrix containing a scalar Block.
 %
 % Example
 %   A = BlockMatrix(reshape(1:16, [8 2]), {[4 4], [1 1]});
 %   disp(A);
-%   lambda = oneBlock(3);
+%   lambda = BlockMatrix.oneBlock(3);
 %   AA = blockProduct_ss(lambda, A)
 %
 

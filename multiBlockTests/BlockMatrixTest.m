@@ -60,6 +60,55 @@ methods (Test)
     end
 end
 
+%% Test Functions for block products
+methods (Test)
+    function test_blockProduct_ss(testCase)
+        data = reshape(1:16, [8 2]);
+        scalar = 3;
+        
+        A = BlockMatrix(data, {[4 4], [1 1]});
+        lambda = BlockMatrix.oneBlock(scalar);
+        AA = blockProduct_ss(lambda, A);
+        
+        testCase.verifyEqual(blockSize(A), blockSize(AA));
+        testCase.verifyEqual(data * scalar, getMatrix(AA));
+    end
+    
+    function test_blockProduct_sh(testCase)
+        dataA = [1 2 3;3 2 1];
+        dataB = reshape(1:36, [4 9]);
+        
+        A = BlockMatrix.oneBlock(dataA);
+        B = BlockMatrix(dataB, {[2 2], [3 3 3]});
+        X = blockProduct_sh(A, B);
+        
+        testCase.verifyEqual(blockSize(B), blockSize(X));
+        exp = dataB .* repmat(dataA, 2, 3);
+        testCase.verifyEqual(exp, getMatrix(X));
+    end
+    
+    function test_blockProduct_su(testCase)
+        blockA = [1 2 3;3 2 1];
+        A = BlockMatrix.oneBlock(blockA);
+        B = BlockMatrix(reshape(1:36, [6 6]), {[3 3], [2 2 2]});
+        X = blockProduct_su(A, B);
+        
+        % verify the dimensions of the result BlockMatrix
+        testCase.verifyEqual([4 6], size(X));
+        testCase.verifyEqual(blockSize(B), blockSize(X));
+        testCase.verifyEqual(IntegerPartition([2 2]), blockDimensions(X, 1));
+        testCase.verifyEqual(IntegerPartition([2 2 2]), blockDimensions(X, 2));
+        
+        % verify that each block correspond to usual product of input
+        % blocks
+        for iBlock = 1:blockSize(B, 1)
+            for jBlock = 1:blockSize(B, 2)
+                block = blockA * B{iBlock, jBlock};
+                testCase.verifyEqual(block, X{iBlock, jBlock});
+            end
+        end            
+    end
+end
 
 %% Test Functions for basic array manipulation
 methods (Test)
