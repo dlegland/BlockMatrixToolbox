@@ -294,10 +294,11 @@ methods
     end
     
     function res = times(this, that)
-        % subtraction of two block-matrices
+        % element-wise multiplication of two block-matrices
         % 
         % usage:
         %   X = A .* B
+        
         sizA = size(this);
         sizB = size(that);
         if any(sizA ~= sizB) && ~(prod(sizA)==1 || prod(sizB)==1)
@@ -365,6 +366,28 @@ methods
         % 
         % usage:
         %   X = A * B
+        
+        % check case of multiplication by a numeric value
+        if isnumeric(this)
+            if isscalar(this)
+                res = times(this, that);
+                return;
+            else
+                % convert the numeric array to one-block matrix to perform
+                % block-matrix product
+                this = BlockMatrix.oneBlock(this);
+            end
+        end
+        if isnumeric(that)
+            if isscalar(that)
+                res = times(this, that);
+                return;
+            else
+                % convert the numeric array to one-block matrix to perform
+                % block-matrix product
+                that = BlockMatrix.oneBlock(that);
+            end
+        end
         
         % get block dimensions of each matrix
         dimsA = this.dims;
