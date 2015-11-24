@@ -102,6 +102,28 @@ methods (Test)
         testCase.verifyEqual(4, blockSize(BM, 1));
         testCase.verifyEqual(7, blockSize(BM, 2));
     end
+    
+    function test_uniformBlock_matrix(testCase)
+        data = reshape((1:24)', [6 4])';
+        
+        BM = BlockMatrix.uniformBlocks(data, [2 2]);
+        
+        testCase.verifyEqual(data, getMatrix(BM));
+        testCase.verifyEqual(2, blockSize(BM, 1));
+        testCase.verifyEqual(3, blockSize(BM, 2));
+    end
+    
+    function test_uniformBlock_blockMatrix(testCase)
+        data = reshape((1:24)', [6 4])';
+        BM0 = BlockMatrix(data, [1 2 1], [2 1 3]);
+        
+        BM = BlockMatrix.uniformBlocks(BM0, [2 2]);
+        
+        testCase.verifyEqual(data, getMatrix(BM));
+        testCase.verifyEqual(2, blockSize(BM, 1));
+        testCase.verifyEqual(3, blockSize(BM, 2));
+    end
+    
 end
 
 

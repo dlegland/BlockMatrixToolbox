@@ -69,18 +69,18 @@ methods (Static)
         %
         %   BM = BlockMatrix.oneBlock(MAT)
         %   MAT is either a standard matlab array, or a BlockMatrix object.
-        %   The function converts the input MAT such that the result as
-        %   same content, but is divided into a single block in each
-        %   dimension.
+        %   The function converts the input MAT into a BlockMatrix object
+        %   such that the result has same data, but is divided into a
+        %   single block in each dimension.
         %
         %   Example
         %   BM = BlockMatrix.oneBlock(magic(3));
         %   reveal(BM)
-        %       3
-        %    3  +
+        %         3
+        %      3  +
         %
         %   See also
-        %     BlockMatrix, scalarBlock
+        %     BlockMatrix, scalarBlock, uniformBlocks
         
         
         % eventually converts to single matrix
@@ -100,6 +100,10 @@ methods (Static)
         %SCALARBLOCK Convert a matrix to a BlockMatrix with only scalar blocks
         %
         %   BM = BlockMatrix.scalarBlock(MAT)
+        %   MAT is either a standard matlab array, or a BlockMatrix object.
+        %   The function converts the input MAT into a BlockMatrix object
+        %   such that the result has same data, but is divided into 1-by-1
+        %   blocks in each dimension.
         %
         %   Example
         %   BM = BlockMatrix.scalarBlock(magic(3));
@@ -110,7 +114,7 @@ methods (Static)
         %       1  +  +  +
         %
         %   See also
-        %     BlockMatrix, oneBlock
+        %     BlockMatrix, oneBlock, uniformBlocks
         
         % eventually converts to single matrix
         if isa(mat, 'AbstractBlockMatrix')
@@ -123,6 +127,56 @@ methods (Static)
 
         % create new BlockMatrix object
         BM = BlockMatrix(mat, ones(1, n), ones(1, p));
+    end
+    
+    function BM = uniformBlocks(mat, blockSize)
+        % Convert a (block-)matrix to a block matrix with uniform blocks 
+        %
+        %   BM = BlockMatrix.uniformBlocks(MAT, BLOCKSIZE)
+        %   MAT is either a standard matlab array, or a BlockMatrix object.
+        %   The function converts the input MAT into a BlockMatrix object
+        %   such that the result has same data, but is divided into blocks
+        %   that all have the same size, specified by BLOCKSIZE argument.
+        %
+        %   Example
+        %   BM = BlockMatrix.uniformBlocks(magic(6), [2 3]);
+        %   reveal(BM)
+        %          3  3
+        %       2  +  +
+        %       2  +  +
+        %       2  +  +
+        %
+        %   See also
+        %     BlockMatrix, oneBlock, scalarBlock
+        
+        % eventually converts to single matrix
+        if isa(mat, 'AbstractBlockMatrix')
+            mat = getMatrix(mat);
+        end
+        
+        % extract dimensions
+        n = size(mat, 1);
+        p = size(mat, 2);
+        
+        % size of blocks in each dimension
+        bs1 = blockSize(1);
+        bs2 = blockSize(2);
+        
+        % number of blocks in each dimension
+        nb1 = n / bs1;
+        nb2 = p / bs2;
+        
+        % check numbers are integer
+        if nb1 ~= floor(nb1)
+            error('%d should be divisible by %d', n, bs1);
+        end
+        if nb2 ~= floor(nb2)
+            error('%d should be divisible by %d', p, bs2);
+        end
+        
+        % create new BlockMatrix object
+        BM = BlockMatrix(mat, repmat(bs1, 1, nb1), repmat(bs2, 1, nb2));
+        
     end
 end
 
