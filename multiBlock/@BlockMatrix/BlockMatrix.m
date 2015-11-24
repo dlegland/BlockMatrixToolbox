@@ -486,9 +486,56 @@ methods
     
     function res = fapply(fun, this, varargin)
         % Apply any function to the inner block matrix data
+        %
+        % RES = fapply(FUN, BM)
+        %
+        % Example
+        % data = reshape((1:28)', [7 4])';
+        % BM = BlockMatrix(data, [2 2], [2 3 2]);
+        % meanBM = fapply(@mean, BM);
+        % reveal(meanBM)
+        %      2  3  2
+        %   1  +  +  +
+        %   1  +  +  +
+        %
+        % meanBM2 = fapply(@(x)mean(x, 2), BM);
+        % reveal(meanBM2)
+        %      1  1  1
+        %   2  +  +  +
+        %   2  +  +  +        
+        %
         
-        newData = fun(this.data, varargin{:});
-        res = BlockMatrix(newData, this.dims);
+        % allocate memory for intermediate results
+        blockRes = cell(blockSize(this));
+        blockDims1 = zeros(1, blockSize(this, 1));
+        blockDims2 = zeros(1, blockSize(this, 2));
+        
+        % compute result for each block, and resulting dimensions
+        for iBlock = 1:blockSize(this, 1)
+            for jBlock = 1:blockSize(this, 2)
+                block = getBlock(this, iBlock, jBlock);
+                res0 = fun(block);
+                
+                blockRes{iBlock, jBlock} = res0;
+                blockDims1(iBlock) = size(res0, 1);
+                blockDims2(jBlock) = size(res0, 2);
+            end
+        end
+        
+        % create the result block matrix
+        BD = BlockDimensions({blockDims1, blockDims2});
+        res = BlockMatrix.zeros(BD);
+        
+        % populate result with individual block results
+        for iBlock = 1:blockSize(this, 1)
+            for jBlock = 1:blockSize(this, 2)
+                setBlock(res, iBlock, jBlock, blockRes{iBlock, jBlock});
+            end
+        end
+        
+% old version
+%         newData = fun(this.data, varargin{:});
+%         res = BlockMatrix(newData, this.dims);
     end
 end
 
