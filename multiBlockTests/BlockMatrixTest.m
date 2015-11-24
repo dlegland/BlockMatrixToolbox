@@ -416,6 +416,20 @@ methods (Test)
 
 end
 
+
+%% Test Functions arithmetic operations
+methods (Test)
+    function test_log_exp(testCase)
+        data = reshape(1:28, [4 7]);
+        parts = {[2 2], [2 3 2]};
+        BM = BlockMatrix(data, parts);
+
+        res = log(exp(BM));
+        
+        testCase.verifyEqual(data, getMatrix(res));
+    end
+end
+
 %% Test Functions for basic array manipulation
 methods (Test)
 
