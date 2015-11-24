@@ -42,7 +42,16 @@ end % end properties
 %% Static methods
 methods (Static)
     function res = zeros(blockDims)
-        % Creates an empty BlockMatrix with specified block-dimensions
+        %ZEROS Create an empty BlockMatrix with specified block-dimensions
+        %
+        % Example
+        %   BD = BlockDimensions({[2 2], [2 3 2]});
+        %   BM = BlockMatrix.zeros(BD);
+        %   reveal(BM)
+        %        2  3  2
+        %     2  +  +  +
+        %     2  +  +  +
+        %
         
         if ~isa(blockDims, 'BlockDimensions')
             error('Requires an instance of BlockDimensions as input');
@@ -56,9 +65,13 @@ methods (Static)
     end
     
     function BM = oneBlock(mat)
-        %ONEBLOCK Converts a matrix to a 1-1 BlockMatrix
+        %ONEBLOCK Convert a matrix or a block-matrix to a 1-1 BlockMatrix
         %
-        %   output = oneBlock(input)
+        %   BM = BlockMatrix.oneBlock(MAT)
+        %   MAT is either a standard matlab array, or a BlockMatrix object.
+        %   The function converts the input MAT such that the result as
+        %   same content, but is divided into a single block in each
+        %   dimension.
         %
         %   Example
         %   BM = BlockMatrix.oneBlock(magic(3));
@@ -69,15 +82,24 @@ methods (Static)
         %   See also
         %     BlockMatrix, scalarBlock
         
+        
+        % eventually converts to single matrix
+        if isa(mat, 'AbstractBlockMatrix')
+            mat = getMatrix(mat);
+        end
+        
+        % extract dimensions
         n = size(mat, 1);
         p = size(mat, 2);
+
+        % create new BlockMatrix object
         BM = BlockMatrix(mat, n, p);
     end
     
     function BM = scalarBlock(mat)
-        %SCALARBLOCK  Converts a matrix to a BlockMatrix with only scalar blocks
+        %SCALARBLOCK Convert a matrix to a BlockMatrix with only scalar blocks
         %
-        %   BM = scalarBlock(MAT)
+        %   BM = BlockMatrix.scalarBlock(MAT)
         %
         %   Example
         %   BM = BlockMatrix.scalarBlock(magic(3));
@@ -90,8 +112,16 @@ methods (Static)
         %   See also
         %     BlockMatrix, oneBlock
         
+        % eventually converts to single matrix
+        if isa(mat, 'AbstractBlockMatrix')
+            mat = getMatrix(mat);
+        end
+        
+        % extract dimensions
         n = size(mat, 1);
         p = size(mat, 2);
+
+        % create new BlockMatrix object
         BM = BlockMatrix(mat, ones(1, n), ones(1, p));
     end
 end
@@ -112,17 +142,18 @@ methods
         %   that can also be a BlockDiagonal object.
         %   
         %   Examples:
-        %   % construction from a cell array of integer partitions
-        %   data = reshape(1:28, [7 4])';
-        %   BM = BlockMatrix(data, {[2 2], [2 3 2]});
-        %   % construction from integer partitions in each direction
-        %   BM = BlockMatrix(data, [2 2], [2 3 2]);
-        %   % construction from a BlockDimension object
-        %   DIMS = BlockDimensions({[2 2], [2 3 2]});
-        %   BM = BlockMatrix(data, DIMS);
+        %     % construction from a cell array of integer partitions
+        %     data = reshape(1:28, [7 4])';
+        %     BM = BlockMatrix(data, {[2 2], [2 3 2]});
+        %     % construction from integer partitions in each direction
+        %     BM = BlockMatrix(data, [2 2], [2 3 2]);
+        %     % construction from a BlockDimension object
+        %     DIMS = BlockDimensions({[2 2], [2 3 2]});
+        %     BM = BlockMatrix(data, DIMS);
         %
         %
         
+        % (the different cases are sorted by order of expected frequency)
         if nargin == 2
             if isnumeric(varargin{1})
                 % initialisation constructor
@@ -187,7 +218,7 @@ methods
 
         
         function checkDimensionsValidity()
-            % checks that data and block dimensions match together
+            % Check that data and block dimensions match together
 
             % string pattern for error message
             pattern = 'Input data have %1$d %3$s, but block dimensions specifies %2$d %3$s';
@@ -216,7 +247,7 @@ end % end constructors
 
 methods
     function matrix = getMatrix(this)
-        % Returns the content of this block-matrix as a matlab array
+        % Return the content of this block-matrix as a matlab array
         %
         % For a BlockMatrix object BM, this is equivalent to 
         % matrix = BM.data;
@@ -225,7 +256,7 @@ methods
     end
     
     function block = getBlock(this, row, col)
-        % return the (i-th, j-th) block 
+        % Return the content of the (i-th, j-th) block 
         %
         %   BLK = getBlock(BM, ROW, COL)
         %
@@ -251,9 +282,9 @@ methods
     end
     
     function setBlock(this, row, col, blockData)
-        % set the data for the (i-th, j-th) block 
+        % Set the content of the (i-th, j-th) block to specified matrix
         %
-        %   setBlock(BM, ROW, COL, DATA)
+        %   setBlock(BM, ROW_IND, COL_IND, DATA)
         %
         
         % determine row indices of block rows

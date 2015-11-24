@@ -60,6 +60,51 @@ methods (Test)
     end
 end
 
+
+%% Test Functions for static methods
+methods (Test)
+    function test_oneBlock_matrix(testCase)
+        data = [1 2 3;4 5 6];
+        BM = BlockMatrix.oneBlock(data);
+
+        testCase.verifyEqual(data, getMatrix(BM));
+        testCase.verifyEqual(1, blockSize(BM, 1));
+        testCase.verifyEqual(1, blockSize(BM, 2));
+    end
+    
+    function test_oneBlock_blockMatrix(testCase)
+        data = reshape((1:28)', [7 4])';
+        BM0 = BlockMatrix(data, [2 2], [2 3 2]);
+        
+        BM = BlockMatrix.oneBlock(BM0);
+
+        testCase.verifyEqual(data, getMatrix(BM));
+        testCase.verifyEqual(1, blockSize(BM, 1));
+        testCase.verifyEqual(1, blockSize(BM, 2));
+    end
+    
+    function test_scalarBlock_matrix(testCase)
+        data = reshape((1:28)', [7 4])';
+        BM = BlockMatrix.scalarBlock(data);
+
+        testCase.verifyEqual(data, getMatrix(BM));
+        testCase.verifyEqual(4, blockSize(BM, 1));
+        testCase.verifyEqual(7, blockSize(BM, 2));
+    end
+    
+    function test_scalarBlock_blockMatrix(testCase)
+        data = reshape((1:28)', [7 4])';
+        BM0 = BlockMatrix(data, [2 2], [2 3 2]);
+        
+        BM = BlockMatrix.scalarBlock(BM0);
+
+        testCase.verifyEqual(data, getMatrix(BM));
+        testCase.verifyEqual(4, blockSize(BM, 1));
+        testCase.verifyEqual(7, blockSize(BM, 2));
+    end
+end
+
+
 %% Test Functions for block products
 methods (Test)
     function test_blockProduct_ss(testCase)

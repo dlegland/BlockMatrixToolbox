@@ -425,7 +425,7 @@ methods
     end
     
     function b = eq(this, that)
-        % compare integer partitions of two block dimensions
+        % Compare integer partitions of two block dimensions
         %
         % BD1 = BlockDimensions( {[2 2], [2, 3, 2]} );
         % BD2 = BlockDimensions( {[2 2], [2, 2, 3]} );
@@ -450,12 +450,12 @@ methods
     end
     
     function b = ne(this, that)
-        % tests whether two block dimensions are different or not
+        % Test whether two block dimensions are different or not
         b = ~eq(this, that);
     end    
     
     function varargout = subsref(this, subs)
-        % Returns the integer partition for a given dimension
+        % Return the integer partition for a given dimension
         %
         % DIMS = BlockDimensions({[1 2 1], [3 4]});
         % DIMS{1}
@@ -519,7 +519,7 @@ end
 
 methods
     function disp(this)
-        % display the content of this BlockMatrix object
+        % Display the content of this BlockDimensions object
         
         % loose format: display more empty lines
         isLoose = strcmp(get(0, 'FormatSpacing'), 'loose');
@@ -537,7 +537,7 @@ methods
     end
 
     function buffer = char(this)
-        % convert to string representation
+        % Convert BlockDimension object to string representation
         
         nd = length(this.parts);
         buffer = ['( ' char(this.parts{1})];
