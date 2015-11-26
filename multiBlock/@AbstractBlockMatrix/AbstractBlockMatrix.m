@@ -213,6 +213,175 @@ methods
 end
 
 
+%% Overload EXPONENT and LOGARITHMS methods
+
+methods
+    function res = exp(this)
+        % returns the returns the exponential for each element of the BlockMatrix
+        res = BlockMatrix(exp(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = expm1(this)
+        % computes exp(x)-1, compensating for the roundoff in exp(x) for BlockMatrix
+        res = BlockMatrix(expm1(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = log(this)
+        %  returns the secant in radians for each element of the BlockMatrix
+        res = BlockMatrix(log(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res =log10(this)
+        %  returns the common logarithm of each element of the BlockMatrix
+        res = BlockMatrix(log10(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = logp1(this)
+        %  returns log(1+x), compensating for the roundoff in 1+x.of the BlockMatrix
+        res = BlockMatrix(logp1(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = log2(this)
+        %  returns the base 2 logarithm of the elementsof the BlockMatrix
+        res = BlockMatrix(log2(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = nextpow2(this)
+        % returns the exponents for the smallest powers of two that satisfy for each element of the BlockMatrix
+        res = BlockMatrix(nextpow2(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = nthroot(this)
+        %  returns the real nth root of the elements of the BlockMatrix
+        res = BlockMatrix(nthroot(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = pow2(this)
+        % returns a BlockMatrix X whose elements are 2 raised to the power of each element of the BlockMatrix.
+        res = BlockMatrix(pow2(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = reallog(this)
+        % returns the natural logarithm of each element  of the BlockMatrix
+        
+        res = BlockMatrix(reallog(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = realsqrt(this)
+        % returns the square root of each element of the BlockMatrix
+        res = BlockMatrix(realsqrt(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = sqrt(this)
+        % returns the square root of each element of the BlockMatrix
+        res = BlockMatrix(sqrt(getMatrix(this)), blockDimensions(this));
+    end
+end
+
+
+%% Overload some arithmetic methods
+methods
+    function res = sin(this)
+        % returns the sin for each element of the BlockMatrix
+        res = BlockMatrix(sin(getMatrix(this)), blockDimensions(this));
+    end
+
+    function res = cos(this)
+        % returns the cos for each element of the BlockMatrix
+        res = BlockMatrix(cos(getMatrix(this)), blockDimensions(this));
+    end
+
+    function res = tan(this)
+        % returns the sin for each element of the BlockMatrix
+        res = BlockMatrix(tan(getMatrix(this)), blockDimensions(this));
+    end
+
+     function res = sind(this)
+        % returns the sind for each element of the BlockMatrix
+        res = BlockMatrix(sind(getMatrix(this)), blockDimensions(this));
+    end
+
+    function res = cosd(this)
+        % returns the cosd for each element of the BlockMatrix
+        res = BlockMatrix(cosd(getMatrix(this)), blockDimensions(this));
+    end
+
+   function res = tand(this)
+        % returns the tand for each element of the BlockMatrix
+        res = BlockMatrix(tand(getMatrix(this)), blockDimensions(this));
+    end
+
+    function res = csch(this)
+        % returns the hyperbolic cosecant for each element of the BlockMatrix
+        res = BlockMatrix(csch(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = acsch(this)
+        % returns the inverse hyperbolic cosecant for each element of the BlockMatrix
+        res = BlockMatrix(acsch(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = sec(this)
+        %  returns the secant in radians for each element of the BlockMatrix
+        res = BlockMatrix(sec(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = secd(this)
+        %  returns the secant in degrees for each element of the BlockMatrix
+        res = BlockMatrix(secd(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = asec(this)
+        %  returns the inverse secant in radians for each element of the BlockMatrix
+        res = BlockMatrix(asec(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = asecd(this)
+        %  returns the inverse secant in degrees for each element of the BlockMatrix
+        res = BlockMatrix(asecd(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = sech(this)
+        % returns the returns the hyperbolic secant for each element of the BlockMatrix
+        res = BlockMatrix(sech(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = asech(this)
+        %  returns the inverse hyperbolic secant for each element of the BlockMatrix
+        res = BlockMatrix(asech(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = cot(this)
+        % returns the returns the cotangent in radians for each element of the BlockMatrix
+        res = BlockMatrix(cot(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = cotd(this)
+        % returns the returns the cotangent in degrees for each element of the BlockMatrix
+        res = BlockMatrix(cotd(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = acot(this)
+        % returns the returns the inverse cotangent in radius for each element of the BlockMatrix
+        res = BlockMatrix(acot(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = acotd(this)
+        % returns the returns the inverse cotangent in degrees for each element of the BlockMatrix
+        res = BlockMatrix(acotd(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = acoth(this)
+        % returns  the inverse hyperbolic cotangent for each element of the BlockMatrix
+        res = BlockMatrix(acoth(getMatrix(this)), blockDimensions(this));
+    end
+    
+    function res = coth(this)
+        % returns the hyperbolic cotangent  for each element of the BlockMatrix
+        res = BlockMatrix(coth(getMatrix(this)), blockDimensions(this));
+    end
+end
+
 %% Overload some arithmetic methods
 
 methods

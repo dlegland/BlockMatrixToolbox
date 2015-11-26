@@ -540,31 +540,6 @@ methods
 end
 
 
-
-%% Overload some arithmetic operators
-methods
-    function res = sin(this)
-        % Overload the sin function for block matrix objects
-        res = BlockMatrix(sin(this.data), this.dims);
-    end
-    
-    function res = cos(this)
-        % Overload the cos function for block matrix objects
-        res = BlockMatrix(cos(this.data), this.dims);
-    end
-    
-    function res = exp(this)
-        % Overload the exp function for block matrix objects
-        res = BlockMatrix(exp(this.data), this.dims);
-    end
-    
-    function res = log(this)
-        % Overload the log function for block matrix objects
-        res = BlockMatrix(log(this.data), this.dims);
-    end
-    
-end
-
 %% Overload array manipulation methods
 methods   
     function varargout = size(this, varargin)
