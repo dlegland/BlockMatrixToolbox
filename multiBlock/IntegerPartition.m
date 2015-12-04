@@ -6,10 +6,13 @@ classdef IntegerPartition < handle
 %   Terms should be positive integers.
 %
 %   Example
-%     IP = IntegerPartition([2, 3, 2]);
+%     IP = IntegerPartition([2, 3, 4]);
 %     length(IP)
 %     ans =
-%         3
+%         8
+%     term(IP, 3)
+%     ans = 
+%         4
 %
 %   See also
 %     BlockDimensions
@@ -33,7 +36,7 @@ end % end properties
 %% Static methods
 methods (Static)
     function res = ones(n)
-        % Returns a new partition formed only by ones
+        % Create a new partition formed only by ones
         %
         % Example
         % I4 = IntegerPartition.ones(4)
@@ -209,20 +212,54 @@ end % end constructors
 %% Methods
 methods
     function p = term(this, index)
-        % Returns the size of the i-th partition
+        % Return the size of the i-th term of the partition
+        %
+        % Example
+        %   IP = IntegerPartition([3 4 5])
+        %   term(IP, 3)
+        %   ans = 
+        %       3
+        %
+        % see also
+        %   length
+        
         p = this.terms(index);
     end
     
     function n = integer(this)
-        % Returns the value of the partitioned integer
+        % Return the value of the partitioned integer
         % deprecated: use sum instead
         warning('deprecated: use sum instead');
         n = sum(this.terms);
     end
     
-    function inds = blockIndices(this, index)
-        % Returns the linear indices of the elements in the i-th block
-        inds = (1:this.terms(index)) + sum(this.terms(1:index-1));
+    function inds = blockIndices(this, blockInds)
+        % Return the linear indices of the elements in the i-th block
+        %
+        % EINDS = blockIndices(IP, BINDS)
+        % IP is an integer partition, BINDS is the array of block indices,
+        % and EINDS is the array of element indices referenced by BINDS.
+        %
+        %
+        % Example
+        %   IP = IntegerPartition([2 3 4 2])
+        %   blockIndices(IP, 3)
+        %   ans = 
+        %       6   7   8   9
+        %
+        %   blockIndices(IP, [1 4])
+        %   ans =
+        %       1   2  10  11
+        %
+        % see also
+        %   term, length
+        
+        inds = [];
+        for i = 1:length(blockInds)
+            index = blockInds(i);
+            inds_i = (1:this.terms(index)) + sum(this.terms(1:index-1));
+            inds = [inds inds_i]; %#ok<AGROW>
+        end
     end
 
 end % end methods
@@ -230,17 +267,17 @@ end % end methods
 %% boolean methods to identify the type of partition
 methods
     function tf = isUniform(this)
-        % Returns true if all terms are equal
+        % Return true if all terms are equal
         tf = all(this.terms == this.terms(1));
     end
     
     function tf = isScalar(this)
-        % Returns true if the length of the partition equals one
+        % Return true if the length of the partition equals one
         tf = length(this.terms) == 1;
     end
     
     function tf = isOnes(this)
-        % Returns true if all terms equal one
+        % Return true if all terms equal one
         % (the method isUniform will return true as well). 
         tf = all(this.terms == 1);
     end
@@ -250,18 +287,18 @@ end % end methods
 
 methods
     function n = length(this)
-        % Returns the number of terms of this partition
+        % Return the number of terms of this partition
         n = length(this.terms);
     end
     
     function n = sum(this)
-        % Returns the sum of the terms
+        % Return the sum of the terms
         % (returns the same result as the "integer" function)
         n = sum(this.terms);
     end
 
     function res = mtimes(this, that)
-        % Multiplies a partition by a scalar integer
+        % Multiply a partition by a scalar integer
         %
         % P2 = mtimes(P1, S)
         % P2 = mtimes(S, P1)
@@ -295,7 +332,7 @@ methods
     end
     
     function res = times(this, that)
-        % Multiplies two partitions element-wise
+        % Multiply two partitions element-wise
         %
         % P3 = times(P1, P2)
         % P3 = P1 .* P2
@@ -317,7 +354,7 @@ methods
     end
     
     function res = plus(this, that)
-        % Adds two partitions element-wise
+        % Add two partitions element-wise
         %
         % P3 = plus(P1, P2)
         % P3 = P1 + P2
@@ -351,7 +388,7 @@ methods
     end
     
     function res = mrdivide(this, arg)
-        % Divides partiton terms by an integer
+        % Divide partiton terms by an integer
         
         if ~isscalar(arg) || mod(arg, 1) ~= 0
             error('second argument must be an integer');
@@ -381,7 +418,7 @@ methods
     end
     
     function varargout = subsref(this, subs)
-        % Returns the term of this partition at the given index
+        % Return the term of this partition at the given index
         %
         % P = IntegerPartition([2 3 2]);
         % P(2)
@@ -435,7 +472,7 @@ methods
     end
     
     function b = eq(this, that)
-        % Tests whether two compositions are the same or not
+        % Test whether two compositions are the same or not
         
         if ~isa(this, 'IntegerPartition') || ~isa(that, 'IntegerPartition')
             b = false;
