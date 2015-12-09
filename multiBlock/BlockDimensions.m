@@ -1,18 +1,44 @@
 classdef BlockDimensions < handle
 %BLOCKDIMENSIONS  Store the block dimensions of a BlockMatrix data structure
 %
-%   Class BlockDimensions
+%   A BlockDimensions object represents the partitions into blocks of a
+%   block-matrix object.
+%   A BlockDimensions object is represented by a series of IntegerPartition
+%   object, each IntegerPartition corresponding to the block-partition
+%   along a given dimension.
+%
 %
 %   Example
-%   BD = BlockDimensions({[2 2], [2, 3, 2]});
+%     % create a new BlockDimension object from integer partitions
+%     p1 = IntegerPartition([2, 2]);
+%     p2 = IntegerPartition([2, 3, 2]);
+%     BD = BlockDimensions({p1, p2});
 %
-%   Example
-%   p1 = IntegerPartition([2, 2]);
-%   p2 = IntegerPartition([2, 3, 2]);
-%   BD = BlockDimensions({p1, p2});
+%     % Alternative creation syntax
+%     BD = BlockDimensions({[2 2], [2, 3, 2]});
+%     BD = 
+%     BlockDimensions object with 2 dimensions
+%     ( (2, 2), (2, 3, 2) )
+%
+%     % Returns the block partition along second direction
+%     BD2 = BD{2}
+%     BD2 = 
+%     IntegerPartition object with 3 terms
+%         (2, 3, 2)
+%   
+%     % computes the block dimension of the transposed block-matrix
+%     BDT = BlockDimensions({BD{2}, BD{1}})
+%     BDT = 
+%     BlockDimensions object with 2 dimensions
+%     ( (2, 3, 2), (2, 2) )
+%
+%     % returns the third block size in second direction
+%     BD{2}(3)
+%     ans =
+%          2
 %
 %   See also
-%     BlockMatrix
+%     BlockMatrix, IntegerPartition
 
 % ------
 % Author: David Legland
@@ -503,7 +529,7 @@ methods
                     varargout{1} = intPart;
                 else
                     % process other calls to subsref
-                    varargout = cell(nargout, 1);
+                    varargout = cell(1);
                     [varargout{:}] = subsref(intPart, subs(2:end));
                 end
                 
@@ -512,6 +538,11 @@ methods
             end
         end
         
+    end
+    
+    function n = numArgumentsFromSubscript(this,~,~)
+        % Need to overload this to allow proper braces indexing
+        n = numel(this);
     end
 end
 
