@@ -458,19 +458,32 @@ methods
             % check number of indices
             ns = length(s1.subs);
             if ns == 1
-                % returns the requested terms
+                % returns the requested terms as a row vector
                 varargout{1} = this.terms(s1.subs{1});
-                
             else
                 error('Only linear indexing is allowed for IntegerPartition');
             end
             
         else
-            error('braces indexing of IntegerPartition is not supported');
+            % Process braces indexing
+            
+            ns = length(s1.subs);
+            if ns == 1
+                % returns the requested terms as a new IntegerPartition
+                newTerms = this.terms(s1.subs{1});
+                varargout = {IntegerPartition(newTerms)};
+            else
+                error('Only linear indexing is allowed for IntegerPartition');
+            end
         end
             
     end
     
+    function n = numArgumentsFromSubscript(this,~,~)
+        % Need to overload this to allow proper braces indexing
+        n = numel(this);
+    end
+
     function b = eq(this, that)
         % Test whether two compositions are the same or not
         
