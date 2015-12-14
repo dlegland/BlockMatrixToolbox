@@ -67,12 +67,20 @@ methods
         
         % iterate until residual is acceptable
         nIter = 0;
-        while resid > this.tolerance
+        while true
             % increment iteration
             nIter = nIter + 1;
             
             % performs one iteration, and get residual
             [q, resid] = iterator.iterate();
+            
+            % check stopping conditions
+            if resid < this.tolerance
+                break;
+            end
+            if nIter >= this.nbMaxIter
+                break;
+            end
         end
 
     end
