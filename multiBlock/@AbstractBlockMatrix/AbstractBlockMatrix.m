@@ -685,8 +685,13 @@ methods
             if ns == 2
                 % returns integer partition of corresponding dimension
                 rowBlockInds = s1.subs{1};
+                if ischar(rowBlockInds) && strcmp(rowBlockInds, ':')
+                    rowBlockInds = 1:blockSize(this, 1);
+                end
                 colBlockInds = s1.subs{2};
-%                 varargout{1} = getBlock(this, blockRow, blockCol);
+                if ischar(colBlockInds) && strcmp(colBlockInds, ':')
+                    colBlockInds = 1:blockSize(this, 2);
+                end
                 varargout{1} = subMatrix(this, rowBlockInds, colBlockInds);
             else
                 error('Requires two indices for identifying blocks');
