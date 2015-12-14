@@ -213,6 +213,32 @@ methods
 end
 
 
+%% Extract sub matrix
+methods
+    function res = subMatrix(this, rowBlockInds, colBlockInds)
+        % Return a new Block-Matrix corresponding to specified block indices
+        
+        % get integer partitions for each dimension
+        parts1 = blockDimensions(this, 1);
+        parts2 = blockDimensions(this, 2);
+        
+        % compute new block dimensions
+        newParts1 = parts1{rowBlockInds};
+        newParts2 = parts2{colBlockInds};
+        newDims = BlockDimensions({newParts1, newParts2});
+
+        res = BlockMatrix.zeros(newDims);
+        for iRow = 1:length(newParts1)
+            % index of block-row in original block-matrix
+            rowInd = rowBlockInds(iRow);
+            for iCol = 1:length(newParts2)
+                blockData = getBlock(this, rowInd, colBlockInds(iCol));
+                setBlock(res, iRow, iCol, blockData);
+            end
+        end
+    end
+end
+
 %% Overload EXPONENT and LOGARITHMS methods
 
 methods
@@ -658,13 +684,19 @@ methods
             ns = length(s1.subs);
             if ns == 2
                 % returns integer partition of corresponding dimension
-                blockRow = s1.subs{1};
-                blockCol = s1.subs{2};
-                varargout{1} = getBlock(this, blockRow, blockCol);
+                rowBlockInds = s1.subs{1};
+                colBlockInds = s1.subs{2};
+%                 varargout{1} = getBlock(this, blockRow, blockCol);
+                varargout{1} = subMatrix(this, rowBlockInds, colBlockInds);
             else
                 error('Requires two indices for identifying blocks');
             end
         end
+    end
+    
+    function n = numArgumentsFromSubscript(this,~,~)
+        % Need to overload this to allow proper braces indexing
+        n = numel(this);
     end
 end
 
