@@ -1,7 +1,7 @@
 function BM = oneBlock(mat)
 %ONEBLOCK Converts a matrix to a 1-1 BlockMatrix
 %
-%   output = oneBlock(input)
+%   DEPRECATED: use BlockMatrix.oneBlock instead
 %
 %   Example
 %   BM = oneBlock(magic(3));
