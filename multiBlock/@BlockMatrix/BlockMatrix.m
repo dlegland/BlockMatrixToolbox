@@ -696,10 +696,18 @@ methods
             ns = length(s1.subs);
             if ns == 2
                 % returns integer partition of corresponding dimension
-                blockRow = s1.subs{1};
-                blockCol = s1.subs{2};
+                rowBlockInds = s1.subs{1};
+                if ischar(rowBlockInds) && strcmp(rowBlockInds, ':')
+                    rowBlockInds = 1:blockSize(this, 1);
+                end
+                colBlockInds = s1.subs{2};
+                if ischar(colBlockInds) && strcmp(colBlockInds, ':')
+                    colBlockInds = 1:blockSize(this, 2);
+                end
                 
-                setBlock(this, blockRow, blockCol, value);
+%                 setBlock(this, rowBlockInds, colBlockInds, value);
+                setSubMatrix(this, rowBlockInds, colBlockInds, value);
+                
             else
                 error('Requires two indices for identifying blocks');
             end

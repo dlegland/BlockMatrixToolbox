@@ -217,6 +217,21 @@ end
 methods
     function res = subMatrix(this, rowBlockInds, colBlockInds)
         % Return a new Block-Matrix corresponding to specified block indices
+        %
+        % BM2 = subMatrix(BM, RBINDS, CBINDS);
+        %
+        % Example
+        %   BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
+        %   BM2 = subMatrix(BM, 1, [2 3]);
+        %   ans = 
+        %   BlockMatrix object with 2 rows and 5 columns
+        %       row dims: 2
+        %       col dims: 3 2
+        %             3           4           5           6           7   
+        %            10          11          12          13          14  
+        %
+        % See Also
+        %   subsref, getBlock
         
         % get integer partitions for each dimension
         parts1 = blockDimensions(this, 1);
@@ -237,7 +252,47 @@ methods
             end
         end
     end
+    
+    function setSubMatrix(this, rowBlockInds, colBlockInds, newData)
+        % Return a new Block-Matrix corresponding to specified block indices
+        %
+        % Example
+        %     BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
+        %     BM{2, [1 3]} = ones(2, 4)
+        %     BM = 
+        %     BlockMatrix object with 4 rows and 7 columns
+        %       row dims: 2 2
+        %       col dims: 2 3 2
+        %             1           2           3           4           5           6           7   
+        %             8           9          10          11          12          13          14   
+        %             1           1          17          18          19           1           1   
+        %             1           1          24          25          26           1           1   
+        % 
+        % see also
+        %   subMatrix, subsasgn
+                
+        % get integer partitions for each dimension
+        parts1 = blockDimensions(this, 1);
+        parts2 = blockDimensions(this, 2);
+        
+        % compute new block dimensions
+        newParts1 = parts1{rowBlockInds};
+        newParts2 = parts2{colBlockInds};
+        newDims = BlockDimensions({newParts1, newParts2});
+        
+        newBlockData = BlockMatrix(newData, newDims);
+
+        for iRow = 1:length(newParts1)
+            % index of block-row in original block-matrix
+            rowInd = rowBlockInds(iRow);
+            for iCol = 1:length(newParts2)
+                blockData = getBlock(newBlockData, iRow, iCol);
+                setBlock(this, rowInd, colBlockInds(iCol), blockData);
+            end
+        end
+    end
 end
+
 
 %% Overload EXPONENT and LOGARITHMS methods
 
