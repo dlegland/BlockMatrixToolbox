@@ -15,7 +15,7 @@ classdef BlockDimensions < handle
 %     BD = BlockDimensions({p1, p2});
 %
 %     % Alternative creation syntax
-%     BD = BlockDimensions({[2 2], [2, 3, 2]});
+%     BD = BlockDimensions({[2 2], [2, 3, 2]})
 %     BD = 
 %     BlockDimensions object with 2 dimensions
 %     ( (2, 2), (2, 3, 2) )

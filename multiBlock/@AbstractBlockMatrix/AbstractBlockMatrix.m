@@ -24,7 +24,7 @@ classdef AbstractBlockMatrix < handle
 % Methods in this cell are declared for implementation in sub-classes
 
 methods (Abstract)
-    % Returns the content of this block-matrix as a matlab array
+    % Return the content of this block-matrix as a matlab array
     matrix = getMatrix(this)
     
     % Return the dimensions of the block in the specified dimension
@@ -155,7 +155,7 @@ methods
     end
     
     function nr = blockRows(this)
-        % return the number of block rows
+        % Return the number of block rows
         %
         % Example:
         % BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
@@ -170,7 +170,7 @@ methods
     end
     
     function nc = blockCols(this)
-        % return the number of block columns
+        % Return the number of block columns
         %
         % Example:
         % BM = BlockMatrix(reshape(1:28, [7 4])', [2 2], [2 3 2]);
@@ -217,63 +217,62 @@ end
 
 methods
     function res = exp(this)
-        % returns the returns the exponential for each element of the BlockMatrix
+        % Compute the exponential for each element of the BlockMatrix
         res = BlockMatrix(exp(getMatrix(this)), blockDimensions(this));
     end
     
     function res = expm1(this)
-        % computes exp(x)-1, compensating for the roundoff in exp(x) for BlockMatrix
+        % Compute exp(x)-1, compensating for the roundoff in exp(x) for BlockMatrix
         res = BlockMatrix(expm1(getMatrix(this)), blockDimensions(this));
     end
     
     function res = log(this)
-        %  returns the secant in radians for each element of the BlockMatrix
+        % Compute the secant in radians for each element of the BlockMatrix
         res = BlockMatrix(log(getMatrix(this)), blockDimensions(this));
     end
     
-    function res =log10(this)
-        %  returns the common logarithm of each element of the BlockMatrix
+    function res = log10(this)
+        % Compute the base 10 logarithm of each element of the BlockMatrix
         res = BlockMatrix(log10(getMatrix(this)), blockDimensions(this));
     end
     
     function res = logp1(this)
-        %  returns log(1+x), compensating for the roundoff in 1+x.of the BlockMatrix
+        % Compute log(1+x), compensating for the roundoff in 1+x.of the BlockMatrix
         res = BlockMatrix(logp1(getMatrix(this)), blockDimensions(this));
     end
     
     function res = log2(this)
-        %  returns the base 2 logarithm of the elementsof the BlockMatrix
+        % Compute the base 2 logarithm of the elementsof the BlockMatrix
         res = BlockMatrix(log2(getMatrix(this)), blockDimensions(this));
     end
     
     function res = nextpow2(this)
-        % returns the exponents for the smallest powers of two that satisfy for each element of the BlockMatrix
+        % Compute the exponents for the smallest powers of two that satisfy for each element of the BlockMatrix
         res = BlockMatrix(nextpow2(getMatrix(this)), blockDimensions(this));
     end
     
     function res = nthroot(this)
-        %  returns the real nth root of the elements of the BlockMatrix
+        % Compute the real nth root of the elements of the BlockMatrix
         res = BlockMatrix(nthroot(getMatrix(this)), blockDimensions(this));
     end
     
     function res = pow2(this)
-        % returns a BlockMatrix X whose elements are 2 raised to the power of each element of the BlockMatrix.
+        % Compute a BlockMatrix X whose elements are 2 raised to the power of each element of the BlockMatrix.
         res = BlockMatrix(pow2(getMatrix(this)), blockDimensions(this));
     end
     
     function res = reallog(this)
-        % returns the natural logarithm of each element  of the BlockMatrix
-        
+        % Compute the natural logarithm of each element of the BlockMatrix
         res = BlockMatrix(reallog(getMatrix(this)), blockDimensions(this));
     end
     
     function res = realsqrt(this)
-        % returns the square root of each element of the BlockMatrix
+        % Compute the square root of each element of the BlockMatrix
         res = BlockMatrix(realsqrt(getMatrix(this)), blockDimensions(this));
     end
     
     function res = sqrt(this)
-        % returns the square root of each element of the BlockMatrix
+        % Compute the square root of each element of the BlockMatrix
         res = BlockMatrix(sqrt(getMatrix(this)), blockDimensions(this));
     end
 end
@@ -282,102 +281,102 @@ end
 %% Overload some arithmetic methods
 methods
     function res = sin(this)
-        % returns the sin for each element of the BlockMatrix
+        % Compute the sin for each element of the BlockMatrix
         res = BlockMatrix(sin(getMatrix(this)), blockDimensions(this));
     end
 
     function res = cos(this)
-        % returns the cos for each element of the BlockMatrix
+        % Compute the cos for each element of the BlockMatrix
         res = BlockMatrix(cos(getMatrix(this)), blockDimensions(this));
     end
 
     function res = tan(this)
-        % returns the sin for each element of the BlockMatrix
+        % Compute the sin for each element of the BlockMatrix
         res = BlockMatrix(tan(getMatrix(this)), blockDimensions(this));
     end
 
      function res = sind(this)
-        % returns the sind for each element of the BlockMatrix
+        % Compute the sind for each element of the BlockMatrix
         res = BlockMatrix(sind(getMatrix(this)), blockDimensions(this));
     end
 
     function res = cosd(this)
-        % returns the cosd for each element of the BlockMatrix
+        % Compute the cosd for each element of the BlockMatrix
         res = BlockMatrix(cosd(getMatrix(this)), blockDimensions(this));
     end
 
    function res = tand(this)
-        % returns the tand for each element of the BlockMatrix
+        % Compute the tand for each element of the BlockMatrix
         res = BlockMatrix(tand(getMatrix(this)), blockDimensions(this));
     end
 
     function res = csch(this)
-        % returns the hyperbolic cosecant for each element of the BlockMatrix
+        % Compute the hyperbolic cosecant for each element of the BlockMatrix
         res = BlockMatrix(csch(getMatrix(this)), blockDimensions(this));
     end
     
     function res = acsch(this)
-        % returns the inverse hyperbolic cosecant for each element of the BlockMatrix
+        % Compute the inverse hyperbolic cosecant for each element of the BlockMatrix
         res = BlockMatrix(acsch(getMatrix(this)), blockDimensions(this));
     end
     
     function res = sec(this)
-        %  returns the secant in radians for each element of the BlockMatrix
+        % Compute the secant in radians for each element of the BlockMatrix
         res = BlockMatrix(sec(getMatrix(this)), blockDimensions(this));
     end
     
     function res = secd(this)
-        %  returns the secant in degrees for each element of the BlockMatrix
+        % Compute the secant in degrees for each element of the BlockMatrix
         res = BlockMatrix(secd(getMatrix(this)), blockDimensions(this));
     end
     
     function res = asec(this)
-        %  returns the inverse secant in radians for each element of the BlockMatrix
+        % Compute the inverse secant in radians for each element of the BlockMatrix
         res = BlockMatrix(asec(getMatrix(this)), blockDimensions(this));
     end
     
     function res = asecd(this)
-        %  returns the inverse secant in degrees for each element of the BlockMatrix
+        % Compute the inverse secant in degrees for each element of the BlockMatrix
         res = BlockMatrix(asecd(getMatrix(this)), blockDimensions(this));
     end
     
     function res = sech(this)
-        % returns the returns the hyperbolic secant for each element of the BlockMatrix
+        % Compute the returns the hyperbolic secant for each element of the BlockMatrix
         res = BlockMatrix(sech(getMatrix(this)), blockDimensions(this));
     end
     
     function res = asech(this)
-        %  returns the inverse hyperbolic secant for each element of the BlockMatrix
+        % Compute the inverse hyperbolic secant for each element of the BlockMatrix
         res = BlockMatrix(asech(getMatrix(this)), blockDimensions(this));
     end
     
     function res = cot(this)
-        % returns the returns the cotangent in radians for each element of the BlockMatrix
+        % Compute the returns the cotangent in radians for each element of the BlockMatrix
         res = BlockMatrix(cot(getMatrix(this)), blockDimensions(this));
     end
     
     function res = cotd(this)
-        % returns the returns the cotangent in degrees for each element of the BlockMatrix
+        % Compute the returns the cotangent in degrees for each element of the BlockMatrix
         res = BlockMatrix(cotd(getMatrix(this)), blockDimensions(this));
     end
     
     function res = acot(this)
-        % returns the returns the inverse cotangent in radius for each element of the BlockMatrix
+        % Compute the returns the inverse cotangent in radius for each element of the BlockMatrix
         res = BlockMatrix(acot(getMatrix(this)), blockDimensions(this));
     end
     
     function res = acotd(this)
-        % returns the returns the inverse cotangent in degrees for each element of the BlockMatrix
+        % Compute the returns the inverse cotangent in degrees for each element of the BlockMatrix
         res = BlockMatrix(acotd(getMatrix(this)), blockDimensions(this));
     end
     
     function res = acoth(this)
-        % returns  the inverse hyperbolic cotangent for each element of the BlockMatrix
+        % Compute the inverse hyperbolic cotangent for each element of the BlockMatrix
         res = BlockMatrix(acoth(getMatrix(this)), blockDimensions(this));
     end
     
     function res = coth(this)
-        % returns the hyperbolic cotangent  for each element of the BlockMatrix
+        % Compute the hyperbolic cotangent  for each element of the BlockMatrix
         res = BlockMatrix(coth(getMatrix(this)), blockDimensions(this));
     end
 end
@@ -386,7 +385,7 @@ end
 
 methods
     function res = norm(this, varargin)
-        % Computes the norm of this BlockMatrix
+        % Compute the norm of this BlockMatrix
         %
         % NORM = norm(BM)
         % returns the norm as a scalar
@@ -395,7 +394,7 @@ methods
     end
 
     function res = plus(this, that)
-        % addition of two block-matrices
+        % Addition of two block-matrices
         % 
         % usage:
         %   X = A + B
@@ -429,7 +428,7 @@ methods
     end
     
     function res = minus(this, that)
-        % subtraction of two block-matrices
+        % Subtraction of two block-matrices
         % 
         % usage:
         %   X = A - B
@@ -463,7 +462,7 @@ methods
     end
     
     function res = times(this, that)
-        % element-wise multiplication of two block-matrices
+        % Element-wise multiplication of two block-matrices
         % 
         % usage:
         %   X = A .* B
@@ -497,7 +496,7 @@ methods
     end
     
     function res = rdivide(this, that)
-        % division of two block-matrices
+        % Division of two block-matrices
         % 
         % usage:
         %   X = A ./ B
@@ -531,7 +530,7 @@ methods
     end
     
     function res = mtimes(this, that)
-        % Multiplies two instances of BlockMatrix
+        % Multiply two instances of BlockMatrix
         % 
         % usage:
         %   X = A * B
@@ -619,6 +618,7 @@ methods
         % BM(2, 3)
         % ans =
         %     10
+        %
         % BM{2, 3}
         % ans = 
         %    20   21
@@ -653,7 +653,8 @@ methods
             varargout{1} = subsref(matrix, subs);
             
         elseif strcmp(type, '{}')
-            % Process braces indexing -> return block at specified position
+            % Process braces indexing -> return new Block Matrix
+            % corresponding to the specified block(s)
             ns = length(s1.subs);
             if ns == 2
                 % returns integer partition of corresponding dimension
@@ -755,7 +756,7 @@ methods
         nRowBlocks = length(dims1);
         nColBlocks = length(dims2);
         
-        % define printing styles for alterating blocs
+        % define printing styles for alternating blocs
         styleList = {'*blue', [.7 0 0]};
         
         % the style of first block, and of 'odd' blocks

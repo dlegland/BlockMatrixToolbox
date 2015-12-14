@@ -222,8 +222,8 @@ methods
             end
             
             % Second argument represents block dimension. It can be either
-            % a BlockDimension object, or a cell array containing the block
-            % sizes in each dimension. 
+            % a BlockDimensions object, or a cell array containing the
+            % block sizes in each dimension. 
             var2 = varargin{2};
             if isa(var2, 'BlockDimensions')
                 this.dims = var2;
@@ -273,10 +273,10 @@ methods
         
         function checkDimensionsValidity()
             % Check that data and block dimensions match together
-
+            
             % string pattern for error message
             pattern = 'Input data have %1$d %3$s, but block dimensions specifies %2$d %3$s';
-
+            
             % check rows
             siz1 = size(this.data, 1);
             bdim1 = sum(this.dims{1});
