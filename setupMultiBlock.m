@@ -20,7 +20,8 @@ mainDir = fileparts(fileName);
 disp('Installing BlockMatrix Toolbox...');
 
 % add libraries
-addpath(fullfile(mainDir, 'multiBlock'));
+addpath(fullfile(mainDir, 'blockMatrices'));
+addpath(fullfile(mainDir, 'blockAlgos'));
 
 disp('BlockMatrix Toolbox installed!');
 
