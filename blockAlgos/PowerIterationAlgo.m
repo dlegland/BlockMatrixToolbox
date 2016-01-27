@@ -8,7 +8,7 @@ classdef PowerIterationAlgo < handle
 %     MAT = rand(5,5);
 %     ALGO = PowerIterationAlgo(MAT);
 %     for i = 1:10, iterate(ALGO); end
-%     lambda = norm(ALGO.u);
+%     lambda = norm(ALGO.vector);
 %
 %     % uses listener to monitor algorithm progression
 %     mat = rand(5,5);
@@ -44,8 +44,8 @@ end % end properties
 %% Events
 % these events are used to manage algorithm progression
 events
-    % notified when the an iteration is run
-    AlgoIterated
+    % notified after an iteration has been performed
+    AlgoIterated;
 end
 
 %% Constructor
@@ -80,9 +80,11 @@ methods
         % update vector
         ui = this.A * this.vector;
         
-        % compute norm (eigen value) and normalize eigen vector
-        lambda = norm(ui);
-        ui = ui / lambda;
+        % normalize eigen vector
+        ui = ui / norm(ui);
+        
+        % compute resulting eigen value
+        lambda = norm(this.A * ui);
         
         % update current state
         this.vector = ui;
