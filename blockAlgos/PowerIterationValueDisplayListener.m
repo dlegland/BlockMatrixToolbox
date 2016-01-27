@@ -72,8 +72,9 @@ methods
         this.valueArray = [this.valueArray; value];
         
         % display current list of values
+        ax = this.axisHandle;
         nv = length(this.valueArray);
-        plot(this.axisHandle, 1:nv, this.valueArray);
+        plot(ax, 1:nv, this.valueArray, 'color', 'b', 'linewidth', 1);
         set(this.axisHandle, 'xlim', [0 nv]);
         
         % decorate

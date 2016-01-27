@@ -65,13 +65,56 @@ ylabel('Eigen value estimation');
 % init algo
 ALGO = PowerIterationAlgo(MAT, V0);
 
-% create new listener, and attach it to algorithm instance
-figure;
+% prepare figure for display
+figure; set(gca, 'fontsize', 14); hold on;
+xlabel('Iteration Number');
+ylabel('Eigen value estimation');
+
+% create new listener
 listener = PowerIterationValueDisplayListener(gca);
+
+% attach the listener to algorithm instance
 addAlgoListener(ALGO, listener);
 
 % iterate for a given number of iterations
 for iIter = 1:nIter
-    lambdaList(iIter) = iterate(ALGO); 
+    iterate(ALGO); 
 end
+
+
+%% Track a posteriori the difference between two vectors
+
+nIter = 30;
+vectorList = zeros(nIter, N);
+
+% init algo
+ALGO = PowerIterationAlgo(MAT, V0);
+
+% iterate for a given number of iterations
+for iIter = 1:nIter
+    iterate(ALGO); 
+    vectorList(iIter, :) = ALGO.vector;
+end
+
+% compute displacement between successive vectors
+diff([V0';vectorList]);
+vDiff = diff([V0';vectorList]);
+
+% compute norm of differences
+absDiff = zeros(nIter, 1);
+for iIter = 1:nIter
+    absDiff(iIter) = norm(vDiff(iIter,:));
+end
+
+% display differences
+figure; set(gca, 'fontsize', 14); hold on;
+plot(absDiff, 'linewidth', 2);
+xlabel('Iteration number');
+ylabel('Sucessive difference');
+
+% use log scale
+figure; set(gca, 'fontsize', 14); hold on;
+plot(log(absDiff))
+xlabel('Iteration number');
+ylabel('Log of vector difference');
 

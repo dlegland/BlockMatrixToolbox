@@ -20,8 +20,10 @@ classdef JacobiPowerBlock < PowerBlockAlgo
 properties
     % the blockMatrix representing the problem
     data;
+    
     % the block vector representing the initial solution
     init;
+    
     % the current solution
     solution;
     
