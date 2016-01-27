@@ -1,5 +1,5 @@
 classdef JacobiPowerBlock < PowerBlockAlgo
-%JACOBIPOWERBLOCK JAcobi algorithm for solving block power algorithms
+%JACOBIPOWERBLOCK Jacobi algorithm for solving block power algorithms
 %
 %   Class JacobiPowerBlock
 %

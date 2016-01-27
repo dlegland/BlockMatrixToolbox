@@ -900,7 +900,7 @@ methods
                 
                 % choose formatting style
                 if num == 0 || round(num) == num
-                    fmt = '%g';
+                    fmt = '%d';
                 elseif abs(num) < 1e4 && abs(num) > 1e-2
                     fmt = '%.3f';
                 else
@@ -908,7 +908,7 @@ methods
                 end
                 
                 % ensure 9 digits are used, and align to the right
-                stringArray{i} = sprintf('%9s', num2str(num, fmt));
+                stringArray{i} = sprintf('%5s', num2str(num, fmt));
             end
         end
     end % end displayData method

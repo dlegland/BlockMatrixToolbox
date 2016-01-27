@@ -1,5 +1,5 @@
 classdef JacobiCorePowerBlock < handle
-%JACOBICOREPOWERBLOCK Gauss algorithm with kernel for solving block power algorithms
+%JACOBICOREPOWERBLOCK Jacobi algorithm with kernel for solving block power algorithms
 %
 %   Class JacobiCorePowerBlock
 %
