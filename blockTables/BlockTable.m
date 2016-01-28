@@ -1,7 +1,7 @@
 classdef BlockTable < handle
-%BLOCKTABLE  One-line description here, please.
+%BLOCKTABLE Data table of Block-partitioned data
 %
-%   Class BlockTable
+%   (Uses block partition only for columns)
 %
 %   Example
 %   BlockTable
@@ -99,12 +99,18 @@ methods
                      error('Number of row names does not match row number');
                 end
                 this.rowNames = value;
-                    
+                
             elseif strcmp(param, 'colnames')
                 if length(value) ~= size(this.data,2)
                      error('Number of column names does not match column number');
                 end
                 this.colNames = value;
+
+            elseif strcmp(param, 'blocknames')
+                if length(value) ~= blockSize(this.data, 2)
+                     error('Number of block names does not match block-column number');
+                end
+                this.blockColNames = value;
 
             
             else
@@ -157,8 +163,8 @@ methods
         % isLong = ~isempty(strfind(get(0,'Format'),'long'));
         % dblDigits = 5 + 10*isLong; % 5 or 15
         % snglDigits = 5 + 2*isLong; % 5 or 7
-        maxWidth = get(0, 'CommandWindowSize');
-        maxWidth = maxWidth(1);
+%         maxWidth = get(0, 'CommandWindowSize');
+%         maxWidth = maxWidth(1);
         
         % get BlockMatrix total size
         dim = size(this.data);
@@ -177,7 +183,6 @@ methods
 
         % get BlockMatrix total size
         dim = blockSize(this.data);
-        nBlockRows = dim(1);
         nBlockCols = dim(2);
         
         if isLoose
@@ -192,7 +197,6 @@ methods
         nSpacesBetweenBlocks = 4;
         
         % data access shortcuts
-        colNames = this.colNames;
         data0 = this.data.data;
         
         % list of formats for the content of each column
@@ -204,6 +208,7 @@ methods
 
         % determine width of each data column
         colWidths = zeros(1, nCols);
+        dataColWidths = zeros(1, nCols);
         for iCol = 1:nCols
             % determine data column width by trying to format data and
             % measuring resulting length
@@ -215,7 +220,7 @@ methods
             dataColWidths(iCol) = w;
             
             % determine maximum width of data and of column names
-            colWidths(iCol) = max(w, length(colNames{iCol}));
+            colWidths(iCol) = max(w, length(this.colNames{iCol}));
         end
 
         rowNamesWidth = 8;
@@ -277,14 +282,14 @@ methods
             % first column of the block
             iCol = iCol + 1;
             fmt = ['%' num2str(colWidths(iCol)) 's'];
-            fprintf(fmt, colNames{iCol});
+            fprintf(fmt, this.colNames{iCol});
             
             % remaining columns of the block
             for iBlockCol = 2:nCols2
                 iCol = iCol + 1;
                 fprintf(repmat(' ', 1, nSpacesBetweenCols));
                 fmt = ['%' num2str(colWidths(iCol)) 's'];
-                fprintf(fmt, colNames{iCol});
+                fprintf(fmt, this.colNames{iCol});
             end
         end
         fprintf('\n');
@@ -315,8 +320,6 @@ methods
         
         % iterate over data rows
         for iRow = 1:nRows
-            % TODO: display block row name if appropriate
-            
             % display row name
             fmt = ['%' num2str(rowNamesWidth) 's'];
             fprintf(fmt, this.rowNames{iRow});
@@ -351,21 +354,11 @@ methods
                     str = sprintf(colFormats{iCol}, value);
                     fmt = ['%-' num2str(colWidths(iCol)) 's'];
                     fprintf(fmt, str);
-% 
-%                     fprintf(repmat(' ', 1, nSpacesBetweenCols));
-%                     fprintf(repmat('_', 1, colWidths(iCol)));
                 end
             end
             fprintf('\n');
             
         end
-        
-%         % iterate over data columns
-%         for iCol = 1:nCols
-%             value = data0(iRow, iCol);
-%             fprintf(' %s', sprintf(colFormats{iCol}, value));
-%         end
-%         fprintf('\n');
         
         % final formatting
         if isLoose
