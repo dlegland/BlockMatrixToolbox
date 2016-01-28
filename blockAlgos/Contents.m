@@ -5,12 +5,15 @@
 % Files
 %
 %   Block-Power algorithms
-%   PowerBlockAlgo                     - Generic interface for Block factorization algorithms
-%   GaussCorePowerBlock                - Gauss algorithm with kernel for solving block power algorithms
-%   GaussPowerBlock                    - Gauss algorithm for solving block power algorithms
-%   JacobiCorePowerBlock               - Jacobi algorithm with kernel for solving block power algorithms
-%   JacobiPowerBlock                   - Jacobi algorithm for solving block power algorithms
-%   BlockCore                          - interface for representing kernel
+%   BlockPowerAlgo                     - Power Iteration algorithms for Block-Matrices
+%   GaussBlockPower                    - Gauss algorithm for solving block power algorithms
+%   JacobiBlockPower                   - Jacobi algorithm for solving block power algorithms
+%   demoJacobiBlockPower               - Demonstration of Jacobi Block-Power Iteration algorithm
+%
+%   Block-Power algorithms with Core functions
+%   GaussCoreBlockPower                - Gauss algorithm with kernel for solving block power algorithms
+%   JacobiCoreBlockPower               - Jacobi algorithm with kernel for solving block power algorithms
+%   BlockCore                          - Interface for kernel of BlockCore Power algorithm
 %   BlockCore0                         - first demo of Blockcore implementation
 %   BlockCore1                         - second demo of Blockcore implementation
 %
@@ -18,6 +21,7 @@
 %   powerIteration                     - simple function to test "power iteration" algorithm
 %   PowerIterationAlgo                 - Demo of Algorithm class for solving power iteration
 %   PowerIterationValueDisplayListener - Display current value of Power Iteration algo
+%   demoPowerIterationAlgo             - Demo script for the PowerIteration class
 %
 %   Utilities
 %   AlgoListener                       - Base class for listening to Algorithms events
@@ -35,5 +39,5 @@
 %   MaxBetIterator                     - Iterate the MaxBet algorithm
 %   test_maxbet1                       - Programme de test pour la fonction 'maxbet_procedure1'
 %   test_maxbet2                       - Programme de test pour la fonction 'maxbet_procedure2'
-%   test_maxbet3                       - TEST_MAXBET2 Programme de test pour la fonction 'maxbet_procedure2'
+%   test_maxbet3                       - Programme de test pour la fonction 'maxbet_procedure2'
 %   test_maxbet4                       - Check the class "MaxBetAlgorithm"

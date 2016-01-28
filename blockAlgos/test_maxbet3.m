@@ -1,12 +1,12 @@
-%TEST_MAXBET2 Programme de test pour la fonction 'maxbet_procedure2'
+%TEST_MAXBET3 Programme de test pour la fonction 'maxbet_procedure2'
 %
-%   Usage: test_maxbet2
+%   Usage: test_maxbet3
 %
 %   Example
-%   test_maxbet2
+%   test_maxbet3
 %
 %   See also
-%   test_maxbet1
+%   test_maxbet1, test_maxbet2
  
 %% Cree une bloc-matrice pour les donnees
 % On part sur une bloc-matrice de 3 blocs concatenes en ligne, 

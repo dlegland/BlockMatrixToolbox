@@ -1,13 +1,13 @@
-classdef PowerBlockAlgo < handle
-%POWERBLOCKALGO Generic interface for Block factorization algorithms
+classdef BlockPowerAlgo < handle
+%BLOCKPOWERALGO Power Iteration algorithms for Block-Matrices
 %
-%   Class PowerBlockAlgo
+%   Class BlockPowerAlgo
 %
 %   Example
-%   PowerBlockAlgo
+%   BlockPowerAlgo
 %
 %   See also
-%
+%     JacobiBlockPower, GaussBlockPower 
 
 % ------
 % Author: David Legland
@@ -23,8 +23,8 @@ end % end properties
 
 %% Constructor
 methods
-    function this = PowerBlockAlgo(varargin)
-    % Constructor for PowerBlockAlgo class
+    function this = BlockPowerAlgo(varargin)
+    % Constructor for BlockPowerAlgo class
 
     end
 

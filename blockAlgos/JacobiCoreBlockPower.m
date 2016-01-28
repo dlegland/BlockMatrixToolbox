@@ -1,10 +1,10 @@
-classdef GaussPowerBlock < PowerBlockAlgo
-%GAUSSPOWERBLOCK Gauss algorithm for solving block power algorithms
+classdef JacobiCoreBlockPower < BlockPowerAlgo
+%JACOBICOREBLOCKPOWER Jacobi algorithm with kernel for solving block power algorithms
 %
-%   Class GaussPowerBlock
+%   Class JacobiCoreBlockPower
 %
 %   Example
-%   GaussPowerBlock
+%   JacobiCoreBlockPower
 %
 %   See also
 %
@@ -18,10 +18,12 @@ classdef GaussPowerBlock < PowerBlockAlgo
 
 %% Properties
 properties
-    % the blockMatrix representing the problem
-    data;
+    % the BlockCore object representing the kernel
+    core;
+    
     % the block vector representing the initial solution
     init;
+    
     % the current solution
     solution;
     
@@ -30,8 +32,8 @@ end % end properties
 
 %% Constructor
 methods
-    function this = GaussPowerBlock(varargin)
-    % Constructor for GaussPowerBlock class
+    function this = JacobiCoreBlockPower(varargin)
+    % Constructor for JacobiCoreBlockPower class
 
     end
 
@@ -40,6 +42,9 @@ end % end constructors
 
 %% Methods
 methods
+    function state = iterate(this)
+        state = this;
+    end
 end % end methods
 
 end % end classdef

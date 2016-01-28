@@ -1,9 +1,9 @@
-%DEMOJACOBIPOWERBLOCK  One-line description here, please.
+%DEMOJACOBIBLOCKPOWER Demonstration of Jacobi Block-Power Iteration algorithm
 %
-%   output = demoJacobiPowerBlock(input)
+%   output = demoJacobiBlockPower(input)
 %
 %   Example
-%   demoJacobiPowerBlock
+%   demoJacobiBlockPower
 %
 %   See also
 %
@@ -58,7 +58,7 @@ disp(qq');
 
 
 % create the algorithm iterator
-algo = JacobiPowerBlock(AA, qq);
+algo = JacobiBlockPower(AA, qq);
 
 % allocate memory for result
 nIter = 20;

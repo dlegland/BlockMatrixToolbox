@@ -1,10 +1,10 @@
-classdef GaussCorePowerBlock < handle
-%GAUSSCOREPOWERBLOCK Gauss algorithm with kernel for solving block power algorithms
+classdef GaussCoreBlockPower < BlockPowerAlgo
+%GAUSSCOREBLOCKPOWER Gauss algorithm with kernel for solving block power algorithms
 %
-%   Class GaussCorePowerBlock
+%   Class GaussCoreBlockPower
 %
 %   Example
-%   GaussCorePowerBlock
+%   GaussCoreBlockPower
 %
 %   See also
 %
@@ -32,8 +32,8 @@ end % end properties
 
 %% Constructor
 methods
-    function this = GaussCorePowerBlock(varargin)
-    % Constructor for GaussCorePowerBlock class
+    function this = GaussCoreBlockPower(varargin)
+    % Constructor for GaussCoreBlockPower class
 
     end
 

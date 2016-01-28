@@ -1,13 +1,13 @@
-classdef JacobiPowerBlock < PowerBlockAlgo
-%JACOBIPOWERBLOCK Jacobi algorithm for solving block power algorithms
+classdef JacobiBlockPower < BlockPowerAlgo
+%JACOBIBLOCKPOWER Jacobi algorithm for solving block power algorithms
 %
-%   Class JacobiPowerBlock
+%   Class JacobiBlockPower
 %
 %   Example
-%   JacobiPowerBlock
+%   JacobiBlockPower
 %
 %   See also
-%
+%     GaussBlockPower
 
 % ------
 % Author: David Legland
@@ -36,12 +36,12 @@ end % end properties
 
 %% Constructor
 methods
-    function this = JacobiPowerBlock(A, varargin)
-        % Constructor for JacobiPowerBlock class
+    function this = JacobiBlockPower(A, varargin)
+        % Constructor for JacobiBlockPower class
         %
         % Usage:
-        %   ALGO = JacobiPowerBlock(MAT);
-        %   ALGO = JacobiPowerBlock(MAT, U0);
+        %   ALGO = JacobiBlockPower(MAT);
+        %   ALGO = JacobiBlockPower(MAT, U0);
         %   MAT is a N-by-P BlockMatrix. U0 is an optional N-by-1
         %   BlockVector.
         %
@@ -80,7 +80,7 @@ methods
         % Performs a single iteration of the (Block-)Power Algorithm
         %
         % [Q, RESID] = iterate(ALGO)
-        % where ALGO is a correctly initialized JacobiPowerBlock algorithm,
+        % where ALGO is a correctly initialized JacobiBlockPower algorithm,
         % returns the new value Q of the vector (as a BlockMatrix), and the
         % value of the residual (as a scalar).
         %

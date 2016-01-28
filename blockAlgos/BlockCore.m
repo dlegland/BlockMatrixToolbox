@@ -1,5 +1,5 @@
 classdef BlockCore < handle
-%BLOCKCORE interface for representing kernel
+%BLOCKCORE Interface for kernel of BlockCore Power algorithm
 %
 %   Class BlockCore
 %
