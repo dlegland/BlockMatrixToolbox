@@ -52,6 +52,7 @@ methods
         % the residual (as a scalar).
         %
         
+        % performs block-product on current vector (uses 'uu' product)
         qq = this.vector;
         q = blockProduct_uu(this.data, qq);
         

@@ -472,7 +472,7 @@ methods
         
         % compute size of result (corresponding to the "block-size")
         siz = blockSize(this);
-        res = scalarBlock(zeros(siz));
+        res = BlockMatrix.scalarBlock(zeros(siz));
         
         % iterate over blocks
         for i = 1:siz(1)
