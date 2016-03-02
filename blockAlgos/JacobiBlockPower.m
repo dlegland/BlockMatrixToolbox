@@ -1,10 +1,18 @@
 classdef JacobiBlockPower < BlockPowerAlgo
 %JACOBIBLOCKPOWER Jacobi algorithm for solving block power algorithms
 %
-%   Class JacobiBlockPower
+%   ALGO = JacobiBlockPower(BM)
+%   ALGO = JacobiBlockPower(BM, U0)
+%   Creates a new instance of Jacobi Block Power iteration algorithm, using
+%   the specified Block-Matrix BM for representing the problem, and an
+%   optional Block-Vector representing the initial state of the algorithm.
+%   If U0 is not specified, a block vector containing only 1 is used.
+%
+%   The algorithm can be used that way:
+%   U = iterate(ALGO)
 %
 %   Example
-%   JacobiBlockPower
+%
 %
 %   See also
 %     GaussBlockPower
@@ -50,10 +58,11 @@ methods
         if ~isa(A, 'BlockMatrix')
             error('First argument should be a block-matrix');
         end
-        % TODO : check Sylvester condition
+        % TODO check if matrix is symmetric positive-definite
+        
         this.data = A;
         
-        
+        % Check if initialisation vector is precised
         if nargin > 1
             % use second input argument for initial vector
             var1 = varargin{1};
@@ -64,10 +73,11 @@ methods
                 error('Second argument should be a block-matrix with one block-column');
             end
             this.vector = varargin{1};
+            
         else
             % create initial vector from matrix size
             n = size(A, 1);
-            this.vector = rand(n, 1);
+            this.vector = ones(n, 1);
         end
     end
 
@@ -76,13 +86,16 @@ end % end constructors
 
 %% Methods
 methods
-    function [q, resid] = iterate(this)
+    function [q, resid, state] = iterate(this)
         % Performs a single iteration of the (Block-)Power Algorithm
         %
-        % [Q, RESID] = iterate(ALGO)
+        % Q = iterate(ALGO)
         % where ALGO is a correctly initialized JacobiBlockPower algorithm,
-        % returns the new value Q of the vector (as a BlockMatrix), and the
-        % value of the residual (as a scalar).
+        % returns the new value Q of the vector, as a BlockMatrix with one
+        % column.
+        %
+        % [Q, RESID] = iterate(ALGO)
+        % Also returns the residual obtained after this iteration.
         %
         
         % performs block-product on current vector
@@ -97,6 +110,14 @@ methods
         
         % keep result for next iteration
         this.vector = q;
+        
+        % create algorithm state data structure
+        if nargout > 2
+            state = struct(...
+                'vector',   q, ...
+                'resid',    resid, ...
+                'eig',      eigenValue(this));
+        end
     end
     
     function lambda = eigenValue(this)
@@ -104,6 +125,7 @@ methods
         q = blockProduct(this.data, this.vector, this.productType);
         lambda = norm(q, this.normType);
     end
+    
 end % end methods
 
 end % end classdef
