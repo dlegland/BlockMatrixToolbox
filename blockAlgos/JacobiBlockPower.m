@@ -97,6 +97,14 @@ methods
         % [Q, RESID] = iterate(ALGO)
         % Also returns the residual obtained after this iteration.
         %
+        % [Q, RESID, STATE] = iterate(ALGO)
+        % Also returns a structure containing information about current
+        % iteration. STATE contains following fields:
+        % * vector  the value of the vector after iteration
+        % * resid   the residual, equal to norm of difference between
+        %           vectors of successive iterations
+        % * eig     the eigen value
+        %
         
         % performs block-product on current vector
         qq = this.vector;
@@ -118,6 +126,34 @@ methods
                 'resid',    resid, ...
                 'eig',      eigenValue(this));
         end
+    end
+    
+    function [q, resid, state] = solve(this, varargin)
+        % Iterates this algorithm until limit condition is found
+        
+        % parse optimization options
+        options = blockPowerOptions(varargin{:});
+        
+        % iterate until residual is acceptable
+        for iIter = 1:options.maxIterNumber
+            % performs one iteration, and get residual
+            [q, resid, state] = this.iterate();
+            
+            % test the tolerance on residual
+            if resid < options.residTol
+                fprintf('converged to residual after %d iteration(s)\n', iIter);
+                return;
+            end
+            
+            % test the tolerance on eigen value
+            if state.eig < options.eigenTol
+                fprintf('converged to eigenValue after %d iteration(s)\n', iIter);
+                return;
+            end
+        end
+        
+        fprintf('Reached maximum number of iterations (%d)\n', iIter);
+
     end
     
     function lambda = eigenValue(this)

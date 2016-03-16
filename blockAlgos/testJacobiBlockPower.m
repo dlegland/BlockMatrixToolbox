@@ -74,3 +74,9 @@ for iIter = 1:nIters
     structArray = [structArray state];
 end
 
+
+%% Solve problem using "solve" method
+
+solution = solve(algo);
+disp('Transposed solution:');
+disp(solution');
