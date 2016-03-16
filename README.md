@@ -4,7 +4,7 @@ Implementation of multi-blocks data structure (matrices) for Matlab
 This toolbox for Matlab allows creation and manipulation of multi-block matrices, also called
 "block-matrices".
 Block-matrices are matrices endowed with a "block-dimensions", that defines a decomposition of 
-the data into several blocks. 
+the matrix data into several blocks. 
 
 The motivation is to manage efficiently concatenation of several data sets while preserving the 
 original structure of the experiment.
@@ -31,12 +31,12 @@ A Block-Dimension can be assigned to this matrix, using the **BlockMatrix** clas
 
     >> X = BlockMatrix(data, [2 2], [2 3 2]);
  
-As an alternative syntax, the BlockDimension object can be explicitley created and given as argument:
+As an alternative syntax, the **BlockDimension** object can be explicitely created and given as argument:
 
     >> BD = BlockDimension({[2 2], [2 3 2]});
     >> X = BlockMatrix(data, BD);
 
-The content of a BlockMatrix can be shown by using the **disp** function, or simply by omitting the 
+The content of a BlockMatrix can be shown by using the `disp` function, or simply by omitting the 
 final semi colon:
 
 	>> X
@@ -65,7 +65,7 @@ block-matrices are preserved.
           728        1953        3178        4403   
 
 The content of Block-matrices is accessible by different ways. One possibility is to use the 
-getBlock() and setBlock methods.
+`getBlock` and `setBlock` methods.
 
 	>> getBlock(X, 1, 2)
 	ans =
@@ -90,13 +90,20 @@ A similar result is obtained by using braces indexing:
 		20    21
 		27	  28
 
+		
+Elements of a block matrix can be accessed using parens indexing
+
+	>> X(3, 2)
+	ans =
+		16
+
 ## Block-Diagonal matrices
 
-The toolbox provides support for Block-Diagonal matrices. Block-Diagonal matrices are block-matrices
+The toolbox provides support for **Block-Diagonal matrices**. Block-Diagonal matrices are block-matrices
 with the particularity that the blocks that are not on the diagonal contains only zero values.
 An example of block-diagonal matrix is as follow:
 
-	> BD = BlockDiagonal({[1 2 3; 4 5 6], [7 8;9 10], [11 12]})
+	>> BD = BlockDiagonal({[1 2 3; 4 5 6], [7 8;9 10], [11 12]})
 	BD =
 	BlockMatrix object with 5 rows and 7 columns
 	  row dims: 2 2 1
@@ -122,7 +129,7 @@ BlockDiagonal matrices can be multiplied as common block-matrices:
 
 # Credits
 
-BlockBerry4m is developped jointly by INRA and ONIRIS. The development started at the occasion of 
+**BlockMatrixToolbox** is developped jointly by INRA and ONIRIS. The development started at the occasion of 
 the "CouplImSpec" project, involving also the SOLEIL synchrotron, and during the AI-Fruit project
 of Region "Pays-de-la-Loire"
 
