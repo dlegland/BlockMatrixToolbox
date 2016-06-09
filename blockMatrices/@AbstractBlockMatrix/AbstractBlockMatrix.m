@@ -770,10 +770,17 @@ methods
         parts1 = blockDimensions(this, 1);
         parts2 = blockDimensions(this, 2);
         
-        pattern = ['   ' repmat('%3d', 1, length(parts2)) '\n'];
+        % computes number of digits for each column
+        % (use same number for all columns)
+        digitsByCol = ceil(log10(parts2.terms));
+        nDigits =  max(2, max(digitsByCol));
+        
+        colPattern = ['%' num2str(nDigits + 1) 'd'];
+        pattern = ['   ' repmat(colPattern, 1, length(parts2)) '\n'];
         fprintf(pattern, parts2.terms);
         
-        pattern = ['%3d' repmat('  +', 1, length(parts2)) '\n'];
+        colPattern = [repmat(' ', 1, nDigits) '+'];
+        pattern = ['%3d' repmat(colPattern, 1, length(parts2)) '\n'];
         for iRow = 1:length(parts1)
             fprintf(pattern, parts1(iRow));
         end
