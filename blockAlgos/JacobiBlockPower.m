@@ -162,6 +162,53 @@ methods
         lambda = norm(q, this.normType);
     end
     
+    function monotony(this, v0, varargin)
+        % Display monotony of this algorithm
+        %
+        % usage:
+        %   monotony(ALGO, V0);
+        % where ALGO if the instance of Block power algorithm, and V0 is
+        % the initial value of the vector
+        %
+        % Example
+        %   % create block matrix for problem
+        %   mdims = BlockDimensions({40, [20 30 20]});
+        %   data = BlockMatrix(rand(40, 70), mdims);
+        %   AA = blockProduct_uu(data', data);
+        %   % create block matrix for initial vector
+        %   vdims = BlockDimensions({[20 30 20], 1});
+        %   q0 = BlockMatrix(rand(70, 1), vdims);
+        %   qq = blockProduct_hs(1./blockNorm(q0), q0);
+        %   % compute algorithm monotony
+        %   algo = JacobiBlockPower(AA, qq);
+        %   monotony(algo, qq);
+        
+        % parse optimization options
+        options = blockPowerOptions(varargin{:});
+        
+        % initialize algo
+        this.vector = v0;
+        
+        % initialize display
+        nIter = options.maxIterNumber;
+        lambdaList = zeros(nIter, 1);
+        
+        % iterate
+        for iIter = 1:nIter
+            iterate(this);
+            lambdaList(iIter) = eigenValue(this);
+        end
+        
+        
+        % display result
+        figure; set(gca, 'fontsize', 14); hold on;
+        plot([1 nIter], lambdaList([end end]), 'k');
+        plot(lambdaList, 'color', 'b', 'linewidth', 2);
+        xlabel('Iteration Number');
+        ylabel('Eigen value estimation');
+
+    end
+    
 end % end methods
 
 end % end classdef
