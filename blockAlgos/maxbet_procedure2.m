@@ -38,23 +38,28 @@ function [q, iter, resid] = maxbet_procedure2(data, tt, tol)
 %
 
 % create new BlockMatrix representing the normalized input vectors
-qq = blockProduct_hs(1./blockNorm(tt), tt);
+qq = blockProduct_hs(1 ./ blockNorm(tt), tt);
 
-AA = blockProduct_uu(data',data);
+% create new BlockMatrix representing the problem
+AA = blockProduct_uu(data', data);
 
+% initialisations
 resid = 1;
-
 iter = 0;
 
+% iterate until convergence
 while resid > tol
     
     iter = iter + 1;
     
-    q = blockProduct_uu(AA,qq);
+    % compute block-product
+    q = blockProduct_uu(AA, qq);
     
-    q = blockProduct_hs(1./blockNorm(q), q); % block normalization
+    % block normalization
+    q = blockProduct_hs(1 ./ blockNorm(q), q); 
     
-    resid = norm(blockNorm(q) - blockNorm(qq)); % residual
+    % compute residuals
+    resid = norm(blockNorm(q) - blockNorm(qq));
     
     qq = q;
 end
