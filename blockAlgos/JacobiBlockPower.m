@@ -130,8 +130,25 @@ methods
     end
     
     function [q, resid, state] = solve(this, varargin)
-        % Iterates this algorithm until limit condition is found
-
+        % Iterates this algorithm until a stopping criterion is found
+        %
+        % U = solve(ALGO, U0);
+        %
+        % U = solve(..., PNAME, PVALUE)
+        % Specified one or several optional parameter as name-value pairs.
+        %
+        % List of available parameters
+        % * maxIterNumber:  the maximum number of iteration (default 100)
+        % * residTol:       the tolerance on residuals, as the norm of the
+        %       block-norm of the difference between two successive vectors. 
+        %       Default value is 1e-8.
+        % * eigenTol:       the tolerance on the difference between two
+        %       successive values of the computed eigen value. Default
+        %       value is 1 e-8. 
+        %
+        % See also
+        %    blockPowerOptions
+        
         % uses first argument if this is a block-vector
         if nargin > 1 && isa(varargin{1}, 'AbstractBlockMatrix')
             this.vector = varargin{1};
