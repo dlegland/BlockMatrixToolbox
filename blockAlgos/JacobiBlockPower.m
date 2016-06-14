@@ -65,8 +65,12 @@ methods
         if ~isa(A, 'BlockMatrix')
             error('First argument should be a block-matrix');
         end
-        % TODO check if matrix is symmetric positive-definite
         
+        % check matrix validity
+        [n1, n2] = size(A);
+        if n1 ~= n2 || ~isSymmetric(A) || ~isPositiveDefinite(A)
+            error('Requires a symmetric positive definite matrix');
+        end
         this.data = A;
         
         % Check if initialisation vector is precised

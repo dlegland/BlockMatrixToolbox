@@ -210,6 +210,54 @@ methods
         % Check if a BlockMatrix is divided in 1 block in at least one direction
         tf = any(blockSize(this) == 1);
     end
+    
+    function tf = isPositiveDefinite(this)
+        % Test is a BlockMatrix is symmetric positive definite
+        %
+        % Uses Sylvester's criterion. Throws an error if matrix is not
+        % square and symmetric.
+        
+        % first check square size
+        [n1, n2] = size(this);
+        if n1 ~= n2
+            error('Criterion is valid only for square matrices');
+        end
+        
+        % check symmetric matrix
+        mat = getMatrix(this);
+        if any(any(mat ~= mat'))
+            error('Criterion is valid only for symmetric matrices');
+        end
+        
+        % compute all determinants and check their sign
+        for i = 1:n1
+            sub = mat(1:i, 1:i);
+            if det(sub) < 0
+                tf = false;
+                return;
+            end
+        end
+        
+        % if no test was escaped, then all determinants are positive, 
+        % and the matrix is positive definite
+        tf = true;
+    end
+    
+    function tf = isSymmetric(this)
+        % Test is a BlockMatrix is symmetric
+        %
+        % Throws an error if matrix is not square.
+        
+        % first check square size
+        [n1, n2] = size(this);
+        if n1 ~= n2
+            error('Requires a square matrix');
+        end
+        
+        % check symmetric matrix
+        mat = getMatrix(this);
+        tf = ~any(any(mat ~= mat'));
+    end
 end
 
 
