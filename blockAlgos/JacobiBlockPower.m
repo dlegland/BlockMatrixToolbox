@@ -77,7 +77,8 @@ methods
         else
             % create initial vector from matrix size
             n = size(A, 1);
-            this.vector = ones(n, 1);
+            vdim = blockDimensions(A, 2);
+            this.vector = BlockMatrix(ones(n, 1), vdim, 1);
         end
     end
 
@@ -114,7 +115,7 @@ methods
         q = blockProduct_hs(1./blockNorm(q), q); 
         
         % compute residual
-        resid = norm(blockNorm(q) - blockNorm(qq), this.normType); 
+        resid = norm(blockNorm(q - qq), this.normType); 
         
         % keep result for next iteration
         this.vector = q;
@@ -130,6 +131,12 @@ methods
     
     function [q, resid, state] = solve(this, varargin)
         % Iterates this algorithm until limit condition is found
+
+        % uses first argument if this is a block-vector
+        if nargin > 1 && isa(varargin{1}, 'AbstractBlockMatrix')
+            this.vector = varargin{1};
+            varargin(1) = [];
+        end
         
         % parse optimization options
         options = blockPowerOptions(varargin{:});
