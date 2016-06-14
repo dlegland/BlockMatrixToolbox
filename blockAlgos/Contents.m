@@ -30,14 +30,3 @@
 %   CoreModel                          - Represent a factorisation of a block-matrix
 %   Iteration                          - Performs iteration of block-matrix factorization algorithm
 %
-%   Old developments
-%   core_methods                       - implement "core methods" for block matrices
-%   maxbet_procedure1                  - MAXBET procedure for multi-block matrices.
-%   maxbet_procedure2                  - MAXBET procedure for multi-block matrices.
-%   maxbet_procedure3                  - MAXBET procedure for multi-block matrices, using algos.
-%   MaxBetAlgorithm                    - Maxbet factorization algorithm
-%   MaxBetIterator                     - Iterate the MaxBet algorithm
-%   test_maxbet1                       - Programme de test pour la fonction 'maxbet_procedure1'
-%   test_maxbet2                       - Programme de test pour la fonction 'maxbet_procedure2'
-%   test_maxbet3                       - Programme de test pour la fonction 'maxbet_procedure2'
-%   test_maxbet4                       - Check the class "MaxBetAlgorithm"

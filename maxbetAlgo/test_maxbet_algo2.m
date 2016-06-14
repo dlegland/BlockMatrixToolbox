@@ -1,7 +1,9 @@
-% Check convergence of maxbet algo with data from Hanafi and Ten Berge (2003)
-% using mutli-block data structures
-%
-%   output = test_maxbet_algo2(input)
+% Check convergence of maxbet algo using mutli-block data structures
+% 
+%   Uses data from Hanafi and Ten Berge (2003)
+% 
+%   USage:
+%   test_maxbet_algo2(input)
 %
 %   Example
 %   test_maxbet_algo2
