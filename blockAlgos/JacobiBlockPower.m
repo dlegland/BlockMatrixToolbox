@@ -39,6 +39,10 @@ properties
     % default is "uu"
     productType = 'uu';
     
+    % a function handle that computes new value of vector from the product
+    % A *_(w1,w2) u.
+    updateFunction;
+    
     % the type of norm used to normalize vector. Default is L2 norm.
     normType = 2;
     
@@ -86,6 +90,9 @@ methods
         
         % default core function simply returns the original matrix.
         this.core = @(A,u) A;
+        
+        % create the default update function
+        this.updateFunction = @(Au) blockProduct_hs( 1 ./ blockNorm(Au), Au );
     end
 
 end % end constructors
@@ -116,14 +123,15 @@ methods
         % extract vector
         qq = this.vector;
 
-        % compute the matrix from the core function
+        % compute the matrix from the core function and the input data
         A = this.core(this.data, qq);
         
         % performs block-product on current vector
         q = blockProduct(A, qq, this.productType);
         
         % block normalization
-        q = blockProduct_hs(1./blockNorm(q), q); 
+        q = this.updateFunction(q);
+        % q = blockProduct_hs(1./blockNorm(q), q); 
         
         % compute residual
         resid = norm(blockNorm(q - qq), this.normType); 
