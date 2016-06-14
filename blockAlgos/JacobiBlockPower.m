@@ -204,9 +204,25 @@ methods
     end
     
     function lambda = eigenValue(this)
-        % Computes the current eigen value
+        % Compute the current eigen value
         q = blockProduct(this.data, this.vector, this.productType);
         lambda = norm(q, this.normType);
+    end
+    
+    function Au = computeProduct(this, u)
+        % Compute the (w1,w2)-product of core matrix by the specified vector
+        A = this.core(this.data, u);
+        Au = blockProduct(A, u, this.productType);
+    end
+    
+    function A = coreMatrix(this, u)
+        % Compute the current core matrix, from data matrix and vector U 
+        A = this.core(this.data, u);
+    end
+    
+    function un = normalizeVector(this, u)
+        % Compute normalized vector, using inner settings
+        un = this.updateFunction(u);
     end
     
     function monotony(this, v0, varargin)
@@ -251,6 +267,55 @@ methods
         figure; set(gca, 'fontsize', 14); hold on;
         plot([1 nIter], lambdaList([end end]), 'k');
         plot(lambdaList, 'color', 'b', 'linewidth', 2);
+        xlabel('Iteration Number');
+        ylabel('Eigen value estimation');
+
+    end
+    function stationarity(this, v0, varargin)
+        % Display stationarity of this algorithm
+        %
+        % usage:
+        %   stationarity(ALGO, V0);
+        % where ALGO if the instance of Block power algorithm, and V0 is
+        % the initial value of the vector
+        %
+        % Example
+        %   % create block matrix for problem
+        %   mdims = BlockDimensions({40, [20 30 20]});
+        %   data = BlockMatrix(rand(40, 70), mdims);
+        %   AA = blockProduct_uu(data', data);
+        %   % create block matrix for initial vector
+        %   vdims = BlockDimensions({[20 30 20], 1});
+        %   q0 = BlockMatrix(rand(70, 1), vdims);
+        %   qq = blockProduct_hs(1./blockNorm(q0), q0);
+        %   % compute algorithm monotony
+        %   algo = JacobiBlockPower(AA, qq);
+        %   stationarity(algo, qq);
+        
+        % parse optimization options
+        options = blockPowerOptions(varargin{:});
+        
+        % initialize algo
+        this.vector = v0;
+        
+        % initialize display
+        nIter = options.maxIterNumber;
+        normList = zeros(nIter, 1);
+        
+        % iterate
+        for iIter = 1:nIter
+            iterate(this);
+            
+            u = this.vector;
+            u2 = computeProduct(this, u);
+            normList(iIter) = norm(blockNorm(u2));
+        end
+        
+        
+        % display result
+        figure; set(gca, 'fontsize', 14); hold on;
+        plot([1 nIter], normList([end end]), 'k');
+        plot(normList, 'color', 'b', 'linewidth', 2);
         xlabel('Iteration Number');
         ylabel('Eigen value estimation');
 
