@@ -32,6 +32,9 @@ properties
     % the block vector representing the initial solution
     vector;
 
+    % a function handle for computing matrix from A and u. Default is A.
+    core;
+
     % the type of block product to apply on (block)matrix and (block)vector
     % default is "uu"
     productType = 'uu';
@@ -80,6 +83,9 @@ methods
             vdim = blockDimensions(A, 2);
             this.vector = BlockMatrix(ones(n, 1), vdim, 1);
         end
+        
+        % default core function simply returns the original matrix.
+        this.core = @(A,u) A;
     end
 
 end % end constructors
@@ -107,9 +113,14 @@ methods
         % * eig     the eigen value
         %
         
-        % performs block-product on current vector
+        % extract vector
         qq = this.vector;
-        q = blockProduct(this.data, qq, this.productType);
+
+        % compute the matrix from the core function
+        A = this.core(this.data, qq);
+        
+        % performs block-product on current vector
+        q = blockProduct(A, qq, this.productType);
         
         % block normalization
         q = blockProduct_hs(1./blockNorm(q), q); 
