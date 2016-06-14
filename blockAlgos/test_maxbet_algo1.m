@@ -1,7 +1,9 @@
-%Check convergence of maxbet algo with data from Hanafi and Ten Berge (2003)
+% Check convergence of maxbet algo using specific function maxbet_Au
+%
+%   Uses data from Hanafi and Ten Berge (2003)
 %
 % Usage:
-%   checkMaxbetConvergence
+%   test_maxbet_algo1
 %
 %   See also
 %
