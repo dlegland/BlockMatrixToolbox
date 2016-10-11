@@ -52,7 +52,7 @@ end % end abstract methods
 
 
 %% Computation Methods
-% Some methods are performed, that only relies on abstract methods.
+% Some methods are performed that only rely on abstract methods.
 
 methods
     function res = blockProduct(this, that, type)
@@ -182,6 +182,49 @@ methods
         %    blockSize, blockRows
         
         nc = blockSize(this, 2);
+    end
+    
+    function res = blockTranspose(this)
+        % Return a new block-matrix with each block transposed
+        %
+        % Example
+        %   rng(100);
+        %   BM = BlockMatrix(randi(20, 6, 6), [3 3], [2 2 2]);
+        %   blockTranspose(BM)
+        %
+        %     ans = 
+        %     BlockMatrix object with 4 rows and 9 columns
+        %       row dims: 2 2
+        %       col dims: 3 3 3
+        % 
+        %        11       6       9       4       3       5       4       8       1   
+        %        14      17       3      17       6       9      12      13       3   
+        %        17       1       3      20      17       4       6      16       1   
+        %        12      18       5      19      17       7       8       1      18   
+       
+        
+        % first check validity of input matrix
+        BD = blockDimensions(this);
+        if ~isUniform(BD{1}) || ~isUniform(BD{2})
+            error('requires a block-uniform BlockMatrix');
+        end
+        
+        % compute size of result
+        blockSize1 = BD{1}(1);
+        blockSize2 = BD{2}(1);
+        parts1 = repmat(blockSize2, 1, length(BD{1}));
+        parts2 = repmat(blockSize1, 1, length(BD{2}));
+        BD2 = BlockDimensions({parts1, parts2});
+        
+        % create result block matrix
+        res = BlockMatrix.zeros(BD2);
+
+        % transpose each block
+        for iBlock = 1:blockSize(this, 1)
+            for jBlock = 1:blockSize(this, 2)
+                setBlock(res, iBlock, jBlock, getBlock(this, iBlock, jBlock)');
+            end
+        end
     end
 end
 
