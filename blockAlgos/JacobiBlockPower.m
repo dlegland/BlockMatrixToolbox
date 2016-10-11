@@ -1,15 +1,15 @@
-classdef JacobiBlockPower < BlockPowerAlgo
+classdef JacobiBlockPower < BlockPowerAlgoState
 %JACOBIBLOCKPOWER Jacobi algorithm for solving block power algorithms
 %
-%   ALGO = JacobiBlockPower(BM)
-%   ALGO = JacobiBlockPower(BM, U0)
+%   STATE = JacobiBlockPower(BM)
+%   STATE = JacobiBlockPower(BM, U0)
 %   Creates a new instance of Jacobi Block Power iteration algorithm, using
 %   the specified Block-Matrix BM for representing the problem, and an
 %   optional Block-Vector representing the initial state of the algorithm.
 %   If U0 is not specified, a block vector containing only 1 is used.
 %
 %   The algorithm can be used that way:
-%   U = iterate(ALGO)
+%   NEWSTATE = next(STATE)
 %
 %   Example
 %
@@ -34,6 +34,9 @@ properties
 
     % a function handle for computing matrix from A and u. Default is A.
     core;
+    
+    % the residual from previous state. NaN for first iteration.
+    residual = NaN;
 
     % the type of block product to apply on (block)matrix and (block)vector
     % default is "uu"
@@ -55,21 +58,43 @@ methods
         % Constructor for JacobiBlockPower class
         %
         % Usage:
-        %   ALGO = JacobiBlockPower(MAT);
-        %   ALGO = JacobiBlockPower(MAT, U0);
+        %   STATE = JacobiBlockPower(MAT);
+        %   STATE = JacobiBlockPower(MAT, U0);
         %   MAT is a N-by-P BlockMatrix. U0 is an optional N-by-1
         %   BlockVector.
         %
+        
+        % Empty constructor, to allow creation of arrays
+        if nargin == 0
+            return;
+        end
+        
+        % Copy constructor
+        if isa(A, 'JacobiBlockPower')
+            this.data   = A.data;
+            this.vector = A.vector;
+            this.core   = A.core;
+
+            this.productType    = A.productType;
+            this.updateFunction = A.updateFunction;
+            this.normType       = A.normType;
+
+            return;
+        end
         
         % check type of first argument
         if ~isa(A, 'BlockMatrix')
             error('First argument should be a block-matrix');
         end
         
-        % check matrix validity
+        % check matrix validity. 
+        % PositiveDefinite Matrices are not tested for now.
         [n1, n2] = size(A);
-        if n1 ~= n2 || ~isSymmetric(A) || ~isPositiveDefinite(A)
+        if n1 ~= n2 || ~isSymmetric(A) % || ~isPositiveDefinite(A)
             error('Requires a symmetric positive definite matrix');
+        end
+        if ~isPositiveDefinite(A)
+            warning('Requires a symmetric positive definite matrix');
         end
         this.data = A;
         
@@ -104,24 +129,13 @@ end % end constructors
 
 %% Methods
 methods
-    function [q, resid, state] = iterate(this)
+    function res = next(this)
         % Performs a single iteration of the (Block-)Power Algorithm
         %
-        % Q = iterate(ALGO)
-        % where ALGO is a correctly initialized JacobiBlockPower algorithm,
-        % returns the new value Q of the vector, as a BlockMatrix with one
-        % column.
-        %
-        % [Q, RESID] = iterate(ALGO)
-        % Also returns the residual obtained after this iteration.
-        %
-        % [Q, RESID, STATE] = iterate(ALGO)
-        % Also returns a structure containing information about current
-        % iteration. STATE contains following fields:
-        % * vector  the value of the vector after iteration
-        % * resid   the residual, equal to norm of difference between
-        %           vectors of successive iterations
-        % * eig     the eigen value
+        % NEWSTATE = iterate(STATE)
+        % where STATE is a correctly initialized JacobiBlockPower
+        % algorithm, returns the new state of the algorithm, as an instance
+        % of JacobiPowerBlock. 
         %
         
         % extract vector
@@ -135,24 +149,20 @@ methods
         
         % block normalization
         q = this.updateFunction(q);
+        % ususally:
         % q = blockProduct_hs(1./blockNorm(q), q); 
         
+        % create algorithm state data structure
+        res = JacobiBlockPower(this);
+        res.vector = q;
+
         % compute residual
         resid = norm(blockNorm(q - qq), this.normType); 
+        res.residual = resid;
         
-        % keep result for next iteration
-        this.vector = q;
-        
-        % create algorithm state data structure
-        if nargout > 2
-            state = struct(...
-                'vector',   q, ...
-                'resid',    resid, ...
-                'eig',      eigenValue(this));
-        end
     end
     
-    function [q, resid, state] = solve(this, varargin)
+    function stateList = solve(this, varargin)
         % Iterates this algorithm until a stopping criterion is found
         %
         % U = solve(ALGO, U0);
@@ -181,19 +191,24 @@ methods
         % parse optimization options
         options = blockPowerOptions(varargin{:});
         
+        % initialize list of state
+        state = this;
+        stateList = {state};
+        
         % iterate until residual is acceptable
         for iIter = 1:options.maxIterNumber
             % performs one iteration, and get residual
-            [q, resid, state] = this.iterate();
+            state = state.next();
+            stateList = [stateList {state}]; %#ok<AGROW>
             
             % test the tolerance on residual
-            if resid < options.residTol
+            if state.residual < options.residTol
                 fprintf('converged to residual after %d iteration(s)\n', iIter);
                 return;
             end
             
             % test the tolerance on eigen value
-            if state.eig < options.eigenTol
+            if eigenValue(state) < options.eigenTol
                 fprintf('converged to eigenValue after %d iteration(s)\n', iIter);
                 return;
             end
@@ -202,6 +217,9 @@ methods
         fprintf('Reached maximum number of iterations (%d)\n', iIter);
 
     end
+    
+    
+    %% Utility methods 
     
     function lambda = eigenValue(this)
         % Compute the current eigen value
@@ -224,6 +242,9 @@ methods
         % Compute normalized vector, using inner settings
         un = this.updateFunction(u);
     end
+    
+    
+    %% Methods for studying the algorithm 
     
     function monotony(this, v0, varargin)
         % Display monotony of this algorithm

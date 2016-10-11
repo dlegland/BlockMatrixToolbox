@@ -10,7 +10,7 @@
  
 % ------
 % Author: David Legland
-% e-mail: david.legland@nantes.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2016-03-02,    using Matlab 8.6.0.267246 (R2015b)
 % Copyright 2016 INRA - Cepia Software Platform.
 
@@ -20,8 +20,12 @@ rng(100);
 % create block dimensions
 mdims = BlockDimensions({4, [2 3 2]});
 
+% create random data, rounded to avoid floating point errors
+data0 = rand(4, 7);
+data0 = round(data0 * 1000) / 1000;
+
 % create block matrix instance
-data = BlockMatrix(rand(4, 7), mdims);
+data = BlockMatrix(data0, mdims);
 
 % display the BlockMatrix
 disp('Block matrix:');
@@ -48,11 +52,20 @@ disp(tt');
 % compute the block-matrix corresponding to maxbet algorithm
 AA = blockProduct_uu(data', data);
 
+% ensure symmetry of the matrix...
+AA.data = max(AA.data, AA.data');
+
 % create new BlockMatrix representing the normalized input vectors
 qq = blockProduct_hs(1./blockNorm(tt), tt);
 
-% create the block power iteration algorithm
-algo = JacobiBlockPower(AA, qq);
+
+%% Initialization of AlgoState instance
+
+% create an initial state for the block power iteration algorithm
+state0 = JacobiBlockPower(AA, qq);
+
+% display content of AlgoState instance:
+disp(state0);
 
 % init residual
 resid = 1;
@@ -63,20 +76,26 @@ structArray = [];
 
 tol = 1e-18;
 
+
+%% Iteration example
+
+stateList = cell(1, nIters);
+state = state0;
+
 % iterate until residual is acceptable
 for iIter = 1:nIters
     % performs one iteration, and get residual
-    [q, resid, state] = algo.iterate();
-%     residArray = [residArray resid];
-    
-    resArray{iIter} = q;
-    residArray(iIter) = resid;
-    structArray = [structArray state];
+    state = state.next();
+    stateList{iIter} = state;
 end
 
 
 %% Solve problem using "solve" method
 
-solution = solve(algo);
+% iterate until a stopping criterium is met
+pathToSolution = solve(state0);
+
+% get solution
+solution = pathToSolution{end}.vector;
 disp('Transposed solution:');
 disp(solution');
